@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z8 Store</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
+        body { background-color: #0b1a12; color: #fff; padding-bottom: 50px; }
+        header { background: #112a1d; border-bottom: 2px solid #39ff14; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo-box { display: flex; align-items: center; gap: 10px; }
+        .logo-box img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #39ff14; object-fit: cover; }
+        .logo-box h1 { color: #39ff14; font-size: 20px; }
+        .btn-main { background: #39ff14; color: #0b1a12; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .nav-tabs { display: flex; justify-content: center; gap: 5px; margin: 15px; flex-wrap: wrap; }
+        .tab-btn { background: #112a1d; color: #b2bec3; border: 1px solid #2d5a3f; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 13px; }
+        .tab-btn.active { background: #39ff14; color: #0b1a12; font-weight: bold; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 15px; }
+        .admin-panel { background: #112a1d; border: 2px solid #39ff14; border-radius: 8px; padding: 20px; margin-bottom: 20px; display: none; }
+        .admin-panel.show { display: block; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #b2bec3; font-size: 13px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 8px; background: #07130c; border: 1px solid #2d5a3f; color: #fff; border-radius: 5px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+        .card { background: #0d2116; border: 1px solid #1f4a33; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
+        .card img { width: 100%; height: 130px; object-fit: cover; }
+        .card-body { padding: 10px; }
+        .card-title { font-weight: bold; font-size: 14px; margin-bottom: 5px; }
+        .card-desc { font-size: 12px; color: #b2bec3; margin-bottom: 8px; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; }
+        .price { color: #39ff14; font-weight: bold; }
+        .status { font-size: 11px; padding: 2px 6px; border-radius: 4px; }
+        .status.yes { background: rgba(57,255,20,0.2); color: #39ff14; }
+        .status.no { background: rgba(255,71,87,0.2); color: #ff4757; }
+        .del-btn { background: #ff4757; color: #fff; border: none; padding: 6px; cursor: pointer; font-size: 11px; font-weight: bold; width: 100%; }
+        .cat-delete-row { display: flex; justify-content: space-between; align-items: center; background: #07130c; padding: 8px; border-radius: 5px; margin-bottom: 8px; border: 1px solid #2d5a3f; }
+        .empty { text-align: center; color: #b2bec3; grid-column: 1/-1; padding: 20px; background: #0d2116; border-radius: 8px; }
+    </style>
+</head>
+<body onload="initSite()">
+
+    <header>
+        <div class="logo-box">
+            <img id="logoView" src="1000014667.png" onerror="this.src='https://via.placeholder.com/45?text=Z8'">
+            <h1 id="storeTitle">Z8 Store</h1>
+        </div>
+        <button class="btn-main" onclick="toggleAdmin()">لوحة التحكم</button>
+    </header>
+
+    <div class="nav-tabs" id="tabsBar">
+        <button class="tab-btn active" onclick="switchCategory('all', this)">الكل</button>
+    </div>
+
+    <div class="container">
+        <div class="admin-panel" id="adminBox">
+            <h3 style="color:#39ff14; margin-bottom:15px;">لوحة التحكم والمشرف</h3>
+            
+            <div id="loginSec">
+                <div class="form-group">
+                    <label>كلمة المرور:</label>
+                    <input type="password" id="passInput" placeholder="أدخل كلمة المرور...">
+                </div>
+                <button class="btn-main" onclick="login()">دخول</button>
+            </div>
+
+            <div id="controlSec" style="display:none;">
+                <hr style="border:0; border-top:1px dashed #2d5a3f; margin:15px 0;">
+                <h4 style="color:#39ff14; margin-bottom:10px;">تغيير شعار الموقع</h4>
+                <div class="form-group">
+                    <input type="file" id="logoFile" accept="image/*">
+                </div>
+                <button class="btn-main" onclick="updateLogo()">تحديث الشعار</button>
+
+                <hr style="border:0; border-top:1px dashed #2d5a3f; margin:15px 0;">
+                <h4 style="color:#39ff14; margin-bottom:10px;">إدارة الأقسام</h4>
+                <div class="form-group">
+                    <label>اسم القسم الجديد:</label>
+                    <input type="text" id="newCatName">
+                </div>
+                <button class="btn-main" onclick="addCategory()" style="margin-bottom: 15px;">إضافة القسم</button>
+                
+                <div id="categoriesListManager"></div>
+
+                <hr style="border:0; border-top:1px dashed #2d5a3f; margin:15px 0;">
+                <h4 style="color:#39ff14; margin-bottom:10px;">إضافة منتج جديد</h4>
+                <div class="form-group">
+                    <label>اختر القسم:</label>
+                    <select id="pCat"></select>
+                </div>
+                <div class="form-group">
+                    <label>اسم المنتج:</label>
+                    <input type="text" id="pName">
+                </div>
+                <div class="form-group">
+                    <label>الوصف:</label>
+                    <textarea id="pDesc" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>السعر:</label>
+                    <input type="text" id="pPrice">
+                </div>
+                <div class="form-group">
+                    <label>الحالة:</label>
+                    <select id="pStatus">
+                        <option value="متوفر">متوفر</option>
+                        <option value="غير متوفر">غير متوفر</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>صورة المنتج:</label>
+                    <input type="file" id="pImg" accept="image/*">
+                </div>
+                <button class="btn-main" onclick="addProduct()">نشر المنتج</button>
+            </div>
+        </div>
+
+        <div id="contentArea"></div>
+    </div>
+
+    <script>
+        let categories = JSON.parse(localStorage.getItem('z8_cats')) || [
+            { id: 'discord', name: 'ديسكورد' },
+            { id: 'steam', name: 'ستيم' }
+        ];
+
+        let products = JSON.parse(localStorage.getItem('z8_prods')) || [];
+        let currentCat = 'all';
+
+        function initSite() {
+            const savedLogo = localStorage.getItem('z8_logo');
+            if (savedLogo) {
+                document.getElementById('logoView').src = savedLogo;
+            }
+            renderTabs();
+            renderProducts();
+            renderCategoriesManager();
+        }
+
+        function toggleAdmin() {
+            document.getElementById('adminBox').classList.toggle('show');
+        }
+
+        function login() {
+            const val = document.getElementById('passInput').value;
+            if (val === 'RAEZAR') {
+                document.getElementById('loginSec').style.display = 'none';
+                document.getElementById('controlSec').style.display = 'block';
+                alert('تم تسجيل الدخول بنجاح!');
+            } else {
+                alert('كلمة المرور خطأ! (كلمة المرور: RAEZAR)');
+            }
+        }
+
+        function updateLogo() {
+            const fileInput = document.getElementById('logoFile');
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64 = e.target.result;
+                    localStorage.setItem('z8_logo', base64);
+                    document.getElementById('logoView').src = base64;
+                    alert('تم تحديث الشعار بنجاح!');
+                }
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                alert('الرجاء اختيار صورة أولاً.');
+            }
+        }
+
+        function addCategory() {
+            const nameInput = document.getElementById('newCatName');
+            const name = nameInput.value.trim();
+            if (!name) {
+                alert('الرجاء كتابة اسم القسم');
+                return;
+            }
+            const id = 'cat_' + Date.now();
+            categories.push({ id, name });
+            localStorage.setItem('z8_cats', JSON.stringify(categories));
+            
+            nameInput.value = '';
+            renderTabs();
+            renderProducts();
+            renderCategoriesManager();
+            alert('تم إضافة القسم بنجاح!');
+        }
+
+        function deleteCategory(catId) {
+            if (confirm('هل أنت متأكد من حذف هذا القسم؟ سيتم حذف المنتجات التابعة له!')) {
+                categories = categories.filter(c => c.id !== catId);
+                products = products.filter(p => p.cat !== catId);
+                
+                if (currentCat === catId) currentCat = 'all';
+
+                localStorage.setItem('z8_cats', JSON.stringify(categories));
+                localStorage.setItem('z8_prods', JSON.stringify(products));
+
+                renderTabs();
+                renderProducts();
+                renderCategoriesManager();
+                alert('تم حذف القسم بنجاح.');
+            }
+        }
+
+        function renderCategoriesManager() {
+            let html = '<label style="color:#b2bec3; font-size:13px; margin-bottom:5px; display:block;">الأقسام الحالية:</label>';
+            if (categories.length === 0) {
+                html += '<div style="font-size:12px; color:#b2bec3;">لا توجد أقسام حالياً.</div>';
+            } else {
+                categories.forEach(c => {
+                    html += `
+                        <div class="cat-delete-row">
+                            <span>${c.name}</span>
+                            <button style="background:#ff4757; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;" onclick="deleteCategory('${c.id}')">حذف</button>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('categoriesListManager').innerHTML = html;
+        }
+
+        function renderTabs() {
+            let html = `<button class="tab-btn ${currentCat === 'all' ? 'active' : ''}" onclick="switchCategory('all', this)">الكل</button>`;
+            let selectHtml = '';
+
+            categories.forEach(c => {
+                html += `<button class="tab-btn ${currentCat === c.id ? 'active' : ''}" onclick="switchCategory('${c.id}', this)">${c.name}</button>`;
+                selectHtml += `<option value="${c.id}">${c.name}</option>`;
+            });
+
+            document.getElementById('tabsBar').innerHTML = html;
+            const pCatSelect = document.getElementById('pCat');
+            if(pCatSelect) pCatSelect.innerHTML = selectHtml;
+        }
+
+        function switchCategory(catId, btn) {
+            currentCat = catId;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            renderProducts();
+        }
+
+        function addProduct() {
+            const cat = document.getElementById('pCat').value;
+            const name = document.getElementById('pName').value.trim();
+            const desc = document.getElementById('pDesc').value.trim();
+            const price = document.getElementById('pPrice').value.trim();
+            const status = document.getElementById('pStatus').value;
+            const imgFile = document.getElementById('pImg').files[0];
+
+            if (!name || !price) {
+                alert('الرجاء إدخال اسم المنتج والسعر على الأقل!');
+                return;
+            }
+
+            if (!cat) {
+                alert('الرجاء إنشاء قسم أولاً قبل إضافة منتج!');
+                return;
+            }
+
+            if (imgFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    saveProdData(cat, name, desc, price, status, e.target.result);
+                }
+                reader.readAsDataURL(imgFile);
+            } else {
+                saveProdData(cat, name, desc, price, status, 'https://via.placeholder.com/300x130?text=Z8');
+            }
+        }
+
+        function saveProdData(cat, name, desc, price, status, img) {
+            const newP = { id: Date.now(), cat, name, desc, price, status, img };
+            products.push(newP);
+            localStorage.setItem('z8_prods', JSON.stringify(products));
+
+            document.getElementById('pName').value = '';
+            document.getElementById('pDesc').value = '';
+            document.getElementById('pPrice').value = '';
+            document.getElementById('pImg').value = '';
+            document.getElementById('adminBox').classList.remove('show');
+
+            renderProducts();
+            alert('تم حفظ ونشر المنتج بنجاح!');
+        }
+
+        function deleteProduct(id) {
+            if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('z8_prods', JSON.stringify(products));
+                renderProducts();
+            }
+        }
+
+        function renderProducts() {
+            let filtered = currentCat === 'all' ? products : products.filter(p => p.cat === currentCat);
+            
+            if (filtered.length === 0) {
+                document.getElementById('contentArea').innerHTML = `<div class="empty">لا توجد منتجات مضافة في هذا القسم حالياً.</div>`;
+                return;
+            }
+
+            let gridHtml = '<div class="grid">';
+            filtered.forEach(p => {
+                let stClass = p.status === 'متوفر' ? 'yes' : 'no';
+                gridHtml += `
+                    <div class="card">
+                        <div>
+                            <img src="${p.img}">
+                            <div class="card-body">
+                                <div class="card-title">${p.name}</div>
+                                <div class="card-desc">${p.desc || 'لا يوجد وصف'}</div>
+                                <div class="card-footer">
+                                    <span class="price">${p.price}</span>
+                                    <span class="status ${stClass}">${p.status}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="del-bin" class="del-btn" onclick="deleteProduct(${p.id})" style="background:#ff4757; color:#fff; border:none; padding:6px; cursor:pointer; font-size:11px; font-weight:bold; width:100%;">حذف المنتج</button>
+                    </div>
+                `;
+            });
+            gridHtml += '</div>';
+            document.getElementById('contentArea').innerHTML = gridHtml;
+        }
+    </script>
+</body>
+</html>

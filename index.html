@@ -57,12 +57,13 @@
             color: #000;
         }
         .store-logo {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: bold;
             color: var(--text-color);
             display: flex;
             align-items: center;
             gap: 10px;
+            letter-spacing: 1px;
         }
         .logo-circle {
             width: 45px;
@@ -75,6 +76,8 @@
             justify-content: center;
             background: #000;
             box-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+            font-size: 11px;
+            font-weight: bold;
         }
         .logo-circle img {
             width: 100%;
@@ -286,7 +289,7 @@
         <div class="store-logo">
             <span id="storeTitleText">Z8 Store</span>
             <div class="logo-circle" id="logoCircleContainer">
-                <span style="font-size: 10px; color: var(--primary-neon);">Z8</span>
+                <span style="color: var(--primary-neon);">Z8</span>
             </div>
         </div>
     </div>
@@ -304,7 +307,7 @@
 
         <h3>➕ إضافة قسم جديد للمتجر</h3>
         <div class="form-group">
-            <label>اسم القسم الجديد (مثال: حسابات نتفليكس، روبلوكس...):</label>
+            <label>اسم القسم الجديد:</label>
             <input type="text" id="newCategoryName" placeholder="اكتب اسم القسم...">
         </div>
         <button class="btn-add" style="background: #3b82f6; color: white;" onclick="addNewCategory()">إضافة القسم الجديد</button>
@@ -347,6 +350,9 @@
         <div class="admin-products-list" id="adminProductsList">
             <!-- قائمة الحذف السريع -->
         </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 20px 0;">
+        <button class="btn-add" style="background: var(--danger-color); color: white;" onclick="resetStoreData()">⚠️ مسح ذاكرة المتجر وإعادة الضبط</button>
     </div>
 
     <!-- شريط الأقسام والفلاتر الأفقية -->
@@ -356,7 +362,7 @@
 
     <!-- عرض المنتجات للزبائن -->
     <div class="section-box">
-        <div class="section-title" id="currentCategoryTitle">🌐 جميع منتجات وخدمات المتجر</div>
+        <div class="section-title" id="currentCategoryTitle">🌐 جميع منتجات وخدمات Z8 Store</div>
         <div id="productsGrid" class="products-grid">
             <div class="empty-msg">لا توجد منتجات مضافة في المتجر حالياً.</div>
         </div>
@@ -366,7 +372,6 @@
 <script>
     const ADMIN_PASSWORD = "1234";
 
-    // جلب البيانات أو التهيئة الأولية للأقسام الافتراضية
     let categories = JSON.parse(localStorage.getItem('z8_store_categories')) || [
         { id: 'discord', name: '💬 خدمات ديسكورد' },
         { id: 'steam', name: '🎮 حسابات ستيم' },
@@ -388,14 +393,14 @@
     }
 
     function checkAdminPassword() {
-        const pass = prompt("الرجاء إدخال كلمة مرور لوحة التحكم:");
+        const pass = prompt("الرجاء إدخال كلمة مرور لوحة التحكم (1234):");
         if(pass === ADMIN_PASSWORD) {
             const panel = document.getElementById('adminPanel');
             panel.classList.toggle('active');
             renderAdminProductsList();
             renderCategoryOptions();
         } else if(pass !== null) {
-            alert("كلمة المرور غير صحيحة!");
+            alert("كلمة المرور غير صحيحة! كلمة المرور هي: 1234");
         }
     }
 
@@ -441,13 +446,13 @@
 
     function renderCategoryOptions() {
         const select = document.getElementById('pCategorySelect');
+        if(!select) return;
         select.innerHTML = '';
         categories.forEach(cat => {
             select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
         });
     }
 
-    // دالة لضغط الصور لتجنب امتلاء الذاكرة الدائمة
     function compressImage(file, maxWidth, maxHeight, quality, callback) {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -581,11 +586,5 @@
 
     function renderAdminProductsList() {
         const listContainer = document.getElementById('adminProductsList');
-        listContainer.innerHTML = '';
-
-        if(products.length === 0) {
-            listContainer.innerHTML = '<div style="color: var(--text-muted); text-align: center; font-size: 0.85rem; padding: 10px;">لا توجد منتجات للحذف حالياً</div>';
-            return;
-        }
-
-        products.forEach(p
+        if(!listContainer) return;
+        listContainer.innerHT

@@ -115,7 +115,11 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
             color: white;
-            font-size: 0.95ln;
+            font-size: 0.95rem;
+        }
+        .form-group input[type="file"] {
+            padding: 7px;
+            cursor: pointer;
         }
         .btn-add {
             background: var(--primary-neon);
@@ -129,7 +133,7 @@
             margin-top: 5px;
         }
 
-        /* قائمة إدارة وحذف المنتجات داخل لوحة التحكم */
+        /* قائمة إدارة الحذف السريع داخل لوحة التحكم */
         .admin-products-list {
             margin-top: 20px;
             max-height: 200px;
@@ -211,7 +215,7 @@
         }
         .product-img {
             width: 100%;
-            height: 130px;
+            height: 140px;
             object-fit: cover;
             border-radius: 8px;
             margin-bottom: 10px;
@@ -268,12 +272,11 @@
 
     <!-- لوحة التحكم المحمية -->
     <div class="admin-panel" id="adminPanel">
-        <h3>⚙️ إعدادات المتجر وإدارة المنتجات</h3>
+        <h3>⚙️ إعدادات المتجر الشاملة</h3>
         
         <div class="form-group" style="margin-top: 15px;">
-            <label>رابط شعار المتجر (Logo Image URL):</label>
-            <input type="text" id="storeLogoInput" placeholder="ضع رابط صورة الشعار هنا...">
-            <button class="btn-add" style="margin-top: 8px; background: #334155; color: white;" onclick="updateStoreLogo()">تحديث الشعار</button>
+            <label>اختر شعار المتجر من الاستديو:</label>
+            <input type="file" id="storeLogoFile" accept="image/*" onchange="updateStoreLogoFromFile(event)">
         </div>
 
         <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 20px 0;">
@@ -292,8 +295,8 @@
             <input type="text" id="pPrice" placeholder="مثال: $10 أو 10,000 د.ع">
         </div>
         <div class="form-group">
-            <label>رابط صورة المنتج (صورة الشركة/اللعبة):</label>
-            <input type="text" id="pImg" placeholder="ضع رابط صورة المنتج هنا...">
+            <label>صورة المنتج (من الاستديو أو المعرض):</label>
+            <input type="file" id="pImageFile" accept="image/*">
         </div>
         <div class="form-group">
             <label>اختر القسم:</label>
@@ -309,11 +312,11 @@
                 <option value="fivem">🎙️ فايف أم (إعلانات)</option>
             </select>
         </div>
-        <button class="btn-add" onclick="addProduct()">حفظ وإضافة المنتج</button>
+        <button class="btn-add" onclick="processAddProduct()">حفظ وإضافة المنتج</button>
 
-        <h3 style="margin-top: 25px;">🗑️ حذف المنتجات (إدارة سريعة)</h3>
+        <h3 style="margin-top: 25px;">🗑️ إدارة وحذف المنتجات</h3>
         <div class="admin-products-list" id="adminProductsList">
-            <!-- قائمة الحذف السريع تظهر هنا -->
+            <!-- قائمة الحذف السريع -->
         </div>
     </div>
 
@@ -341,18 +344,16 @@
 </div>
 
 <script>
-    // كلمة المرور الخاصة لوحة التحكم (يمكنك تغييرها من هنا)
+    // كلمة المرور الافتتاحية للوحة التحكم
     const ADMIN_PASSWORD = "1234";
 
-    // جلب البيانات من ذاكرة المتصفح الدائمة
-    let products = JSON.parse(localStorage.getItem('z8_store_final_products')) || [];
-    let customLogo = localStorage.getItem('z8_store_logo') || '';
+    let products = JSON.parse(localStorage.getItem('z8_store_gallery_products')) || [];
+    let customLogo = localStorage.getItem('z8_store_gallery_logo') || '';
     let currentFilter = 'all';
 
-    // تطبيق الشعار المحفوظ مسبقاً إن وجد
+    // تحميل الشعار المحفوظ مسبقاً إن وجد
     if(customLogo) {
         document.getElementById('logoCircleContainer').innerHTML = `<img src="${customLogo}" alt="Logo">`;
-        document.getElementById('storeLogoInput').value = customLogo;
     }
 
     function checkAdminPassword() {
@@ -366,55 +367,68 @@
         }
     }
 
-    function updateStoreLogo() {
-        const logoUrl = document.getElementById('storeLogoInput').value.trim();
-        customLogo = logoUrl;
-        localStorage.setItem('z8_store_logo', logoUrl);
-        
-        if(logoUrl) {
-            document.getElementById('logoCircleContainer').innerHTML = `<img src="${logoUrl}" alt="Logo">`;
-            alert("تم تحديث الشعار بنجاح!");
-        } else {
-            document.getElementById('logoCircleContainer').innerHTML = `<span style="font-size: 10px; color: var(--primary-neon);">Z8</span>`;
-            alert("تم إزالة الشعار!");
+    function updateStoreLogoFromFile(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                customLogo = e.target.result;
+                localStorage.setItem('z8_store_gallery_logo', customLogo);
+                document.getElementById('logoCircleContainer').innerHTML = `<img src="${customLogo}" alt="Logo">`;
+                alert("تم تحديث شعار المتجر بنجاح!");
+            };
+            reader.readAsDataURL(file);
         }
     }
 
     function saveAndRender() {
-        localStorage.setItem('z8_store_final_products', JSON.stringify(products));
+        localStorage.setItem('z8_store_gallery_products', JSON.stringify(products));
         renderProducts();
         renderAdminProductsList();
     }
 
-    function addProduct() {
+    function processAddProduct() {
         const name = document.getElementById('pName').value.trim();
         const desc = document.getElementById('pDesc').value.trim();
         const price = document.getElementById('pPrice').value.trim();
-        const img = document.getElementById('pImg').value.trim();
         const category = document.getElementById('pCategory').value;
+        const fileInput = document.getElementById('pImageFile');
 
         if(!name || !price) {
             alert('الرجاء إدخال اسم المنتج والسعر على الأقل!');
             return;
         }
 
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imgData = e.target.result;
+                saveNewProduct(name, desc, price, category, imgData);
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            saveNewProduct(name, desc, price, category, '');
+        }
+    }
+
+    function saveNewProduct(name, desc, price, category, img) {
         const newProduct = {
             id: Date.now(),
             name,
             desc,
             price,
-            img,
-            category
+            category,
+            img
         };
 
         products.push(newProduct);
         saveAndRender();
 
-        // تفريغ حقول الإدخال
+        // تفريغ الحقول
         document.getElementById('pName').value = '';
         document.getElementById('pDesc').value = '';
         document.getElementById('pPrice').value = '';
-        document.getElementById('pImg').value = '';
+        document.getElementById('pImageFile').value = '';
         alert("تم إضافة المنتج بنجاح!");
     }
 

@@ -28,7 +28,6 @@
         .admin-manage-list { max-height: 180px; overflow-y: auto; background: #050b07; border: 1px solid #132d1d; padding: 10px; border-radius: 5px; margin-top: 10px; }
         .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #132d1d; font-size: 0.85rem; }
 
-        /* نافذة تكبير الصورة */
         .modal { display: none; position: fixed; z-index: 999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
         .modal img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid #00ff66; }
         .close-modal { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 30px; cursor: pointer; background: #ef4444; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
@@ -106,9 +105,20 @@
 </div>
 
 <script>
+    // أقسام افتراضية تظهر لأي زبون يفتح الموقع لأول مرة حتى لا يكون فارغاً
+    let defaultCategories = [
+        {id: 'all', name: 'الكل'},
+        {id: 'c_1', name: 'خدمات وشحن'},
+        {id: 'c_2', name: 'حسابات'}
+    ];
+
+    let defaultProducts = [
+        {id: 1, name: 'منتج تجريبي افتراضي', price: '10$', cat: 'خدمات وشحن', status: 'available', img: ''}
+    ];
+
     let adminPass = localStorage.getItem('z8_pass') || "1234";
-    let categories = JSON.parse(localStorage.getItem('z8_cats')) || [{id: 'all', name: 'الكل'}];
-    let products = JSON.parse(localStorage.getItem('z8_prods')) || [];
+    let categories = JSON.parse(localStorage.getItem('z8_cats')) || defaultCategories;
+    let products = JSON.parse(localStorage.getItem('z8_prods')) || defaultProducts;
     let currentFilter = 'الكل';
     let storeLogo = localStorage.getItem('z8_logo') || '';
 
@@ -386,8 +396,6 @@
 
     renderCategories();
     renderProducts();
-    renderAdminManageList();
-    renderAdminCatsList();
 </script>
 
 </body>

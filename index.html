@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Z8 Store - المتجر الرقمي المتكامل</title>
+    <title>Z8 Store - المتجر الرقمي</title>
     <style>
         :root {
-            --primary-color: #6366f1;
-            --secondary-color: #4f46e5;
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
+            --bg-color: #050b07;
+            --card-bg: #0b1710;
+            --border-color: #132d1d;
+            --primary-neon: #00ff66;
+            --text-color: #ffffff;
+            --text-muted: #8aa895;
             --danger-color: #ef4444;
-            --border-color: #334155;
         }
         * {
             box-sizing: border-box;
@@ -24,145 +23,193 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            padding: 20px;
+            padding: 15px;
         }
         .container {
             max-width: 1000px;
             margin: 0 auto;
         }
-        header {
-            text-align: center;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 35px;
-            border-radius: 16px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+        /* الهيدر العلوي */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
         }
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+        .admin-toggle-btn {
+            background: transparent;
+            color: var(--primary-neon);
+            border: 1px solid var(--primary-neon);
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: 0.3s;
         }
-        header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+        .admin-toggle-btn:hover {
+            background: var(--primary-neon);
+            color: #000;
         }
+        .store-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--primary-neon);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+        }
+
+        /* لوحة التحكم المخفية/ الظاهرة */
         .admin-panel {
             background: var(--card-bg);
-            padding: 25px;
-            border-radius: 16px;
-            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 20px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            display: none;
+        }
+        .admin-panel.active {
+            display: block;
         }
         .admin-panel h3 {
             margin-bottom: 15px;
-            color: #818cf8;
+            color: var(--primary-neon);
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .form-group label {
             display: block;
             margin-bottom: 5px;
-            font-weight: bold;
+            font-size: 0.9rem;
             color: var(--text-muted);
         }
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
-            padding: 12px;
-            background: #0f172a;
+            padding: 10px;
+            background: var(--bg-color);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 8px;
             color: white;
-            font-size: 1rem;
-            outline: none;
+            font-size: 0.95rem;
         }
-        button.btn-main {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
+        .btn-add {
+            background: var(--primary-neon);
+            color: #000;
             border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
+            padding: 10px 20px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 1rem;
             font-weight: bold;
             width: 100%;
-            transition: opacity 0.3s;
         }
-        button.btn-main:hover {
-            opacity: 0.9;
-        }
-        .section-box {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 16px;
-            margin-bottom: 25px;
-            border: 1px solid var(--border-color);
-        }
-        .section-header {
+
+        /* شريط الفلاتر (الأقسام الأفقية) */
+        .filters-container {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 2px solid var(--border-color);
+            gap: 8px;
+            overflow-x: auto;
             padding-bottom: 10px;
             margin-bottom: 20px;
+            scrollbar-width: none;
         }
-        .section-header h2 {
-            font-size: 1.4rem;
-            color: var(--text-color);
+        .filters-container::-webkit-scrollbar {
+            display: none;
+        }
+        .filter-btn {
+            background: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .filter-btn.active {
+            background: var(--primary-neon);
+            color: #000;
+            border-color: var(--primary-neon);
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.3);
+        }
+
+        /* صندوق عرض المنتجات */
+        .section-box {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+        }
+        .section-title {
+            color: var(--primary-neon);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 18px;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 15px;
         }
         .product-card {
-            background: #0f172a;
+            background: var(--bg-color);
             border: 1px solid var(--border-color);
-            padding: 18px;
-            border-radius: 12px;
+            padding: 15px;
+            border-radius: 10px;
             text-align: center;
-            position: relative;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
         .product-card h4 {
-            font-size: 1.2rem;
-            margin-bottom: 8px;
+            font-size: 1.1rem;
+            margin-bottom: 6px;
             color: white;
         }
         .product-card p {
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             margin-bottom: 10px;
         }
         .product-price {
             font-weight: bold;
-            color: #34d399;
-            margin-bottom: 12px;
-            font-size: 1.1rem;
+            color: var(--primary-neon);
+            margin-bottom: 10px;
+            font-size: 1rem;
         }
         .delete-btn {
             background-color: var(--danger-color);
             color: white;
             border: none;
-            padding: 8px;
-            border-radius: 8px;
+            padding: 6px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: bold;
-            transition: background 0.2s;
-        }
-        .delete-btn:hover {
-            background-color: #dc2626;
         }
         .empty-msg {
             color: var(--text-muted);
             text-align: center;
             grid-column: 1 / -1;
-            padding: 15px;
+            padding: 30px;
             font-style: italic;
         }
     </style>
@@ -170,68 +217,84 @@
 <body>
 
 <div class="container">
-    <header>
-        <h1>Z8 Store</h1>
-        <p>متجرا الرقمي الاحترافي - البيانات محفوظة بشكل دائم ولا تختفي أبداً</p>
-    </header>
+    <!-- الهيدر العلوي -->
+    <div class="top-header">
+        <button class="admin-toggle-btn" onclick="toggleAdminPanel()">لوحة التحكم (Admin)</button>
+        <div class="store-logo">
+            Z8 Store
+            <div class="logo-circle"></div>
+        </div>
+    </div>
 
-    <!-- لوحة التحكم للإضافة -->
-    <div class="admin-panel">
-        <h3>➕ إضافة منتج جديد لأي قسم</h3>
+    <!-- لوحة التحكم للإضافة (مخفية افتراضياً تفتح بالضغط على الزر) -->
+    <div class="admin-panel" id="adminPanel">
+        <h3>➕ إضافة منتج جديد</h3>
         <div class="form-group">
-            <label for="pName">اسم المنتج:</label>
-            <input type="text" id="pName" placeholder="مثال: ديسكورد نايترو شهر، حساب ستيم...">
+            <label>اسم المنتج:</label>
+            <input type="text" id="pName" placeholder="أدخل اسم المنتج...">
         </div>
         <div class="form-group">
-            <label for="pDesc">وصف المنتج:</label>
-            <input type="text" id="pDesc" placeholder="تفاصيل المنتج...">
+            <label>وصف المنتج:</label>
+            <input type="text" id="pDesc" placeholder="أدخل الوصف...">
         </div>
         <div class="form-group">
-            <label for="pPrice">السعر:</label>
+            <label>السعر:</label>
             <input type="text" id="pPrice" placeholder="مثال: $10 أو 10,000 د.ع">
         </div>
         <div class="form-group">
-            <label for="pCategory">اختر القسم المناسب:</label>
+            <label>اختر القسم:</label>
             <select id="pCategory">
-                <option value="discord">💬 خدمات ديسكورد (نايترو، بوستات، برمجة، أعضاء، إفكتات)</option>
-                <option value="accounts">🎮 الحسابات والألعاب (ستيم، رينبو، راست، كراند، نتفليكس، ويندوز، كيم باس)</option>
-                <option value="fivem">🎙️ فايف ام (إعلانات صوتية وخدمات)</option>
+                <option value="discord">💬 خدمات ديسكورد</option>
+                <option value="steam">🎮 حسابات ستيم</option>
+                <option value="rainbow">🎯 حسابات رينبو</option>
+                <option value="netflix">🎬 حسابات نتفليكس</option>
+                <option value="rust">⛺ حسابات راست</option>
+                <option value="gta">🚗 حسابات كراند</option>
+                <option value="windows">💻 حسابات ويندوز</option>
+                <option value="gamepass">🎮 جيم باس</option>
+                <option value="fivem">🎙️ فايف أم (إعلانات)</option>
             </select>
         </div>
-        <button class="btn-main" onclick="addProduct()">حفظ وإضافة المنتج للمتجر</button>
+        <button class="btn-add" onclick="addProduct()">حفظ وإضافة المنتج</button>
     </div>
 
-    <!-- قسم ديسكورد -->
-    <div class="section-box">
-        <div class="section-header">
-            <h2>💬 قسم خدمات ديسكورد (نايترو، برمجة، بوستات، إفكتات)</h2>
-        </div>
-        <div id="discord" class="products-grid"></div>
+    <!-- شريط الأقسام والفلاتر الأفقية -->
+    <div class="filters-container">
+        <button class="filter-btn active" onclick="filterProducts('all', this)">🌐 الكل</button>
+        <button class="filter-btn" onclick="filterProducts('discord', this)">💬 خدمات ديسكورد</button>
+        <button class="filter-btn" onclick="filterProducts('steam', this)">🎮 حسابات ستيم</button>
+        <button class="filter-btn" onclick="filterProducts('rainbow', this)">🎯 حسابات رينبو</button>
+        <button class="filter-btn" onclick="filterProducts('netflix', this)">🎬 حسابات نتفليكس</button>
+        <button class="filter-btn" onclick="filterProducts('rust', this)">⛺ حسابات راست</button>
+        <button class="filter-btn" onclick="filterProducts('gta', this)">🚗 حسابات كراند</button>
+        <button class="filter-btn" onclick="filterProducts('windows', this)">💻 حسابات ويندوز</button>
+        <button class="filter-btn" onclick="filterProducts('gamepass', this)">🎮 جيم باس</button>
+        <button class="filter-btn" onclick="filterProducts('fivem', this)">🎙️ فايف أم (إعلانات)</button>
     </div>
 
-    <!-- قسم الحسابات والألعاب -->
+    <!-- عرض المنتجات -->
     <div class="section-box">
-        <div class="section-header">
-            <h2>🎮 قسم الحسابات والاشتراكات (ستيم، رينبو، نتفليكس، كيم باس)</h2>
+        <div class="section-title">
+            <span id="currentCategoryTitle">🌐 جميع منتجات وخدمات المتجر</span>
         </div>
-        <div id="accounts" class="products-grid"></div>
-    </div>
-
-    <!-- قسم فايف ام -->
-    <div class="section-box">
-        <div class="section-header">
-            <h2>🎙️ قسم فايف ام (إعلانات صوتية وخدمات)</h2>
+        <div id="productsGrid" class="products-grid">
+            <div class="empty-msg">لا توجد منتجات مضافة في المتجر حالياً.</div>
         </div>
-        <div id="fivem" class="products-grid"></div>
     </div>
 </div>
 
 <script>
-    // جلب المنتجات المخزنة مسبقاً بذاكرة المتصفح
-    let products = JSON.parse(localStorage.getItem('z8_ultimate_store_products')) || [];
+    // جلب المنتجات المخزنة مسبقاً بذاكرة المتصفح الدائمة
+    let products = JSON.parse(localStorage.getItem('z8_neon_store_products')) || [];
+    let currentFilter = 'all';
+
+    function toggleAdminPanel() {
+        const panel = document.getElementById('adminPanel');
+        panel.classList.toggle('active');
+    }
 
     function saveAndRender() {
-        localStorage.setItem('z8_ultimate_store_products', JSON.stringify(products));
+        localStorage.setItem('z8_neon_store_products', JSON.stringify(products));
         renderProducts();
     }
 
@@ -257,10 +320,13 @@
         products.push(newProduct);
         saveAndRender();
 
-        // تفريغ الحقول بعد الإضافة
+        // تفريغ الحقول
         document.getElementById('pName').value = '';
         document.getElementById('pDesc').value = '';
         document.getElementById('pPrice').value = '';
+        
+        // إغلاق لوحة التحكم بعد الإضافة اختياريًا
+        toggleAdminPanel();
     }
 
     function deleteProduct(id) {
@@ -268,33 +334,45 @@
         saveAndRender();
     }
 
+    function filterProducts(category, btnElement) {
+        currentFilter = category;
+        
+        // تغيير الزر النشط
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+
+        // تغيير عنوان القسم العلوي بناءً على الاختيار
+        document.getElementById('currentCategoryTitle').innerText = btnElement.innerText;
+
+        renderProducts();
+    }
+
     function renderProducts() {
-        // تفريغ الأقسام أولاً
-        const categories = ['discord', 'accounts', 'fivem'];
-        categories.forEach(cat => {
-            document.getElementById(cat).innerHTML = '<div class="empty-msg">لا توجد منتجات في هذا القسم حالياً</div>';
-        });
+        const grid = document.getElementById('productsGrid');
+        grid.innerHTML = '';
 
-        products.forEach(p => {
-            const targetCategory = document.getElementById(p.category);
-            if(targetCategory) {
-                const emptyMsg = targetCategory.querySelector('.empty-msg');
-                if(emptyMsg) {
-                    emptyMsg.remove();
-                }
+        // تصفية المنتجات
+        const filteredProducts = currentFilter === 'all' 
+            ? products 
+            : products.filter(p => p.category === currentFilter);
 
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.innerHTML = `
-                    <div>
-                        <h4>${p.name}</h4>
-                        <p>${p.desc || 'لا يوجد وصف مضاف'}</p>
-                        <div class="product-price">${p.price}</div>
-                    </div>
-                    <button class="delete-btn" onclick="deleteProduct(${p.id})">حذف المنتج</button>
-                `;
-                targetCategory.appendChild(card);
-            }
+        if(filteredProducts.length === 0) {
+            grid.innerHTML = '<div class="empty-msg">لا توجد منتجات مضافة في المتجر حالياً.</div>';
+            return;
+        }
+
+        filteredProducts.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <div>
+                    <h4>${p.name}</h4>
+                    <p>${p.desc || 'لا يوجد وصف مضاف'}</p>
+                    <div class="product-price">${p.price}</div>
+                </div>
+                <button class="delete-btn" onclick="deleteProduct(${p.id})">حذف</button>
+            `;
+            grid.appendChild(card);
         });
     }
 

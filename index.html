@@ -25,7 +25,7 @@
         .status-available { background: rgba(0, 255, 102, 0.2); color: #00ff66; border: 1px solid #00ff66; }
         .status-busy { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
         
-        .admin-manage-list { max-height: 200px; overflow-y: auto; background: #050b07; border: 1px solid #132d1d; padding: 10px; border-radius: 5px; margin-top: 10px; }
+        .admin-manage-list { max-height: 180px; overflow-y: auto; background: #050b07; border: 1px solid #132d1d; padding: 10px; border-radius: 5px; margin-top: 10px; }
         .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #132d1d; font-size: 0.85rem; }
 
         /* نافذة تكبير الصورة */
@@ -66,6 +66,9 @@
     <input type="text" id="catName" placeholder="اسم القسم الجديد...">
     <button onclick="addCategory()" style="background:#3b82f6; color:#fff;">إضافة القسم</button>
 
+    <label>🗑️ إدارة ومسح الأقسام:</label>
+    <div class="admin-manage-list" id="adminCatsList"></div>
+
     <hr style="border-color: #132d1d; margin: 15px 0;">
 
     <label>إضافة منتج جديد:</label>
@@ -84,9 +87,7 @@
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
     <label>📦 إدارة المنتجات (الحذف وتغيير الحالة):</label>
-    <div class="admin-manage-list" id="adminManageList">
-        <!-- المنتجات وأزرار التحكم تظهر هنا -->
-    </div>
+    <div class="admin-manage-list" id="adminManageList"></div>
 </div>
 
 <!-- الأقسام الفلاتر -->
@@ -122,6 +123,7 @@
             panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
             updateCatsSelect();
             renderAdminManageList();
+            renderAdminCatsList();
         } else if(p !== null) {
             alert("كلمة المرور خطأ!");
         }
@@ -165,14 +167,44 @@
     function addCategory() {
         let name = document.getElementById('catName').value.trim();
         if(name) {
+            if(categories.some(c => c.name === name)) {
+                alert("هذا القسم موجود مسبقاً!");
+                return;
+            }
             categories.push({id: 'c_' + Date.now(), name: name});
             localStorage.setItem('z8_cats', JSON.stringify(categories));
             document.getElementById('catName').value = '';
             renderCategories();
             updateCatsSelect();
+            renderAdminCatsList();
             alert("تم إضافة القسم بنجاح!");
         } else {
             alert("الرجاء كتابة اسم القسم");
+        }
+    }
+
+    function deleteCategory(catName) {
+        if(catName === 'الكل') {
+            alert("لا يمكن حذف قسم الكل!");
+            return;
+        }
+        if(confirm(`هل أنت متأكد من حذف قسم "${catName}"؟ سيتم حذف جميع المنتجات التابعة له أيضاً.`)) {
+            categories = categories.filter(c => c.name !== catName);
+            products = products.filter(p => p.cat !== catName);
+            
+            if(currentFilter === catName) {
+                currentFilter = 'الكل';
+            }
+
+            localStorage.setItem('z8_cats', JSON.stringify(categories));
+            localStorage.setItem('z8_prods', JSON.stringify(products));
+
+            renderCategories();
+            updateCatsSelect();
+            renderProducts();
+            renderAdminManageList();
+            renderAdminCatsList();
+            alert("تم حذف القسم بنجاح!");
         }
     }
 
@@ -222,7 +254,10 @@
             let reader = new FileReader();
             reader.onload = function(e) {
                 saveProd(name, price, cat, status, e.target.result);
-            }
+            };
+            reader.onerror = function() {
+                saveProd(name, price, cat, status, '');
+            };
             reader.readAsDataURL(fileInput.files[0]);
         } else {
             saveProd(name, price, cat, status, '');
@@ -270,6 +305,27 @@
 
     function closeImageModal() {
         document.getElementById('imageModal').style.display = 'none';
+    }
+
+    function renderAdminCatsList() {
+        let listContainer = document.getElementById('adminCatsList');
+        if(!listContainer) return;
+        listContainer.innerHTML = '';
+
+        let subCats = categories.filter(c => c.name !== 'الكل');
+        if(subCats.length === 0) {
+            listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد أقسام مضافة حالياً</div>';
+            return;
+        }
+
+        subCats.forEach(c => {
+            listContainer.innerHTML += `
+                <div class="admin-item-row">
+                    <span><b>${c.name}</b></span>
+                    <button class="del-btn" onclick="deleteCategory('${c.name}')">حذف القسم</button>
+                </div>
+            `;
+        });
     }
 
     function renderAdminManageList() {
@@ -331,6 +387,7 @@
     renderCategories();
     renderProducts();
     renderAdminManageList();
+    renderAdminCatsList();
 </script>
 
 </body>

@@ -19,6 +19,8 @@
         .filter-btn { background: #0b1710; color: #8aa895; border: 1px solid #132d1d; padding: 6px 12px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
         .filter-btn.active { background: #00ff66; color: #000; font-weight: bold; }
         .del-btn { background: #ef4444; color: #fff; padding: 4px 8px; font-size: 0.8rem; margin-top: 5px; }
+        .admin-manage-list { max-height: 180px; overflow-y: auto; background: #050b07; border: 1px solid #132d1d; padding: 10px; border-radius: 5px; margin-top: 10px; }
+        .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #132d1d; font-size: 0.85rem; }
     </style>
 </head>
 <body>
@@ -42,9 +44,10 @@
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
 
-    <label>تغيير كلمة المرور:</label>
-    <input type="password" id="newPass" placeholder="اكتب كلمة المرور الجديدة هنا">
-    <button onclick="changePass()" style="background:#f59e0b;">هل تريد تغيير كلمة السر؟</button>
+    <label>تغيير كلمة المرور (بكلمة التأكيد RAEZAR):</label>
+    <input type="password" id="confirmKey" placeholder="اكتب كلمة التأكيد RAEZAR هنا">
+    <input type="password" id="newPass" placeholder="كلمة المرور الجديدة لوحة التحكم">
+    <button onclick="changePass()" style="background:#f59e0b;">تغيير كلمة المرور</button>
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
 
@@ -59,7 +62,13 @@
     <input type="text" id="pPrice" placeholder="السعر">
     <select id="pCat"></select>
     <input type="file" id="pImage" accept="image/*">
-    <button onclick="addProduct()">حفظ المنتج</button>
+    <button onclick="addProduct()">حفظ ونشر المنتج</button>
+
+    <hr style="border-color: #132d1d; margin: 15px 0;">
+    <label>🗑️ إدارة ومسح المنتجات:</label>
+    <div class="admin-manage-list" id="adminManageList">
+        <!-- المنتجات للحذف تظهر هنا -->
+    </div>
 </div>
 
 <!-- الأقسام الفلاتر -->
@@ -88,6 +97,7 @@
             let panel = document.getElementById('adminPanel');
             panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
             updateCatsSelect();
+            renderAdminManageList();
         } else if(p !== null) {
             alert("كلمة المرور خطأ!");
         }
@@ -108,18 +118,24 @@
     }
 
     function changePass() {
+        let key = document.getElementById('confirmKey').value;
         let np = document.getElementById('newPass').value;
-        if(!np) {
-            alert("الرجاء كتابة كلمة المرور الجديدة أولاً!");
+
+        if(key !== "RAEZAR") {
+            alert("كلمة التأكيد (RAEZAR) غير صحيحة!");
             return;
         }
 
-        if(confirm("هل أنت متأكد أنك تريد تغيير كلمة السر؟")) {
-            adminPass = np;
-            localStorage.setItem('z8_pass', adminPass);
-            document.getElementById('newPass').value = '';
-            alert("تم تغيير كلمة المرور بنجاح!");
+        if(!np) {
+            alert("الرجاء كتابة كلمة المرور الجديدة!");
+            return;
         }
+
+        adminPass = np;
+        localStorage.setItem('z8_pass', adminPass);
+        document.getElementById('confirmKey').value = '';
+        document.getElementById('newPass').value = '';
+        alert("تم تغيير كلمة المرور بنجاح!");
     }
 
     function addCategory() {
@@ -198,6 +214,7 @@
         document.getElementById('pImage').value = '';
         
         renderProducts();
+        renderAdminManageList();
         alert("تم إضافة ونشر المنتج بنجاح!");
     }
 
@@ -206,7 +223,28 @@
             products = products.filter(p => p.id !== id);
             localStorage.setItem('z8_prods', JSON.stringify(products));
             renderProducts();
+            renderAdminManageList();
         }
+    }
+
+    function renderAdminManageList() {
+        let listContainer = document.getElementById('adminManageList');
+        if(!listContainer) return;
+        listContainer.innerHTML = '';
+
+        if(products.length === 0) {
+            listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد منتجات حالياً</div>';
+            return;
+        }
+
+        products.forEach(p => {
+            listContainer.innerHTML += `
+                <div class="admin-item-row">
+                    <span>${p.name} (${p.price})</span>
+                    <button class="del-btn" onclick="deleteProduct(${p.id})">حذف</button>
+                </div>
+            `;
+        });
     }
 
     function renderProducts() {
@@ -237,6 +275,7 @@
 
     renderCategories();
     renderProducts();
+    renderAdminManageList();
 </script>
 
 </body>

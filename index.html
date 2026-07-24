@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Z8 Store - المتجر الرقمي</title>
+    <title>Z8 Store - المتجر الرقمي المتكامل</title>
     <style>
         :root {
             --bg-color: #050b07;
@@ -13,6 +13,7 @@
             --text-color: #ffffff;
             --text-muted: #8aa895;
             --danger-color: #ef4444;
+            --success-color: #10b981;
         }
         * {
             box-sizing: border-box;
@@ -133,7 +134,7 @@
             margin-top: 5px;
         }
 
-        /* قائمة إدارة الحذف السريع داخل لوحة التحكم */
+        /* إدارة الحذف السريع */
         .admin-products-list {
             margin-top: 20px;
             max-height: 200px;
@@ -212,6 +213,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
         }
         .product-img {
             width: 100%;
@@ -234,8 +236,27 @@
         .product-price {
             font-weight: bold;
             color: var(--primary-neon);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-size: 1rem;
+        }
+        /* بادج الحالة (متوفر / غير متوفر) */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .status-available {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid #10b981;
+        }
+        .status-unavailable {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid #ef4444;
         }
         .delete-btn {
             background-color: var(--danger-color);
@@ -281,6 +302,15 @@
 
         <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 20px 0;">
 
+        <h3>➕ إضافة قسم جديد للمتجر</h3>
+        <div class="form-group">
+            <label>اسم القسم الجديد (مثال: حسابات نتفليكس، روبلوكس...):</label>
+            <input type="text" id="newCategoryName" placeholder="اكتب اسم القسم...">
+        </div>
+        <button class="btn-add" style="background: #3b82f6; color: white;" onclick="addNewCategory()">إضافة القسم الجديد</button>
+
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 20px 0;">
+
         <h3>➕ إضافة منتج جديد</h3>
         <div class="form-group">
             <label>اسم المنتج:</label>
@@ -295,21 +325,20 @@
             <input type="text" id="pPrice" placeholder="مثال: $10 أو 10,000 د.ع">
         </div>
         <div class="form-group">
-            <label>صورة المنتج (من الاستديو أو المعرض):</label>
+            <label>صورة المنتج (من الاستديو):</label>
             <input type="file" id="pImageFile" accept="image/*">
         </div>
         <div class="form-group">
             <label>اختر القسم:</label>
-            <select id="pCategory">
-                <option value="discord">💬 خدمات ديسكورد</option>
-                <option value="steam">🎮 حسابات ستيم</option>
-                <option value="rainbow">🎯 حسابات رينبو</option>
-                <option value="netflix">🎬 حسابات نتفليكس</option>
-                <option value="rust">⛺ حسابات راست</option>
-                <option value="gta">🚗 حسابات كراند</option>
-                <option value="windows">💻 حسابات ويندوز</option>
-                <option value="gamepass">🎮 جيم باس</option>
-                <option value="fivem">🎙️ فايف أم (إعلانات)</option>
+            <select id="pCategorySelect">
+                <!-- الأقسام تتعبى تلقائياً -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label>حالة المنتج:</label>
+            <select id="pStatusSelect">
+                <option value="available">🟢 متوفر</option>
+                <option value="unavailable">🔴 غير متوفر</option>
             </select>
         </div>
         <button class="btn-add" onclick="processAddProduct()">حفظ وإضافة المنتج</button>
@@ -320,18 +349,9 @@
         </div>
     </div>
 
-    <!-- شريط الأقسام وفلاتر العرض -->
-    <div class="filters-container">
-        <button class="filter-btn active" onclick="filterProducts('all', this)">🌐 الكل</button>
-        <button class="filter-btn" onclick="filterProducts('discord', this)">💬 خدمات ديسكورد</button>
-        <button class="filter-btn" onclick="filterProducts('steam', this)">🎮 حسابات ستيم</button>
-        <button class="filter-btn" onclick="filterProducts('rainbow', this)">🎯 حسابات رينبو</button>
-        <button class="filter-btn" onclick="filterProducts('netflix', this)">🎬 حسابات نتفليكس</button>
-        <button class="filter-btn" onclick="filterProducts('rust', this)">⛺ حسابات راست</button>
-        <button class="filter-btn" onclick="filterProducts('gta', this)">🚗 حسابات كراند</button>
-        <button class="filter-btn" onclick="filterProducts('windows', this)">💻 حسابات ويندوز</button>
-        <button class="filter-btn" onclick="filterProducts('gamepass', this)">🎮 جيم باس</button>
-        <button class="filter-btn" onclick="filterProducts('fivem', this)">🎙️ فايف أم (إعلانات)</button>
+    <!-- شريط الأقسام والفلاتر الأفقية -->
+    <div class="filters-container" id="filtersContainer">
+        <!-- الأقسام تتعبى تلقائياً -->
     </div>
 
     <!-- عرض المنتجات للزبائن -->
@@ -344,14 +364,25 @@
 </div>
 
 <script>
-    // كلمة المرور الافتتاحية للوحة التحكم
     const ADMIN_PASSWORD = "1234";
+
+    // جلب البيانات أو التهيئة الأولية للأقسام الافتراضية
+    let categories = JSON.parse(localStorage.getItem('z8_store_categories')) || [
+        { id: 'discord', name: '💬 خدمات ديسكورد' },
+        { id: 'steam', name: '🎮 حسابات ستيم' },
+        { id: 'rainbow', name: '🎯 حسابات رينبو' },
+        { id: 'netflix', name: '🎬 حسابات نتفليكس' },
+        { id: 'rust', name: '⛺ حسابات راست' },
+        { id: 'gta', name: '🚗 حسابات كراند' },
+        { id: 'windows', name: '💻 حسابات ويندوز' },
+        { id: 'gamepass', name: '🎮 جيم باس' },
+        { id: 'fivem', name: '🎙️ فايف أم (إعلانات)' }
+    ];
 
     let products = JSON.parse(localStorage.getItem('z8_store_gallery_products')) || [];
     let customLogo = localStorage.getItem('z8_store_gallery_logo') || '';
     let currentFilter = 'all';
 
-    // تحميل الشعار المحفوظ مسبقاً إن وجد
     if(customLogo) {
         document.getElementById('logoCircleContainer').innerHTML = `<img src="${customLogo}" alt="Logo">`;
     }
@@ -362,6 +393,7 @@
             const panel = document.getElementById('adminPanel');
             panel.classList.toggle('active');
             renderAdminProductsList();
+            renderCategoryOptions();
         } else if(pass !== null) {
             alert("كلمة المرور غير صحيحة!");
         }
@@ -370,15 +402,82 @@
     function updateStoreLogoFromFile(event) {
         const file = event.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                customLogo = e.target.result;
+            compressImage(file, 300, 300, 0.7, function(compressedData) {
+                customLogo = compressedData;
                 localStorage.setItem('z8_store_gallery_logo', customLogo);
                 document.getElementById('logoCircleContainer').innerHTML = `<img src="${customLogo}" alt="Logo">`;
                 alert("تم تحديث شعار المتجر بنجاح!");
-            };
-            reader.readAsDataURL(file);
+            });
         }
+    }
+
+    function addNewCategory() {
+        const nameInput = document.getElementById('newCategoryName');
+        const name = nameInput.value.trim();
+        if(!name) {
+            alert('الرجاء كتابة اسم القسم الجديد!');
+            return;
+        }
+
+        const newId = 'cat_' + Date.now();
+        categories.push({ id: newId, name: name });
+        localStorage.setItem('z8_store_categories', JSON.stringify(categories));
+
+        nameInput.value = '';
+        renderCategoriesUI();
+        renderCategoryOptions();
+        alert('تم إضافة القسم بنجاح!');
+    }
+
+    function renderCategoriesUI() {
+        const container = document.getElementById('filtersContainer');
+        container.innerHTML = `<button class="filter-btn ${currentFilter === 'all' ? 'active' : ''}" onclick="filterProducts('all', this)">🌐 الكل</button>`;
+
+        categories.forEach(cat => {
+            const isActive = currentFilter === cat.id ? 'active' : '';
+            container.innerHTML += `<button class="filter-btn ${isActive}" onclick="filterProducts('${cat.id}', this)">${cat.name}</button>`;
+        });
+    }
+
+    function renderCategoryOptions() {
+        const select = document.getElementById('pCategorySelect');
+        select.innerHTML = '';
+        categories.forEach(cat => {
+            select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+        });
+    }
+
+    // دالة لضغط الصور لتجنب امتلاء الذاكرة الدائمة
+    function compressImage(file, maxWidth, maxHeight, quality, callback) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function (event) {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = function () {
+                let canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                callback(canvas.toDataURL('image/jpeg', quality));
+            };
+        };
     }
 
     function saveAndRender() {
@@ -391,7 +490,8 @@
         const name = document.getElementById('pName').value.trim();
         const desc = document.getElementById('pDesc').value.trim();
         const price = document.getElementById('pPrice').value.trim();
-        const category = document.getElementById('pCategory').value;
+        const category = document.getElementById('pCategorySelect').value;
+        const status = document.getElementById('pStatusSelect').value;
         const fileInput = document.getElementById('pImageFile');
 
         if(!name || !price) {
@@ -400,31 +500,28 @@
         }
 
         if (fileInput.files && fileInput.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const imgData = e.target.result;
-                saveNewProduct(name, desc, price, category, imgData);
-            };
-            reader.readAsDataURL(fileInput.files[0]);
+            compressImage(fileInput.files[0], 500, 500, 0.7, function(compressedImgData) {
+                saveNewProduct(name, desc, price, category, status, compressedImgData);
+            });
         } else {
-            saveNewProduct(name, desc, price, category, '');
+            saveNewProduct(name, desc, price, category, status, '');
         }
     }
 
-    function saveNewProduct(name, desc, price, category, img) {
+    function saveNewProduct(name, desc, price, category, status, img) {
         const newProduct = {
             id: Date.now(),
             name,
             desc,
             price,
             category,
+            status,
             img
         };
 
         products.push(newProduct);
         saveAndRender();
 
-        // تفريغ الحقول
         document.getElementById('pName').value = '';
         document.getElementById('pDesc').value = '';
         document.getElementById('pPrice').value = '';
@@ -465,6 +562,9 @@
             card.className = 'product-card';
             
             let imgTag = p.img ? `<img src="${p.img}" class="product-img" alt="${p.name}">` : '';
+            let statusBadge = p.status === 'unavailable' 
+                ? `<div class="status-badge status-unavailable">🔴 غير متوفر</div>` 
+                : `<div class="status-badge status-available">🟢 متوفر</div>`;
 
             card.innerHTML = `
                 <div>
@@ -472,6 +572,7 @@
                     <h4>${p.name}</h4>
                     <p>${p.desc || 'لا يوجد وصف مضاف'}</p>
                     <div class="product-price">${p.price}</div>
+                    ${statusBadge}
                 </div>
             `;
             grid.appendChild(card);
@@ -487,20 +588,4 @@
             return;
         }
 
-        products.forEach(p => {
-            const item = document.createElement('div');
-            item.className = 'admin-product-item';
-            item.innerHTML = `
-                <span><b>${p.name}</b> (${p.price})</span>
-                <button class="delete-btn" onclick="deleteProduct(${p.id})">حذف</button>
-            `;
-            listContainer.appendChild(item);
-        });
-    }
-
-    // التشغيل الأولي عند فتح الصفحة
-    renderProducts();
-</script>
-
-</body>
-</html>
+        products.forEach(p

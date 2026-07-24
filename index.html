@@ -20,12 +20,13 @@
         .filter-btn { background: #0b1710; color: #8aa895; border: 1px solid #132d1d; padding: 6px 12px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
         .filter-btn.active { background: #00ff66; color: #000; font-weight: bold; }
         .del-btn { background: #ef4444; color: #fff; padding: 5px 10px; font-size: 0.8rem; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; }
+        .status-toggle-btn { background: #3b82f6; color: #fff; padding: 5px 10px; font-size: 0.8rem; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; margin-left: 5px; }
         .status-badge { display: inline-block; padding: 4px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; margin-bottom: 8px; }
         .status-available { background: rgba(0, 255, 102, 0.2); color: #00ff66; border: 1px solid #00ff66; }
         .status-busy { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
         
-        .admin-manage-list { max-height: 180px; overflow-y: auto; background: #050b07; border: 1px solid #132d1d; padding: 10px; border-radius: 5px; margin-top: 10px; }
-        .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #132d1d; font-size: 0.85rem; }
+        .admin-manage-list { max-height: 200px; overflow-y: auto; background: #050b07; border: 1px solid #132d1d; padding: 10px; border-radius: 5px; margin-top: 10px; }
+        .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #132d1d; font-size: 0.85rem; }
 
         /* نافذة تكبير الصورة */
         .modal { display: none; position: fixed; z-index: 999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
@@ -54,8 +55,8 @@
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
 
-    <label>تغيير كلمة المرور (بكلمة التأكيد RAEZAR):</label>
-    <input type="password" id="confirmKey" placeholder="اكتب كلمة التأكيد RAEZAR هنا">
+    <label>تغيير كلمة المرور (بكلمة التأكيد RAEZAR المشفرة):</label>
+    <input type="password" id="confirmKey" placeholder="اكتب كلمة التأكيد هنا">
     <input type="password" id="newPass" placeholder="كلمة المرور الجديدة لوحة التحكم">
     <button onclick="changePass()" style="background:#f59e0b;">تغيير كلمة المرور</button>
 
@@ -82,9 +83,9 @@
     <button onclick="addProduct()">حفظ ونشر المنتج</button>
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
-    <label>🗑️ إدارة ومسح المنتجات (من لوحة التحكم فقط):</label>
+    <label>📦 إدارة المنتجات (الحذف وتغيير الحالة):</label>
     <div class="admin-manage-list" id="adminManageList">
-        <!-- المنتجات للحذف تظهر هنا -->
+        <!-- المنتجات وأزرار التحكم تظهر هنا -->
     </div>
 </div>
 
@@ -251,6 +252,16 @@
         }
     }
 
+    function toggleProductStatus(id) {
+        let p = products.find(item => item.id === id);
+        if(p) {
+            p.status = p.status === 'available' ? 'busy' : 'available';
+            localStorage.setItem('z8_prods', JSON.stringify(products));
+            renderProducts();
+            renderAdminManageList();
+        }
+    }
+
     function openImageModal(imgSrc) {
         if(!imgSrc) return;
         document.getElementById('modalImg').src = imgSrc;
@@ -272,10 +283,14 @@
         }
 
         products.forEach(p => {
+            let statusText = p.status === 'available' ? '🟢 متوفر' : '🔴 غير متوفر';
             listContainer.innerHTML += `
                 <div class="admin-item-row">
-                    <span>${p.name} (${p.price})</span>
-                    <button class="del-btn" onclick="deleteProduct(${p.id})">حذف</button>
+                    <span><b>${p.name}</b><br><small style="color:#8aa895;">${statusText}</small></span>
+                    <div>
+                        <button class="status-toggle-btn" onclick="toggleProductStatus(${p.id})">تبديل الحالة</button>
+                        <button class="del-btn" onclick="deleteProduct(${p.id})">حذف</button>
+                    </div>
                 </div>
             `;
         });

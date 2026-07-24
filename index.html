@@ -55,9 +55,9 @@
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
 
-    <label>تغيير كلمة المرور (بكلمة التأكيد RAEZAR المشفرة):</label>
-    <input type="password" id="confirmKey" placeholder="اكتب كلمة التأكيد هنا">
-    <input type="password" id="newPass" placeholder="كلمة المرور الجديدة لوحة التحكم">
+    <label>تغيير كلمة المرور:</label>
+    <input type="password" id="confirmKey" placeholder="أدخل كلمة التأكيد">
+    <input type="password" id="newPass" placeholder="كلمة المرور الجديدة">
     <button onclick="changePass()" style="background:#f59e0b;">تغيير كلمة المرور</button>
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
@@ -148,7 +148,7 @@
         let np = document.getElementById('newPass').value;
 
         if(key !== "RAEZAR") {
-            alert("كلمة التأكيد (RAEZAR) غير صحيحة!");
+            alert("كلمة التأكيد غير صحيحة!");
             return;
         }
 

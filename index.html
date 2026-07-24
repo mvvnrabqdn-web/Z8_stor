@@ -3,155 +3,541 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Z8 Store</title>
+    <title>Z8 Store - المتجر الرقمي المتكامل</title>
     <style>
-        body {
-            background-color: #050b07;
-            color: #ffffff;
-            font-family: Tahoma, sans-serif;
-            padding: 15px;
+        :root {
+            --bg-color: #050b07;
+            --card-bg: #0b1710;
+            --border-color: #132d1d;
+            --primary-neon: #00ff66;
+            --text-color: #ffffff;
+            --text-muted: #8aa895;
+            --danger-color: #ef4444;
+            --success-color: #10b981;
+        }
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 15px;
         }
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
         }
-        .header {
+        /* الهيدر العلوي */
+        .top-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #0b1710;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #132d1d;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            background: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
         }
-        button {
-            background: #00ff66;
-            color: #000;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-weight: bold;
+        .admin-toggle-btn {
+            background: transparent;
+            color: var(--primary-neon);
+            border: 1px solid var(--primary-neon);
+            padding: 8px 16px;
+            border-radius: 10px;
             cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: 0.3s;
         }
+        .admin-toggle-btn:hover {
+            background: var(--primary-neon);
+            color: #000;
+        }
+        .store-logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 1px;
+        }
+        .logo-circle {
+            width: 45px;
+            height: 45px;
+            border: 2px solid var(--primary-neon);
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .logo-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* لوحة التحكم */
         .admin-panel {
-            background: #0b1710;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #132d1d;
-            margin-bottom: 15px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
             display: none;
         }
-        .admin-panel.show {
+        .admin-panel.active {
             display: block;
         }
-        input, select {
+        .admin-panel h3 {
+            margin-bottom: 15px;
+            color: var(--primary-neon);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 10px;
-            margin: 5px 0 12px 0;
-            background: #050b07;
-            border: 1px solid #132d1d;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             color: white;
-            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+        .form-group input[type="file"] {
+            padding: 7px;
+            cursor: pointer;
+        }
+        .btn-add {
+            background: var(--primary-neon);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        /* إدارة الحذف السريع */
+        .admin-products-list {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+        }
+        .admin-product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        /* شريط الأقسام والفلاتر الأفقية */
+        .filters-container {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            scrollbar-width: none;
+        }
+        .filters-container::-webkit-scrollbar {
+            display: none;
+        }
+        .filter-btn {
+            background: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .filter-btn.active {
+            background: var(--primary-neon);
+            color: #000;
+            border-color: var(--primary-neon);
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.3);
+        }
+
+        /* صندوق عرض المنتجات */
+        .section-box {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+        }
+        .section-title {
+            color: var(--primary-neon);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
         }
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 15px;
         }
         .product-card {
-            background: #0b1710;
-            border: 1px solid #132d1d;
-            padding: 12px;
-            border-radius: 8px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 10px;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        .product-img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #111;
         }
         .product-card h4 {
-            margin: 5px 0;
-            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+            color: white;
         }
-        .price {
-            color: #00ff66;
+        .product-card p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+        .product-price {
             font-weight: bold;
+            color: var(--primary-neon);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .status-available {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid #10b981;
+        }
+        .status-unavailable {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid #ef4444;
         }
         .delete-btn {
-            background: #ef4444;
+            background-color: var(--danger-color);
             color: white;
-            padding: 5px 10px;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
             font-size: 0.8rem;
-            margin-top: 5px;
+            font-weight: bold;
+        }
+        .empty-msg {
+            color: var(--text-muted);
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 30px;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h2>Z8 Store</h2>
-        <button onclick="toggleAdmin()">إفتح / أغلق لوحة التحكم</button>
+    <!-- الهيدر العلوي -->
+    <div class="top-header">
+        <button class="admin-toggle-btn" onclick="toggleAdminPanel()">لوحة التحكم (Admin)</button>
+        <div class="store-logo">
+            <span id="storeTitleText">Z8 Store</span>
+            <div class="logo-circle" id="logoCircleContainer">
+                <span style="color: var(--primary-neon);">Z8</span>
+            </div>
+        </div>
     </div>
 
-    <!-- لوحة التحكم -->
+    <!-- لوحة التحكم (تفتح مباشرة وبكل الميزات) -->
     <div class="admin-panel" id="adminPanel">
-        <h3 style="color: #00ff66; margin-top: 0;">لوحة التحكم البسيطة</h3>
+        <h3>⚙️ إعدادات المتجر الشاملة</h3>
         
-        <label>اسم المنتج:</label>
-        <input type="text" id="pName" placeholder="أدخل اسم المنتج">
+        <div class="form-group" style="margin-top: 15px;">
+            <label>اختر شعار المتجر من الاستديو:</label>
+            <input type="file" id="storeLogoFile" accept="image/*" onchange="updateStoreLogoFromFile(event)">
+        </div>
 
-        <label>السعر:</label>
-        <input type="text" id="pPrice" placeholder="أدخل السعر">
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 20px 0;">
 
-        <button onclick="addProduct()" style="width: 100%;">إضافة المنتج للمتجر</button>
+        <h3>➕ إضافة قسم جديد للمتجر</h3>
+        <div class="form-group">
+            <label>اسم القسم الجديد:</label>
+            <input type="text" id="newCategoryName" placeholder="اكتب اسم القسم...">
+        </div>
+        <button class="btn-add" style="background: #3b82f6; color: white;" onclick="addNewCategory()">إضافة القسم الجديد</button>
+
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 20px 0;">
+
+        <h3>➕ إضافة منتج جديد</h3>
+        <div class="form-group">
+            <label>اسم المنتج:</label>
+            <input type="text" id="pName" placeholder="أدخل اسم المنتج...">
+        </div>
+        <div class="form-group">
+            <label>وصف المنتج:</label>
+            <input type="text" id="pDesc" placeholder="أدخل الوصف...">
+        </div>
+        <div class="form-group">
+            <label>السعر:</label>
+            <input type="text" id="pPrice" placeholder="مثال: $10 أو 10,000 د.ع">
+        </div>
+        <div class="form-group">
+            <label>صورة المنتج (من الاستديو):</label>
+            <input type="file" id="pImageFile" accept="image/*">
+        </div>
+        <div class="form-group">
+            <label>اختر القسم:</label>
+            <select id="pCategorySelect">
+                <!-- الأقسام تتعبى تلقائياً -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label>حالة المنتج:</label>
+            <select id="pStatusSelect">
+                <option value="available">🟢 متوفر</option>
+                <option value="unavailable">🔴 غير متوفر</option>
+            </select>
+        </div>
+        <button class="btn-add" onclick="processAddProduct()">حفظ وإضافة المنتج</button>
+
+        <h3 style="margin-top: 25px;">🗑️ إدارة وحذف المنتجات</h3>
+        <div class="admin-products-list" id="adminProductsList">
+            <!-- قائمة الحذف السريع -->
+        </div>
     </div>
 
-    <!-- عرض المنتجات -->
-    <h3>منتجات المتجر</h3>
-    <div class="products-grid" id="productsGrid">
-        <div style="color: #8aa895;">لا توجد منتجات حالياً.</div>
+    <!-- شريط الأقسام والفلاتر الأفقية -->
+    <div class="filters-container" id="filtersContainer">
+        <!-- الأقسام تتعبى تلقائياً -->
+    </div>
+
+    <!-- عرض المنتجات للزبائن -->
+    <div class="section-box">
+        <div class="section-title" id="currentCategoryTitle">🌐 جميع منتجات وخدمات Z8 Store</div>
+        <div id="productsGrid" class="products-grid">
+            <div class="empty-msg">لا توجد منتجات مضافة في المتجر حالياً.</div>
+        </div>
     </div>
 </div>
 
 <script>
-    // مصفوفة تخزين المنتجات مباشرة داخل الذاكرة المؤقتة للتشغيل السريع
-    let products = [];
+    let categories = JSON.parse(localStorage.getItem('z8_store_categories')) || [
+        { id: 'discord', name: '💬 خدمات ديسكورد' },
+        { id: 'steam', name: '🎮 حسابات ستيم' },
+        { id: 'rainbow', name: '🎯 حسابات رينبو' },
+        { id: 'netflix', name: '🎬 حسابات نتفليكس' },
+        { id: 'rust', name: '⛺ حسابات راست' },
+        { id: 'gta', name: '🚗 حسابات كراند' },
+        { id: 'windows', name: '💻 حسابات ويندوز' },
+        { id: 'gamepass', name: '🎮 جيم باس' },
+        { id: 'fivem', name: '🎙️ فايف أم (إعلانات)' }
+    ];
 
-    function toggleAdmin() {
+    let products = JSON.parse(localStorage.getItem('z8_store_gallery_products')) || [];
+    let customLogo = localStorage.getItem('z8_store_gallery_logo') || '';
+    let currentFilter = 'all';
+
+    if(customLogo) {
+        document.getElementById('logoCircleContainer').innerHTML = `<img src="${customLogo}" alt="Logo">`;
+    }
+
+    // فتح وإغلاق لوحة التحكم بشكل مباشر وسلس بدون عوائق
+    function toggleAdminPanel() {
         const panel = document.getElementById('adminPanel');
-        // تبديل حالة الظهور بشكل مباشر وقاطع
-        if (panel.style.display === 'block') {
-            panel.style.display = 'none';
-        } else {
-            panel.style.display = 'block';
+        panel.classList.toggle('active');
+        if (panel.classList.contains('active')) {
+            renderAdminProductsList();
+            renderCategoryOptions();
         }
     }
 
-    function addProduct() {
-        const name = document.getElementById('pName').value.trim();
-        const price = document.getElementById('pPrice').value.trim();
+    function updateStoreLogoFromFile(event) {
+        const file = event.target.files[0];
+        if (file) {
+            compressImage(file, 300, 300, 0.7, function(compressedData) {
+                customLogo = compressedData;
+                localStorage.setItem('z8_store_gallery_logo', customLogo);
+                document.getElementById('logoCircleContainer').innerHTML = `<img src="${customLogo}" alt="Logo">`;
+                alert("تم تحديث شعار المتجر بنجاح!");
+            });
+        }
+    }
 
-        if (!name || !price) {
-            alert('الرجاء كتابة اسم المنتج والسعر!');
+    function addNewCategory() {
+        const nameInput = document.getElementById('newCategoryName');
+        const name = nameInput.value.trim();
+        if(!name) {
+            alert('الرجاء كتابة اسم القسم الجديد!');
             return;
         }
 
-        const product = {
+        const newId = 'cat_' + Date.now();
+        categories.push({ id: newId, name: name });
+        localStorage.setItem('z8_store_categories', JSON.stringify(categories));
+
+        nameInput.value = '';
+        renderCategoriesUI();
+        renderCategoryOptions();
+        alert('تم إضافة القسم بنجاح!');
+    }
+
+    function renderCategoriesUI() {
+        const container = document.getElementById('filtersContainer');
+        container.innerHTML = `<button class="filter-btn ${currentFilter === 'all' ? 'active' : ''}" onclick="filterProducts('all', this)">🌐 الكل</button>`;
+
+        categories.forEach(cat => {
+            const isActive = currentFilter === cat.id ? 'active' : '';
+            container.innerHTML += `<button class="filter-btn ${isActive}" onclick="filterProducts('${cat.id}', this)">${cat.name}</button>`;
+        });
+    }
+
+    function renderCategoryOptions() {
+        const select = document.getElementById('pCategorySelect');
+        if(!select) return;
+        select.innerHTML = '';
+        categories.forEach(cat => {
+            select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+        });
+    }
+
+    function compressImage(file, maxWidth, maxHeight, quality, callback) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function (event) {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = function () {
+                let canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                callback(canvas.toDataURL('image/jpeg', quality));
+            };
+        };
+    }
+
+    function saveAndRender() {
+        localStorage.setItem('z8_store_gallery_products', JSON.stringify(products));
+        renderProducts();
+        renderAdminProductsList();
+    }
+
+    function processAddProduct() {
+        const name = document.getElementById('pName').value.trim();
+        const desc = document.getElementById('pDesc').value.trim();
+        const price = document.getElementById('pPrice').value.trim();
+        const category = document.getElementById('pCategorySelect').value;
+        const status = document.getElementById('pStatusSelect').value;
+        const fileInput = document.getElementById('pImageFile');
+
+        if(!name || !price) {
+            alert('الرجاء إدخال اسم المنتج والسعر على الأقل!');
+            return;
+        }
+
+        if (fileInput.files && fileInput.files[0]) {
+            compressImage(fileInput.files[0], 500, 500, 0.7, function(compressedImgData) {
+                saveNewProduct(name, desc, price, category, status, compressedImgData);
+            });
+        } else {
+            saveNewProduct(name, desc, price, category, status, '');
+        }
+    }
+
+    function saveNewProduct(name, desc, price, category, status, img) {
+        const newProduct = {
             id: Date.now(),
-            name: name,
-            price: price
+            name,
+            desc,
+            price,
+            category,
+            status,
+            img
         };
 
-        products.push(product);
-        renderProducts();
+        products.push(newProduct);
+        saveAndRender();
 
-        // تفريغ الحقول
         document.getElementById('pName').value = '';
+        document.getElementById('pDesc').value = '';
         document.getElementById('pPrice').value = '';
-        alert('تمت الإضافة بنجاح!');
+        document.getElementById('pImageFile').value = '';
+        alert("تم إضافة المنتج بنجاح!");
     }
 
     function deleteProduct(id) {
-        products = products.filter(p => p.id !== id);
+        if(confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
+            products = products.filter(p => p.id !== id);
+            saveAndRender();
+        }
+    }
+
+    function filterProducts(category, btnElement) {
+        currentFilter = category;
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+        document.getElementById('currentCategoryTitle').innerText = btnElement.innerText;
         renderProducts();
     }
 
@@ -159,23 +545,49 @@
         const grid = document.getElementById('productsGrid');
         grid.innerHTML = '';
 
-        if (products.length === 0) {
-            grid.innerHTML = '<div style="color: #8aa895;">لا توجد منتجات حالياً.</div>';
+        const filteredProducts = currentFilter === 'all' 
+            ? products 
+            : products.filter(p => p.category === currentFilter);
+
+        if(filteredProducts.length === 0) {
+            grid.innerHTML = '<div class="empty-msg">لا توجد منتجات مضافة في المتجر حالياً.</div>';
             return;
         }
 
-        products.forEach(p => {
+        filteredProducts.forEach(p => {
             const card = document.createElement('div');
             card.className = 'product-card';
+            
+            let imgTag = p.img ? `<img src="${p.img}" class="product-img" alt="${p.name}">` : '';
+            let statusBadge = p.status === 'unavailable' 
+                ? `<div class="status-badge status-unavailable">🔴 غير متوفر</div>` 
+                : `<div class="status-badge status-available">🟢 متوفر</div>`;
+
             card.innerHTML = `
-                <h4>${p.name}</h4>
-                <div class="price">${p.price}</div>
-                <button class="delete-btn" onclick="deleteProduct(${p.id})">حذف</button>
+                <div>
+                    ${imgTag}
+                    <h4>${p.name}</h4>
+                    <p>${p.desc || 'لا يوجد وصف مضاف'}</p>
+                    <div class="product-price">${p.price}</div>
+                    ${statusBadge}
+                </div>
             `;
             grid.appendChild(card);
         });
     }
-</script>
 
-</body>
-</html>
+    function renderAdminProductsList() {
+        const listContainer = document.getElementById('adminProductsList');
+        if(!listContainer) return;
+        listContainer.innerHTML = '';
+
+        if(products.length === 0) {
+            listContainer.innerHTML = '<div style="color: var(--text-muted); text-align: center; font-size: 0.85rem; padding: 10px;">لا توجد منتجات للحذف حالياً</div>';
+            return;
+        }
+
+        products.forEach(p => {
+            const item = document.createElement('div');
+            item.className = 'admin-product-item';
+            item.innerHTML = `
+              

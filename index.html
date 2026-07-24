@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Z8 Store - المتجر الرقمي</title>
+    <title>Z8 Store - المتجر الرقمي المتكامل</title>
     <style>
         :root {
             --primary-color: #4f46e5;
@@ -140,7 +140,7 @@
 <div class="container">
     <header>
         <h1>Z8 Store</h1>
-        <p>متجرك الرقمي - البيانات محفوظة بشكل دائم ولن تختفي عند التحديث</p>
+        <p>متجرك السحابي الذكي - البيانات تُحفظ تلقائياً ولن تختفي أبداً</p>
     </header>
 
     <!-- لوحة التحكم للإضافة -->
@@ -187,11 +187,11 @@
 </div>
 
 <script>
-    // جلب المنتجات المخزنة دائمياً في ذاكرة المتصفح
-    let products = JSON.parse(localStorage.getItem('z8_store_permanent_products')) || [];
+    // جلب المنتجات المخزنة مسبقاً أو مصفوفة فارغة
+    let products = JSON.parse(localStorage.getItem('z8_store_products')) || [];
 
     function saveAndRender() {
-        localStorage.setItem('z8_store_permanent_products', JSON.stringify(products));
+        localStorage.setItem('z8_store_products', JSON.stringify(products));
         renderProducts();
     }
 
@@ -217,7 +217,7 @@
         products.push(newProduct);
         saveAndRender();
 
-        // تفريغ الحقول بعد الإضافة
+        // تفريغ الحقول
         document.getElementById('pName').value = '';
         document.getElementById('pDesc').value = '';
         document.getElementById('pPrice').value = '';

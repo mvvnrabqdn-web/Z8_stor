@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Z8 Store</title>
+    <!-- استدعاء مكتبات Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
     <style>
         body { background: #050b07; color: #fff; font-family: Tahoma, sans-serif; padding: 10px; margin: 0; }
         .box { background: #0b1710; border: 1px solid #132d1d; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
@@ -105,26 +110,57 @@
 </div>
 
 <script>
-    // أقسام افتراضية تظهر لأي زبون يفتح الموقع لأول مرة حتى لا يكون فارغاً
-    let defaultCategories = [
-        {id: 'all', name: 'الكل'},
-        {id: 'c_1', name: 'خدمات وشحن'},
-        {id: 'c_2', name: 'حسابات'}
-    ];
+    // إعدادات Firebase الخاصة بك
+    const firebaseConfig = {
+      apiKey: "AIzaSyDUNN-QVK6-81yheeE22TiLnLsrFpjNNRD0",
+      authDomain: "z8-store.firebaseapp.com",
+      databaseURL: "https://z8-store-default-rtdb.firebaseio.com",
+      projectId: "z8-store",
+      storageBucket: "z8-store.appspot.com",
+      messagingSenderId: "86927354883",
+      appId: "1:86927354883:web:fc283316115beec41c44b6",
+      measurementId: "G-KMRPTDC9VT"
+    };
 
-    let defaultProducts = [
-        {id: 1, name: 'منتج تجريبي افتراضي', price: '10$', cat: 'خدمات وشحن', status: 'available', img: ''}
-    ];
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    let adminPass = localStorage.getItem('z8_pass') || "1234";
-    let categories = JSON.parse(localStorage.getItem('z8_cats')) || defaultCategories;
-    let products = JSON.parse(localStorage.getItem('z8_prods')) || defaultProducts;
+    let adminPass = "1234";
+    let categories = [{id: 'all', name: 'الكل'}];
+    let products = [];
     let currentFilter = 'الكل';
-    let storeLogo = localStorage.getItem('z8_logo') || '';
+    let storeLogo = '';
 
-    if(storeLogo) {
-        document.getElementById('logoContainer').innerHTML = `<img src="${storeLogo}">`;
-    }
+    // جلب البيانات مباشرة من السحاب لتتحدث عند كل الزبائن فوراً
+    db.ref('settings/adminPass').on('value', (snapshot) => {
+        if(snapshot.exists()) adminPass = snapshot.val();
+    });
+
+    db.ref('settings/storeLogo').on('value', (snapshot) => {
+        storeLogo = snapshot.val() || '';
+        if(storeLogo) {
+            document.getElementById('logoContainer').innerHTML = `<img src="${storeLogo}">`;
+        }
+    });
+
+    db.ref('categories').on('value', (snapshot) => {
+        categories = [{id: 'all', name: 'الكل'}];
+        snapshot.forEach((childSnapshot) => {
+            categories.push(childSnapshot.val());
+        });
+        renderCategories();
+        updateCatsSelect();
+        renderAdminCatsList();
+    });
+
+    db.ref('products').on('value', (snapshot) => {
+        products = [];
+        snapshot.forEach((childSnapshot) => {
+            products.push({ ...childSnapshot.val(), firebaseKey: childSnapshot.key });
+        });
+        renderProducts();
+        renderAdminManageList();
+    });
 
     function toggleAdmin() {
         let p = prompt("أدخل كلمة المرور لوحة التحكم:");
@@ -144,10 +180,9 @@
         if(file) {
             let reader = new FileReader();
             reader.onload = function(e) {
-                storeLogo = e.target.result;
-                localStorage.setItem('z8_logo', storeLogo);
-                document.getElementById('logoContainer').innerHTML = `<img src="${storeLogo}">`;
-                alert("تم تحديث الشعار بنجاح!");
+                db.ref('settings/storeLogo').set(e.target.result, (error) => {
+                    if(!error) alert("تم تحديث الشعار بنجاح للجميع!");
+                });
             }
             reader.readAsDataURL(file);
         }
@@ -167,11 +202,13 @@
             return;
         }
 
-        adminPass = np;
-        localStorage.setItem('z8_pass', adminPass);
-        document.getElementById('confirmKey').value = '';
-        document.getElementById('newPass').value = '';
-        alert("تم تغيير كلمة المرور بنجاح!");
+        db.ref('settings/adminPass').set(np, (error) => {
+            if(!error) {
+                document.getElementById('confirmKey').value = '';
+                document.getElementById('newPass').value = '';
+                alert("تم تغيير كلمة المرور بنجاح!");
+            }
+        });
     }
 
     function addCategory() {
@@ -181,13 +218,13 @@
                 alert("هذا القسم موجود مسبقاً!");
                 return;
             }
-            categories.push({id: 'c_' + Date.now(), name: name});
-            localStorage.setItem('z8_cats', JSON.stringify(categories));
-            document.getElementById('catName').value = '';
-            renderCategories();
-            updateCatsSelect();
-            renderAdminCatsList();
-            alert("تم إضافة القسم بنجاح!");
+            let newCatRef = db.ref('categories').push();
+            newCatRef.set({id: newCatRef.key, name: name}, (error) => {
+                if(!error) {
+                    document.getElementById('catName').value = '';
+                    alert("تم إضافة القسم بنجاح للجميع!");
+                }
+            });
         } else {
             alert("الرجاء كتابة اسم القسم");
         }
@@ -199,21 +236,23 @@
             return;
         }
         if(confirm(`هل أنت متأكد من حذف قسم "${catName}"؟ سيتم حذف جميع المنتجات التابعة له أيضاً.`)) {
-            categories = categories.filter(c => c.name !== catName);
-            products = products.filter(p => p.cat !== catName);
-            
-            if(currentFilter === catName) {
-                currentFilter = 'الكل';
-            }
+            db.ref('categories').once('value', (snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    if(childSnapshot.val().name === catName) {
+                        db.ref('categories/' + childSnapshot.key).remove();
+                    }
+                });
+            });
 
-            localStorage.setItem('z8_cats', JSON.stringify(categories));
-            localStorage.setItem('z8_prods', JSON.stringify(products));
+            db.ref('products').once('value', (snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    if(childSnapshot.val().cat === catName) {
+                        db.ref('products/' + childSnapshot.key).remove();
+                    }
+                });
+            });
 
-            renderCategories();
-            updateCatsSelect();
-            renderProducts();
-            renderAdminManageList();
-            renderAdminCatsList();
+            if(currentFilter === catName) currentFilter = 'الكل';
             alert("تم حذف القسم بنجاح!");
         }
     }
@@ -263,48 +302,42 @@
         if(fileInput.files && fileInput.files[0]) {
             let reader = new FileReader();
             reader.onload = function(e) {
-                saveProd(name, price, cat, status, e.target.result);
-            };
-            reader.onerror = function() {
-                saveProd(name, price, cat, status, '');
+                saveProdToCloud(name, price, cat, status, e.target.result);
             };
             reader.readAsDataURL(fileInput.files[0]);
         } else {
-            saveProd(name, price, cat, status, '');
+            saveProdToCloud(name, price, cat, status, '');
         }
     }
 
-    function saveProd(name, price, cat, status, img) {
-        let newId = Date.now();
-        products.push({id: newId, name, price, cat, status, img});
-        localStorage.setItem('z8_prods', JSON.stringify(products));
-        
-        document.getElementById('pName').value = '';
-        document.getElementById('pPrice').value = '';
-        document.getElementById('pImage').value = '';
-        
-        renderProducts();
-        renderAdminManageList();
-        alert("تم إضافة ونشر المنتج بنجاح!");
+    function saveProdToCloud(name, price, cat, status, img) {
+        let newProdRef = db.ref('products').push();
+        newProdRef.set({
+            id: newProdRef.key,
+            name: name,
+            price: price,
+            cat: cat,
+            status: status,
+            img: img
+        }, (error) => {
+            if(!error) {
+                document.getElementById('pName').value = '';
+                document.getElementById('pPrice').value = '';
+                document.getElementById('pImage').value = '';
+                alert("تم نشر المنتج بنجاح ليظهر لكل الزبائن فوراً!");
+            }
+        });
     }
 
-    function deleteProduct(id) {
-        if(confirm("هل أنت متأكد من حذف هذا المنتج من لوحة التحكم؟")) {
-            products = products.filter(p => p.id !== id);
-            localStorage.setItem('z8_prods', JSON.stringify(products));
-            renderProducts();
-            renderAdminManageList();
+    function deleteProduct(firebaseKey) {
+        if(confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
+            db.ref('products/' + firebaseKey).remove();
         }
     }
 
-    function toggleProductStatus(id) {
-        let p = products.find(item => item.id === id);
-        if(p) {
-            p.status = p.status === 'available' ? 'busy' : 'available';
-            localStorage.setItem('z8_prods', JSON.stringify(products));
-            renderProducts();
-            renderAdminManageList();
-        }
+    function toggleProductStatus(firebaseKey, currentStatus) {
+        let newStatus = currentStatus === 'available' ? 'busy' : 'available';
+        db.ref('products/' + firebaseKey).update({ status: newStatus });
     }
 
     function openImageModal(imgSrc) {
@@ -354,8 +387,8 @@
                 <div class="admin-item-row">
                     <span><b>${p.name}</b><br><small style="color:#8aa895;">${statusText}</small></span>
                     <div>
-                        <button class="status-toggle-btn" onclick="toggleProductStatus(${p.id})">تبديل الحالة</button>
-                        <button class="del-btn" onclick="deleteProduct(${p.id})">حذف</button>
+                        <button class="status-toggle-btn" onclick="toggleProductStatus('${p.firebaseKey}', '${p.status}')">تبديل الحالة</button>
+                        <button class="del-btn" onclick="deleteProduct('${p.firebaseKey}')">حذف</button>
                     </div>
                 </div>
             `;
@@ -393,9 +426,6 @@
             `;
         });
     }
-
-    renderCategories();
-    renderProducts();
 </script>
 
 </body>

@@ -42,10 +42,9 @@
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
 
-    <label>تغيير كلمة المرور (يتطلب كلمة سر التغيير RAEZAR):</label>
-    <input type="password" id="secretKey" placeholder="اكتب كلمة السر RAEZAR هنا">
-    <input type="password" id="newPass" placeholder="كلمة المرور الجديدة لوحة التحكم">
-    <button onclick="changePass()" style="background:#f59e0b;">تحديث كلمة المرور</button>
+    <label>تغيير كلمة المرور:</label>
+    <input type="password" id="newPass" placeholder="اكتب كلمة المرور الجديدة هنا">
+    <button onclick="changePass()" style="background:#f59e0b;">هل تريد تغيير كلمة السر؟</button>
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
 
@@ -109,24 +108,18 @@
     }
 
     function changePass() {
-        let key = document.getElementById('secretKey').value;
         let np = document.getElementById('newPass').value;
-
-        if(key !== "RAEZAR") {
-            alert("كلمة سر التغيير (RAEZAR) غير صحيحة!");
-            return;
-        }
-
         if(!np) {
-            alert("الرجاء كتابة كلمة المرور الجديدة!");
+            alert("الرجاء كتابة كلمة المرور الجديدة أولاً!");
             return;
         }
 
-        adminPass = np;
-        localStorage.setItem('z8_pass', adminPass);
-        document.getElementById('secretKey').value = '';
-        document.getElementById('newPass').value = '';
-        alert("تم تغيير كلمة مرور لوحة التحكم بنجاح!");
+        if(confirm("هل أنت متأكد أنك تريد تغيير كلمة السر؟")) {
+            adminPass = np;
+            localStorage.setItem('z8_pass', adminPass);
+            document.getElementById('newPass').value = '';
+            alert("تم تغيير كلمة المرور بنجاح!");
+        }
     }
 
     function addCategory() {
@@ -161,7 +154,6 @@
     function updateCatsSelect() {
         let select = document.getElementById('pCat');
         select.innerHTML = '';
-        // نتجاوز خيار "الكل" عند إضافة منتج جديد
         categories.forEach(c => {
             if(c.name !== 'الكل') {
                 select.innerHTML += `<option value="${c.name}">${c.name}</option>`;
@@ -170,8 +162,8 @@
     }
 
     function addProduct() {
-        let name = document.getElementById('pName').value;
-        let price = document.getElementById('pPrice').value;
+        let name = document.getElementById('pName').value.trim();
+        let price = document.getElementById('pPrice').value.trim();
         let cat = document.getElementById('pCat').value;
         let fileInput = document.getElementById('pImage');
 
@@ -200,11 +192,13 @@
         let newId = Date.now();
         products.push({id: newId, name, price, cat, img});
         localStorage.setItem('z8_prods', JSON.stringify(products));
+        
         document.getElementById('pName').value = '';
         document.getElementById('pPrice').value = '';
         document.getElementById('pImage').value = '';
+        
         renderProducts();
-        alert("تم إضافة المنتج بنجاح!");
+        alert("تم إضافة ونشر المنتج بنجاح!");
     }
 
     function deleteProduct(id) {

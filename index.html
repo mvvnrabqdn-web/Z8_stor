@@ -11,16 +11,26 @@
         input, select { width: 100%; padding: 8px; margin: 5px 0 10px 0; background: #050b07; border: 1px solid #132d1d; color: #fff; border-radius: 5px; box-sizing: border-box; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
         .card { background: #050b07; border: 1px solid #132d1d; padding: 10px; border-radius: 8px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
-        .card img { width: 100%; height: 120px; object-fit: cover; border-radius: 5px; margin-bottom: 8px; }
+        .card img { width: 100%; height: 120px; object-fit: cover; border-radius: 5px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
+        .card img:hover { opacity: 0.8; }
         .admin-panel { display: none; }
         .logo-circle { width: 45px; height: 45px; border: 2px solid #00ff66; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; }
         .logo-circle img { width: 100%; height: 100%; object-fit: cover; }
         .filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px; }
         .filter-btn { background: #0b1710; color: #8aa895; border: 1px solid #132d1d; padding: 6px 12px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
         .filter-btn.active { background: #00ff66; color: #000; font-weight: bold; }
-        .del-btn { background: #ef4444; color: #fff; padding: 4px 8px; font-size: 0.8rem; margin-top: 5px; }
+        .del-btn { background: #ef4444; color: #fff; padding: 5px 10px; font-size: 0.8rem; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; }
+        .status-badge { display: inline-block; padding: 4px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; margin-bottom: 8px; }
+        .status-available { background: rgba(0, 255, 102, 0.2); color: #00ff66; border: 1px solid #00ff66; }
+        .status-busy { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
+        
         .admin-manage-list { max-height: 180px; overflow-y: auto; background: #050b07; border: 1px solid #132d1d; padding: 10px; border-radius: 5px; margin-top: 10px; }
         .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #132d1d; font-size: 0.85rem; }
+
+        /* نافذة تكبير الصورة */
+        .modal { display: none; position: fixed; z-index: 999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
+        .modal img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid #00ff66; }
+        .close-modal { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 30px; cursor: pointer; background: #ef4444; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -61,11 +71,18 @@
     <input type="text" id="pName" placeholder="اسم المنتج">
     <input type="text" id="pPrice" placeholder="السعر">
     <select id="pCat"></select>
+    
+    <label>حالة المنتج:</label>
+    <select id="pStatus">
+        <option value="available">🟢 متوفر</option>
+        <option value="busy">🔴 غير متوفر</option>
+    </select>
+
     <input type="file" id="pImage" accept="image/*">
     <button onclick="addProduct()">حفظ ونشر المنتج</button>
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
-    <label>🗑️ إدارة ومسح المنتجات:</label>
+    <label>🗑️ إدارة ومسح المنتجات (من لوحة التحكم فقط):</label>
     <div class="admin-manage-list" id="adminManageList">
         <!-- المنتجات للحذف تظهر هنا -->
     </div>
@@ -78,6 +95,12 @@
 <div class="box">
     <h3>المنتجات المعروضة</h3>
     <div class="grid" id="productsGrid"></div>
+</div>
+
+<!-- نافذة تكبير الصورة -->
+<div class="modal" id="imageModal" onclick="closeImageModal()">
+    <span class="close-modal">&times;</span>
+    <img id="modalImg">
 </div>
 
 <script>
@@ -181,6 +204,7 @@
         let name = document.getElementById('pName').value.trim();
         let price = document.getElementById('pPrice').value.trim();
         let cat = document.getElementById('pCat').value;
+        let status = document.getElementById('pStatus').value;
         let fileInput = document.getElementById('pImage');
 
         if(!name || !price) {
@@ -196,17 +220,17 @@
         if(fileInput.files && fileInput.files[0]) {
             let reader = new FileReader();
             reader.onload = function(e) {
-                saveProd(name, price, cat, e.target.result);
+                saveProd(name, price, cat, status, e.target.result);
             }
             reader.readAsDataURL(fileInput.files[0]);
         } else {
-            saveProd(name, price, cat, '');
+            saveProd(name, price, cat, status, '');
         }
     }
 
-    function saveProd(name, price, cat, img) {
+    function saveProd(name, price, cat, status, img) {
         let newId = Date.now();
-        products.push({id: newId, name, price, cat, img});
+        products.push({id: newId, name, price, cat, status, img});
         localStorage.setItem('z8_prods', JSON.stringify(products));
         
         document.getElementById('pName').value = '';
@@ -219,12 +243,22 @@
     }
 
     function deleteProduct(id) {
-        if(confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
+        if(confirm("هل أنت متأكد من حذف هذا المنتج من لوحة التحكم؟")) {
             products = products.filter(p => p.id !== id);
             localStorage.setItem('z8_prods', JSON.stringify(products));
             renderProducts();
             renderAdminManageList();
         }
+    }
+
+    function openImageModal(imgSrc) {
+        if(!imgSrc) return;
+        document.getElementById('modalImg').src = imgSrc;
+        document.getElementById('imageModal').style.display = 'flex';
+    }
+
+    function closeImageModal() {
+        document.getElementById('imageModal').style.display = 'none';
     }
 
     function renderAdminManageList() {
@@ -259,15 +293,21 @@
         }
         
         filtered.forEach(p => {
+            let statusHtml = p.status === 'available' 
+                ? '<div class="status-badge status-available">🟢 متوفر</div>' 
+                : '<div class="status-badge status-busy">🔴 غير متوفر</div>';
+
+            let imgHtml = p.img ? `<img src="${p.img}" onclick="openImageModal('${p.img}')" alt="صورة المنتج">` : '';
+
             grid.innerHTML += `
                 <div class="card">
                     <div>
-                        ${p.img ? `<img src="${p.img}">` : ''}
+                        ${imgHtml}
                         <h4>${p.name}</h4>
                         <p style="color:#00ff66; font-weight:bold; margin:5px 0;">${p.price}</p>
-                        <small style="color:#8aa895;">القسم: ${p.cat}</small>
+                        ${statusHtml}
+                        <br><small style="color:#8aa895;">القسم: ${p.cat}</small>
                     </div>
-                    <button class="del-btn" onclick="deleteProduct(${p.id})">حذف المنتج</button>
                 </div>
             `;
         });

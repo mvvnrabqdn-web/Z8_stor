@@ -10,41 +10,61 @@
         button { background: #00ff66; color: #000; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
         input, select { width: 100%; padding: 8px; margin: 5px 0 10px 0; background: #050b07; border: 1px solid #132d1d; color: #fff; border-radius: 5px; box-sizing: border-box; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
-        .card { background: #050b07; border: 1px solid #132d1d; padding: 10px; border-radius: 8px; text-align: center; }
-        .card img { width: 100%; height: 120px; object-fit: cover; border-radius: 5px; }
+        .card { background: #050b07; border: 1px solid #132d1d; padding: 10px; border-radius: 8px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
+        .card img { width: 100%; height: 120px; object-fit: cover; border-radius: 5px; margin-bottom: 8px; }
         .admin-panel { display: none; }
+        .logo-circle { width: 45px; height: 45px; border: 2px solid #00ff66; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; }
+        .logo-circle img { width: 100%; height: 100%; object-fit: cover; }
+        .filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px; }
+        .filter-btn { background: #0b1710; color: #8aa895; border: 1px solid #132d1d; padding: 6px 12px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
+        .filter-btn.active { background: #00ff66; color: #000; font-weight: bold; }
+        .del-btn { background: #ef4444; color: #fff; padding: 4px 8px; font-size: 0.8rem; margin-top: 5px; }
     </style>
 </head>
 <body>
 
 <div class="box" style="display: flex; justify-content: space-between; align-items: center;">
     <button onclick="toggleAdmin()">لوحة التحكم (Admin)</button>
-    <h2>Z8 Store</h2>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <h2>Z8 Store</h2>
+        <div class="logo-circle" id="logoContainer">
+            <span style="font-size: 10px; color: #00ff66;">Z8</span>
+        </div>
+    </div>
 </div>
 
 <!-- لوحة التحكم -->
 <div class="box admin-panel" id="adminPanel">
     <h3>⚙️ لوحة التحكم</h3>
     
-    <label>كلمة المرور الجديدة:</label>
-    <input type="password" id="newPass" placeholder="اتركها فارغة إذا لمغن تغييرها">
+    <label>إضافة شعار للمتجر (من الألبوم):</label>
+    <input type="file" id="logoImage" accept="image/*" onchange="updateLogo()">
+
+    <hr style="border-color: #132d1d; margin: 15px 0;">
+
+    <label>تغيير كلمة المرور (يتطلب كلمة سر التغيير RAEZAR):</label>
+    <input type="password" id="secretKey" placeholder="اكتب كلمة السر RAEZAR هنا">
+    <input type="password" id="newPass" placeholder="كلمة المرور الجديدة لوحة التحكم">
     <button onclick="changePass()" style="background:#f59e0b;">تحديث كلمة المرور</button>
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
 
     <label>إضافة قسم جديد:</label>
-    <input type="text" id="catName" placeholder="اسم القسم...">
+    <input type="text" id="catName" placeholder="اسم القسم الجديد...">
     <button onclick="addCategory()" style="background:#3b82f6; color:#fff;">إضافة القسم</button>
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
 
-    <label>إضافة منتج:</label>
+    <label>إضافة منتج جديد:</label>
     <input type="text" id="pName" placeholder="اسم المنتج">
     <input type="text" id="pPrice" placeholder="السعر">
     <select id="pCat"></select>
     <input type="file" id="pImage" accept="image/*">
     <button onclick="addProduct()">حفظ المنتج</button>
 </div>
+
+<!-- الأقسام الفلاتر -->
+<div class="filters" id="filtersContainer"></div>
 
 <!-- المنتجات -->
 <div class="box">
@@ -53,13 +73,19 @@
 </div>
 
 <script>
-    let password = localStorage.getItem('z8_pass') || "1234";
-    let categories = JSON.parse(localStorage.getItem('z8_cats')) || [{id: 'general', name: 'عام'}];
+    let adminPass = localStorage.getItem('z8_pass') || "1234";
+    let categories = JSON.parse(localStorage.getItem('z8_cats')) || [{id: 'all', name: 'الكل'}];
     let products = JSON.parse(localStorage.getItem('z8_prods')) || [];
+    let currentFilter = 'الكل';
+    let storeLogo = localStorage.getItem('z8_logo') || '';
+
+    if(storeLogo) {
+        document.getElementById('logoContainer').innerHTML = `<img src="${storeLogo}">`;
+    }
 
     function toggleAdmin() {
-        let p = prompt("أدخل كلمة المرور (الافتراضية 1234):");
-        if(p === password) {
+        let p = prompt("أدخل كلمة المرور لوحة التحكم:");
+        if(p === adminPass) {
             let panel = document.getElementById('adminPanel');
             panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
             updateCatsSelect();
@@ -68,34 +94,78 @@
         }
     }
 
-    function changePass() {
-        let np = document.getElementById('newPass').value;
-        if(np) {
-            password = np;
-            localStorage.setItem('z8_pass', password);
-            alert("تم تغيير كلمة المرور بنجاح!");
-            document.getElementById('newPass').value = '';
-        } else {
-            alert("الرجاء كتابة كلمة المرور الجديدة");
+    function updateLogo() {
+        let file = document.getElementById('logoImage').files[0];
+        if(file) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                storeLogo = e.target.result;
+                localStorage.setItem('z8_logo', storeLogo);
+                document.getElementById('logoContainer').innerHTML = `<img src="${storeLogo}">`;
+                alert("تم تحديث الشعار بنجاح!");
+            }
+            reader.readAsDataURL(file);
         }
     }
 
+    function changePass() {
+        let key = document.getElementById('secretKey').value;
+        let np = document.getElementById('newPass').value;
+
+        if(key !== "RAEZAR") {
+            alert("كلمة سر التغيير (RAEZAR) غير صحيحة!");
+            return;
+        }
+
+        if(!np) {
+            alert("الرجاء كتابة كلمة المرور الجديدة!");
+            return;
+        }
+
+        adminPass = np;
+        localStorage.setItem('z8_pass', adminPass);
+        document.getElementById('secretKey').value = '';
+        document.getElementById('newPass').value = '';
+        alert("تم تغيير كلمة مرور لوحة التحكم بنجاح!");
+    }
+
     function addCategory() {
-        let name = document.getElementById('catName').value;
+        let name = document.getElementById('catName').value.trim();
         if(name) {
             categories.push({id: 'c_' + Date.now(), name: name});
             localStorage.setItem('z8_cats', JSON.stringify(categories));
             document.getElementById('catName').value = '';
+            renderCategories();
             updateCatsSelect();
-            alert("تم إضافة القسم!");
+            alert("تم إضافة القسم بنجاح!");
+        } else {
+            alert("الرجاء كتابة اسم القسم");
         }
+    }
+
+    function renderCategories() {
+        let container = document.getElementById('filtersContainer');
+        container.innerHTML = '';
+        categories.forEach(c => {
+            let activeClass = currentFilter === c.name ? 'active' : '';
+            container.innerHTML += `<button class="filter-btn ${activeClass}" onclick="filterProducts('${c.name}')">${c.name}</button>`;
+        });
+    }
+
+    function filterProducts(catName) {
+        currentFilter = catName;
+        renderCategories();
+        renderProducts();
     }
 
     function updateCatsSelect() {
         let select = document.getElementById('pCat');
         select.innerHTML = '';
+        // نتجاوز خيار "الكل" عند إضافة منتج جديد
         categories.forEach(c => {
-            select.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+            if(c.name !== 'الكل') {
+                select.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+            }
         });
     }
 
@@ -106,7 +176,12 @@
         let fileInput = document.getElementById('pImage');
 
         if(!name || !price) {
-            alert("املأ الحقول الأساسية!");
+            alert("املأ اسم المنتج والسعر!");
+            return;
+        }
+
+        if(!cat) {
+            alert("يرجى إضافة قسم أولاً لتتمكن من اختيار قسم للمنتج!");
             return;
         }
 
@@ -122,7 +197,8 @@
     }
 
     function saveProd(name, price, cat, img) {
-        products.push({name, price, cat, img});
+        let newId = Date.now();
+        products.push({id: newId, name, price, cat, img});
         localStorage.setItem('z8_prods', JSON.stringify(products));
         document.getElementById('pName').value = '';
         document.getElementById('pPrice').value = '';
@@ -131,26 +207,41 @@
         alert("تم إضافة المنتج بنجاح!");
     }
 
+    function deleteProduct(id) {
+        if(confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
+            products = products.filter(p => p.id !== id);
+            localStorage.setItem('z8_prods', JSON.stringify(products));
+            renderProducts();
+        }
+    }
+
     function renderProducts() {
         let grid = document.getElementById('productsGrid');
         grid.innerHTML = '';
-        if(products.length === 0) {
-            grid.innerHTML = '<p style="color:#8aa895;">لا توجد منتجات حالياً</p>';
+        
+        let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
+
+        if(filtered.length === 0) {
+            grid.innerHTML = '<p style="color:#8aa895; grid-column:1/-1; text-align:center;">لا توجد منتجات في هذا القسم حالياً</p>';
             return;
         }
-        products.forEach(p => {
+        
+        filtered.forEach(p => {
             grid.innerHTML += `
                 <div class="card">
-                    ${p.img ? `<img src="${p.img}">` : ''}
-                    <h4>${p.name}</h4>
-                    <p style="color:#00ff66;">${p.price}</p>
-                    <small style="color:#8aa895;">${p.cat}</small>
+                    <div>
+                        ${p.img ? `<img src="${p.img}">` : ''}
+                        <h4>${p.name}</h4>
+                        <p style="color:#00ff66; font-weight:bold; margin:5px 0;">${p.price}</p>
+                        <small style="color:#8aa895;">القسم: ${p.cat}</small>
+                    </div>
+                    <button class="del-btn" onclick="deleteProduct(${p.id})">حذف المنتج</button>
                 </div>
             `;
         });
     }
 
-    updateCatsSelect();
+    renderCategories();
     renderProducts();
 </script>
 

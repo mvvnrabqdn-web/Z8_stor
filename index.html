@@ -65,13 +65,6 @@
     <button onclick="changePass()" style="background:#f59e0b;">تغيير كلمة المرور</button>
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
-<!-- قسم إحصائيات الزوار في مركز التحكم -->
-<div class="card" style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px;">
-    <h3 style="margin-bottom: 10px; color: #333;">📊 إحصائيات الزوار</h3>
-    <p>عدد الزوار في آخر أسبوع (7 أيام): <span id="weeklyVisits" style="font-weight: bold; color: #007bff;">0</span></p>
-<p>عدد الزوار في آخر شهر (30 يوم): <span id="monthlyVisits" style="font-weight: bold; color: #28a745;">0</span></p>
-    
-</div>
     
     <label>إضافة قسم جديد:</label>
     <input type="text" id="catName" placeholder="اسم القسم الجديد...">
@@ -448,35 +441,85 @@
 `;
 });
 
-<script>
-function trackAndShowVisitorStats() {
-    let visits = JSON.parse(localStorage.getItem('siteVisits') || '[]');
-    let now = new Date().getTime();
-    visits.push(now);
-    let thirtyDaysAgo = now - (30 * 24 * 60 * 60 * 1000);
-    visits = visits.filter(time => time > thirtyDaysAgo);
-    localStorage.setItem('siteVisits', JSON.stringify(visits));
-    let sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000);
-    let weeklyCount = visits.filter(time => time > sevenDaysAgo).length;
-    let monthlyCount = visits.length;
-    let weeklyEl = document.getElementById('weeklyVisits');
-    let monthlyEl = document.getElementById('monthlyVisits');
-    if (weeklyEl) weeklyEl.innerText = weeklyCount;
-    if (monthlyEl) monthlyEl.innerText = monthlyCount;
-}
-window.addEventListener('DOMContentLoaded', trackAndShowVisitorStats);
-</script>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z8 Store</title>
+    <style>
+        body {
+            background-color: #0b0f0e;
+            color: #ffffff;
+            font-family: Tahoma, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #121816;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 1px solid #1f2b26;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #00ff66;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00ff66;
+            font-weight: bold;
+        }
+        .admin-btn {
+            background-color: #00ff66;
+            color: #000000;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .products-section {
+            margin-top: 30px;
+            background: #121816;
+            border: 1px solid #1f2b26;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .products-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #1f2b26;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <div class="logo-circle">Z8</div>
+            <h2>Z8 Store</h2>
+        </div>
+        <a href="admin.html" class="admin-btn">لوحة التحكم (Admin)</a>
+    </header>
+
+    <div class="products-section">
+        <div class="products-title">المنتجات المعروضة</div>
+        <div id="products-container">
+            <!-- سيتم عرض المنتجات هنا برمجياً -->
+        </div>
+    </div>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
+    

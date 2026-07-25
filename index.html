@@ -65,7 +65,14 @@
     <button onclick="changePass()" style="background:#f59e0b;">تغيير كلمة المرور</button>
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
-
+<!-- قسم إحصائيات الزوار في مركز التحكم -->
+<div class="card" style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px;">
+    <h3 style="margin-bottom: 10px; color: #333;">📊 إحصائيات الزوار</h3>
+    <p>عدد الزوار في آخر أسبوع (7 أيام): <span id="weeklyVisits" style="font-weight: bold; color: #007bff;">0</span></p>
+<p>عدد الزوار في آخر شهر (30 يوم): <span id="monthlyVisits" style="font-weight: bold; color: #28a745;">0</span></p>
+    
+</div>
+    
     <label>إضافة قسم جديد:</label>
     <input type="text" id="catName" placeholder="اسم القسم الجديد...">
     <button onclick="addCategory()" style="background:#3b82f6; color:#fff;">إضافة القسم</button>
@@ -440,7 +447,31 @@
     </div>
 `;
 });
+
+<script>
+function trackAndShowVisitorStats() {
+    let visits = JSON.parse(localStorage.getItem('siteVisits') || '[]');
+    let now = new Date().getTime();
+    visits.push(now);
+    let thirtyDaysAgo = now - (30 * 24 * 60 * 60 * 1000);
+    visits = visits.filter(time => time > thirtyDaysAgo);
+    localStorage.setItem('siteVisits', JSON.stringify(visits));
+    let sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000);
+    let weeklyCount = visits.filter(time => time > sevenDaysAgo).length;
+    let monthlyCount = visits.length;
+    let weeklyEl = document.getElementById('weeklyVisits');
+    let monthlyEl = document.getElementById('monthlyVisits');
+    if (weeklyEl) weeklyEl.innerText = weeklyCount;
+    if (monthlyEl) monthlyEl.innerText = monthlyCount;
 }
+window.addEventListener('DOMContentLoaded', trackAndShowVisitorStats);
+</script>
+    
+
+// تشغيل الدالة فور فتح الصفحة
+window.addEventListener('DOMContentLoaded', trackAndShowVisitorStats);
+</script>
+    }
 </script>
 </body>
 </html>

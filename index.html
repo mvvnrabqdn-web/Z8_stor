@@ -397,7 +397,9 @@
 
     function renderProducts() {
         let grid = document.getElementById('productsGrid');
-        grid.innerHTML = '<p style="text-align: center; color: #8aa895; grid-column: 1/-1; padding: 20px;">جاري تحميل المنتجات...</p>';
+        if(products.length === 0) { grid.innerHTML = '<p style="text-align: center; color: #8aa895; grid-column: 1/-1; padding: 20px;">جاري تحميل المنتجات...</p>'; return; }
+        
+        
         
         
         let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);

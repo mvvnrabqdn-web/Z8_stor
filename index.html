@@ -16,7 +16,7 @@
         .page { display: none; }
         .page.active { display: block; }
 
-        /* واجهة الترحيب الفخمة وسحب الشاشة */
+        /* واجهة الترحيب الفخمة وتستجيب للسحب أو اللسلسة */
         #welcomePage {
             display: flex;
             flex-direction: column;
@@ -32,7 +32,8 @@
             background: #050b07;
             z-index: 1000;
             transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
-            touch-action: none; /* لمنع التمرير الافتراضي للمتصفح وجعل الصفحة الاستجابة كاملة للسحب */
+            cursor: pointer;
+            user-select: none;
         }
 
         #welcomePage.slide-up {
@@ -50,6 +51,7 @@
             max-width: 400px;
             width: 100%;
             animation: fadeIn 0.8s ease-in-out;
+            pointer-events: none; /* لتمرير اللمس لواجهة الترحيب بسلاسة */
         }
 
         @keyframes fadeIn {
@@ -61,7 +63,7 @@
         .swipe-indicator {
             margin-top: 25px;
             color: #00ff66;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             animation: bounce 1.5s infinite;
         }
 
@@ -106,7 +108,7 @@
 </head>
 <body onload="initApp()">
 
-    <!-- 1. واجهة الترحيب -->
+    <!-- 1. واجهة الترحيب (تدعم السحب وأي لمسة على الشاشة لدخول سلس 100%) -->
     <div id="welcomePage">
         <div class="welcome-card" id="welcomeCard">
             <div class="logo-circle" style="width: 90px; height: 90px; margin: 0 auto 20px auto;" id="welcomeLogoContainer">
@@ -116,7 +118,7 @@
             <p style="color: #8aa895; font-size: 1rem; margin-bottom: 10px;">نورت المتجر، تصفح أحدث المنتجات والخدمات الرقمية بكل عروضها المميزة.</p>
             
             <div class="swipe-indicator">
-                ▲ اسحب الشاشة للأعلى للدخول ▲
+                ▲ اسحب الشاشة أو المس في أي مكان للدخول ▲
             </div>
         </div>
     </div>
@@ -250,9 +252,10 @@
         setupSwipeToEnter();
     }
 
-    // الانتقال للمتجر بسلاسة عند السحب
+    // الانتقال للمتجر بسلاسة
     function enterStore() {
         let welcome = document.getElementById('welcomePage');
+        if(welcome.classList.contains('slide-up')) return; // لمنع التكرار
         welcome.classList.add('slide-up');
         setTimeout(() => {
             welcome.style.display = 'none';
@@ -260,27 +263,41 @@
         }, 500);
     }
 
-    // تفعيل السحب بدقة عالية جداً (للهواتف والحواسيب)
+    // نظام تفاعلي مزدوج (سحب الشاشة للأعلى + أو لمس الشاشة بأي مكان للدخول فوراً)
     function setupSwipeToEnter() {
         let touchStartY = 0;
         let mouseStartY = 0;
         let isDragging = false;
         let welcomePage = document.getElementById('welcomePage');
+        let hasMoved = false;
 
-        // أحداث اللمس للهواتف
+        // الدخول الفوري عند اللمس أو النقر في أي مكان في واجهة الترحيب
+        welcomePage.addEventListener('click', function(e) {
+            enterStore();
+        });
+
+        // أحداث اللمس للسحب
         welcomePage.addEventListener('touchstart', function(e) {
             touchStartY = e.touches[0].clientY;
+            hasMoved = false;
+        }, {passive: true});
+
+        welcomePage.addEventListener('touchmove', function(e) {
+            let currentY = e.touches[0].clientY;
+            if (touchStartY - currentY > 15) {
+                hasMoved = true;
+            }
         }, {passive: true});
 
         welcomePage.addEventListener('touchend', function(e) {
             let touchEndY = e.changedTouches[0].clientY;
-            // إذا كان الفرق أكثر من 30 بكسل للأعلى سيتم الدخول فوراً
-            if (touchStartY - touchEndY > 30) {
+            // إذا سحب للأعلى أو رفع إبعه بعد لمس خفيف
+            if ((touchStartY - touchEndY > 20) || hasMoved) {
                 enterStore();
             }
         }, {passive: true});
 
-        // دعم السحب بواسطة الماوس
+        // دعم الماوس للكمبيوتر
         welcomePage.addEventListener('mousedown', function(e) {
             mouseStartY = e.clientY;
             isDragging = true;
@@ -289,15 +306,15 @@
         window.addEventListener('mouseup', function(e) {
             if (!isDragging) return;
             let mouseEndY = e.clientY;
-            if (mouseStartY - mouseEndY > 30) {
+            if (mouseStartY - mouseEndY > 20) {
                 enterStore();
             }
             isDragging = false;
         });
 
-        // دعم عجلة الماوس والتمرير السريع
+        // دعم عجلات الماوس
         welcomePage.addEventListener('wheel', function(e) {
-            if (e.deltaY > 15) {
+            if (e.deltaY > 10) {
                 enterStore();
             }
         }, {passive: true});
@@ -483,20 +500,5 @@
 
     function openImageModal(imgSrc) {
         if(!imgSrc) return;
-        document.getElementById('modalImg').src = imgSrc;
-        document.getElementById('imageModal').style.display = 'flex';
-    }
-
-    function closeImageModal() {
-        document.getElementById('imageModal').style.display = 'none';
-    }
-
-    function renderAdminCatsList() {
-        let listContainer = document.getElementById('adminCatsList');
-        if(!listContainer) return;
-        listContainer.innerHTML = '';
-
-        let subCats = categories.filter(c => c.name !== 'الكل');
-        if(subCats.length === 0) {
-            listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد أقسام مضافة حالياً</div>';
-            return
+        document.getElementById('moda
+                            

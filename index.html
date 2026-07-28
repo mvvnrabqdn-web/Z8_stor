@@ -12,11 +12,10 @@
     <style>
         body { background: #050b07; color: #fff; font-family: Tahoma, sans-serif; padding: 10px; margin: 0; min-height: 100vh; box-sizing: border-box; overflow-x: hidden; }
         
-        /* نظام الصفحات (الترحيب والموقع الرئيسي) */
         .page { display: none; }
         .page.active { display: block; }
 
-        /* واجهة الترحيب الفخمة وتستجيب للسحب أو اللسلسة */
+        /* واجهة الترحيب */
         #welcomePage {
             display: flex;
             flex-direction: column;
@@ -30,9 +29,9 @@
             left: 0;
             width: 100%;
             background: #050b07;
-            z-index: 1000;
+            z-index: 9999;
             transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
-            cursor: pointer;
+            touch-action: pan-y;
             user-select: none;
         }
 
@@ -51,7 +50,8 @@
             max-width: 400px;
             width: 100%;
             animation: fadeIn 0.8s ease-in-out;
-            pointer-events: none; /* لتمرير اللمس لواجهة الترحيب بسلاسة */
+            position: relative;
+            z-index: 2;
         }
 
         @keyframes fadeIn {
@@ -59,7 +59,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* مؤشر السحب الجذاب */
         .swipe-indicator {
             margin-top: 25px;
             color: #00ff66;
@@ -108,7 +107,7 @@
 </head>
 <body onload="initApp()">
 
-    <!-- 1. واجهة الترحيب (تدعم السحب وأي لمسة على الشاشة لدخول سلس 100%) -->
+    <!-- 1. واجهة الترحيب -->
     <div id="welcomePage">
         <div class="welcome-card" id="welcomeCard">
             <div class="logo-circle" style="width: 90px; height: 90px; margin: 0 auto 20px auto;" id="welcomeLogoContainer">
@@ -118,7 +117,7 @@
             <p style="color: #8aa895; font-size: 1rem; margin-bottom: 10px;">نورت المتجر، تصفح أحدث المنتجات والخدمات الرقمية بكل عروضها المميزة.</p>
             
             <div class="swipe-indicator">
-                ▲ اسحب الشاشة أو المس في أي مكان للدخول ▲
+                ▲ اسحب الشاشة للأعلى للدخول ▲
             </div>
         </div>
     </div>
@@ -252,10 +251,9 @@
         setupSwipeToEnter();
     }
 
-    // الانتقال للمتجر بسلاسة
     function enterStore() {
         let welcome = document.getElementById('welcomePage');
-        if(welcome.classList.contains('slide-up')) return; // لمنع التكرار
+        if(welcome.classList.contains('slide-up')) return;
         welcome.classList.add('slide-up');
         setTimeout(() => {
             welcome.style.display = 'none';
@@ -263,56 +261,37 @@
         }, 500);
     }
 
-    // نظام تفاعلي مزدوج (سحب الشاشة للأعلى + أو لمس الشاشة بأي مكان للدخول فوراً)
+    // نظام سحب متطور يعتمد على Pointer Events الشاملة للأجهزة الذكية والحواسيب
     function setupSwipeToEnter() {
-        let touchStartY = 0;
-        let mouseStartY = 0;
-        let isDragging = false;
+        let startY = 0;
+        let isSwiping = false;
         let welcomePage = document.getElementById('welcomePage');
-        let hasMoved = false;
 
-        // الدخول الفوري عند اللمس أو النقر في أي مكان في واجهة الترحيب
-        welcomePage.addEventListener('click', function(e) {
-            enterStore();
+        welcomePage.addEventListener('pointerdown', function(e) {
+            startY = e.clientY;
+            isSwiping = true;
         });
 
-        // أحداث اللمس للسحب
-        welcomePage.addEventListener('touchstart', function(e) {
-            touchStartY = e.touches[0].clientY;
-            hasMoved = false;
-        }, {passive: true});
-
-        welcomePage.addEventListener('touchmove', function(e) {
-            let currentY = e.touches[0].clientY;
-            if (touchStartY - currentY > 15) {
-                hasMoved = true;
-            }
-        }, {passive: true});
-
-        welcomePage.addEventListener('touchend', function(e) {
-            let touchEndY = e.changedTouches[0].clientY;
-            // إذا سحب للأعلى أو رفع إبعه بعد لمس خفيف
-            if ((touchStartY - touchEndY > 20) || hasMoved) {
+        welcomePage.addEventListener('pointermove', function(e) {
+            if (!isSwiping) return;
+            let currentY = e.clientY;
+            // إذا قام بسحب الشاشة للأعلى بمسافة تزيد عن 20 بكسل
+            if (startY - currentY > 20) {
+                isSwiping = false;
                 enterStore();
             }
-        }, {passive: true});
-
-        // دعم الماوس للكمبيوتر
-        welcomePage.addEventListener('mousedown', function(e) {
-            mouseStartY = e.clientY;
-            isDragging = true;
         });
 
-        window.addEventListener('mouseup', function(e) {
-            if (!isDragging) return;
-            let mouseEndY = e.clientY;
-            if (mouseStartY - mouseEndY > 20) {
+        welcomePage.addEventListener('pointerup', function(e) {
+            if (!isSwiping) return;
+            let endY = e.clientY;
+            if (startY - endY > 15) {
                 enterStore();
             }
-            isDragging = false;
+            isSwiping = false;
         });
 
-        // دعم عجلات الماوس
+        // دعم إضافي لعجلة الماوس
         welcomePage.addEventListener('wheel', function(e) {
             if (e.deltaY > 10) {
                 enterStore();
@@ -500,5 +479,28 @@
 
     function openImageModal(imgSrc) {
         if(!imgSrc) return;
-        document.getElementById('moda
-                            
+        document.getElementById('modalImg').src = imgSrc;
+        document.getElementById('imageModal').style.display = 'flex';
+    }
+
+    function closeImageModal() {
+        document.getElementById('imageModal').style.display = 'none';
+    }
+
+    function renderAdminCatsList() {
+        let listContainer = document.getElementById('adminCatsList');
+        if(!listContainer) return;
+        listContainer.innerHTML = '';
+
+        let subCats = categories.filter(c => c.name !== 'الكل');
+        if(subCats.length === 0) {
+            listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد أقسام مضافة حالياً</div>';
+            return;
+        }
+
+        subCats.forEach(c => {
+            listContainer.innerHTML += `
+                <div class="admin-item-row">
+                    <span><b>${c.name}</b></span>
+                    <button class="del-btn" onclick="deleteCategory('${c.name}')">حذف القسم</button>
+ 

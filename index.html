@@ -10,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
     <style>
-        body { background: #050b07; color: #fff; font-family: Tahoma, sans-serif; padding: 10px; margin: 0; min-height: 100vh; box-sizing: border-box; }
+        body { background: #050b07; color: #fff; font-family: Tahoma, sans-serif; padding: 10px; margin: 0; min-height: 100vh; box-sizing: border-box; overflow-x: hidden; }
         
         /* نظام الصفحات (الترحيب والموقع الرئيسي) */
         .page { display: none; }
@@ -22,9 +22,22 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 95vh;
+            height: 100vh;
             text-align: center;
             padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #050b07;
+            z-index: 1000;
+            transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
+        }
+
+        #welcomePage.slide-up {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
         }
 
         .welcome-card {
@@ -43,9 +56,23 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* مؤشر السحب الجذاب */
+        .swipe-indicator {
+            margin-top: 25px;
+            color: #00ff66;
+            font-size: 0.9rem;
+            animation: bounce 1.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
         .box { background: #0b1710; border: 1px solid #132d1d; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
         button { background: #00ff66; color: #000; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        button:hover { opacity: 0.9; transform: scale(1.02); }
+        button:hover { opacity: 0.9; }
         
         input, select { width: 100%; padding: 8px; margin: 5px 0 10px 0; background: #050b07; border: 1px solid #132d1d; color: #fff; border-radius: 5px; box-sizing: border-box; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
@@ -76,18 +103,20 @@
         .close-modal { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 30px; cursor: pointer; background: #ef4444; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
-<body onload="initApp()" ontouchstart="handleTouchStart(event)" ontouchend="handleTouchEnd(event)">
+<body onload="initApp()">
 
-    <!-- 1. واجهة الترحيب (تظهر عند الدخول لأول مرة) -->
-    <div id="welcomePage" class="page active">
-        <div class="welcome-card">
+    <!-- 1. واجهة الترحيب (تفتح بالكامل وتستجيب للسحب فقط) -->
+    <div id="welcomePage">
+        <div class="welcome-card" id="welcomeCard">
             <div class="logo-circle" style="width: 90px; height: 90px; margin: 0 auto 20px auto;" id="welcomeLogoContainer">
                 <span style="font-size: 14px; color: #00ff66;">Z8</span>
             </div>
             <h1 style="color: #00ff66; font-size: 1.8rem; margin-bottom: 10px;">أهلاً بك في متجرنا</h1>
-            <p style="color: #8aa895; font-size: 1rem; margin-bottom: 25px;">نورت المتجر، تصفح أحدث المنتجات والخدمات الرقمية بكل عروضها المميزة.</p>
-            <button onclick="enterStore()" style="width: 100%; padding: 12px; font-size: 1.1rem;">دخول إلى المتجر 🚀</button>
-            <p style="color: #555; font-size: 0.75rem; margin-top: 15px;">(اسحب الشاشة للأعلى أو اضغط الزر للدخول)</p>
+            <p style="color: #8aa895; font-size: 1rem; margin-bottom: 10px;">نورت المتجر، تصفح أحدث المنتجات والخدمات الرقمية بكل عروضها المميزة.</p>
+            
+            <div class="swipe-indicator">
+                ▲ اسحب الشاشة للأعلى للدخول ▲
+            </div>
         </div>
     </div>
 
@@ -186,7 +215,6 @@
     let storeLogo = '';
 
     function initApp() {
-        // الاستماع للبيانات من سحابة Firebase
         db.ref('settings/adminPass').on('value', (snapshot) => {
             if(snapshot.exists()) adminPass = snapshot.val();
         });
@@ -217,26 +245,60 @@
             renderProducts();
             renderAdminManageList();
         });
+
+        setupSwipeToEnter();
     }
 
-    // الانتقال للمتجر وسحب الشاشة
+    // الانتقال للمتجر بسلاسة عند السحب
     function enterStore() {
-        document.getElementById('welcomePage').classList.remove('active');
-        document.getElementById('mainSitePage').classList.add('active');
-        window.scrollTo(0, 0);
+        let welcome = document.getElementById('welcomePage');
+        welcome.classList.add('slide-up');
+        setTimeout(() => {
+            welcome.style.display = 'none';
+            document.getElementById('mainSitePage').classList.add('active');
+        }, 500);
     }
 
-    // ميزة سحب الشاشة للأعلى للانتقال
-    let touchStartY = 0;
-    function handleTouchStart(e) {
-        touchStartY = e.touches[0].clientY;
-    }
-    function handleTouchEnd(e) {
-        let touchEndY = e.changedTouches[0].clientY;
-        // إذا كان المستخدم في صفحة الترحيب وسحب للأعلى
-        if (document.getElementById('welcomePage').classList.contains('active') && (touchStartY - touchEndY > 50)) {
-            enterStore();
-        }
+    // تفعيل السحب للأعلى (الهواتف + الماوس للكمبيوتر)
+    function setupSwipeToEnter() {
+        let touchStartY = 0;
+        let mouseStartY = 0;
+        let isDragging = false;
+        let welcomePage = document.getElementById('welcomePage');
+
+        // أحداث اللمس للهواتف
+        welcomePage.addEventListener('touchstart', function(e) {
+            touchStartY = e.touches[0].clientY;
+        }, {passive: true});
+
+        welcomePage.addEventListener('touchend', function(e) {
+            let touchEndY = e.changedTouches[0].clientY;
+            if (touchStartY - touchEndY > 40) {
+                enterStore();
+            }
+        }, {passive: true});
+
+        // دعم السحب بواسطة الماوس (للاختبار على الحاسوب)
+        welcomePage.addEventListener('mousedown', function(e) {
+            mouseStartY = e.clientY;
+            isDragging = true;
+        });
+
+        welcomePage.addEventListener('mouseup', function(e) {
+            if (!isDragging) return;
+            let mouseEndY = e.clientY;
+            if (mouseStartY - mouseEndY > 40) {
+                enterStore();
+            }
+            isDragging = false;
+        });
+
+        // دعم عجلة الماوس (Scroll) للأعلى أو الأسفل للدخول فوراً
+        welcomePage.addEventListener('wheel', function(e) {
+            if (e.deltaY > 20) {
+                enterStore();
+            }
+        }, {passive: true});
     }
 
     function toggleAdmin() {
@@ -440,43 +502,4 @@
 
         subCats.forEach(c => {
             listContainer.innerHTML += `
-                <div class="admin-item-row">
-                    <span><b>${c.name}</b></span>
-                    <button class="del-btn" onclick="deleteCategory('${c.name}')">حذف القسم</button>
-                </div>
-            `;
-        });
-    }
-
-    function renderAdminManageList() {
-        let listContainer = document.getElementById('adminManageList');
-        if(!listContainer) return;
-        listContainer.innerHTML = '';
-
-        if(products.length === 0) {
-            listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد منتجات حالياً</div>';
-            return;
-        }
-
-        products.forEach(p => {
-            let statusText = p.status === 'available' ? '🟢 متوفر' : '🔴 غير متوفر';
-            listContainer.innerHTML += `
-                <div class="admin-item-row">
-                    <span><b>${p.name}</b><br><small style="color:#8aa895;">${statusText}</small></span>
-                    <div>
-                        <button class="status-toggle-btn" onclick="toggleProductStatus('${p.firebaseKey}', '${p.status}')">تبديل الحالة</button>
-                        <button class="del-btn" onclick="deleteProduct('${p.firebaseKey}')">حذف</button>
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    function renderProducts() {
-        let grid = document.getElementById('productsGrid');
-        grid.innerHTML = '';
-
-        let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
-
-        if(filtered.length === 0) {
-            grid.in
+    

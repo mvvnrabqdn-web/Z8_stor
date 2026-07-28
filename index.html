@@ -31,7 +31,8 @@
             width: 100%;
             background: #050b07;
             z-index: 1000;
-            transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            touch-action: none; /* لمنع التمرير الافتراضي للمتصفح وجعل الصفحة الاستجابة كاملة للسحب */
         }
 
         #welcomePage.slide-up {
@@ -105,7 +106,7 @@
 </head>
 <body onload="initApp()">
 
-    <!-- 1. واجهة الترحيب (تفتح بالكامل وتستجيب للسحب فقط) -->
+    <!-- 1. واجهة الترحيب -->
     <div id="welcomePage">
         <div class="welcome-card" id="welcomeCard">
             <div class="logo-circle" style="width: 90px; height: 90px; margin: 0 auto 20px auto;" id="welcomeLogoContainer">
@@ -259,7 +260,7 @@
         }, 500);
     }
 
-    // تفعيل السحب للأعلى (الهواتف + الماوس للكمبيوتر)
+    // تفعيل السحب بدقة عالية جداً (للهواتف والحواسيب)
     function setupSwipeToEnter() {
         let touchStartY = 0;
         let mouseStartY = 0;
@@ -273,29 +274,30 @@
 
         welcomePage.addEventListener('touchend', function(e) {
             let touchEndY = e.changedTouches[0].clientY;
-            if (touchStartY - touchEndY > 40) {
+            // إذا كان الفرق أكثر من 30 بكسل للأعلى سيتم الدخول فوراً
+            if (touchStartY - touchEndY > 30) {
                 enterStore();
             }
         }, {passive: true});
 
-        // دعم السحب بواسطة الماوس (للاختبار على الحاسوب)
+        // دعم السحب بواسطة الماوس
         welcomePage.addEventListener('mousedown', function(e) {
             mouseStartY = e.clientY;
             isDragging = true;
         });
 
-        welcomePage.addEventListener('mouseup', function(e) {
+        window.addEventListener('mouseup', function(e) {
             if (!isDragging) return;
             let mouseEndY = e.clientY;
-            if (mouseStartY - mouseEndY > 40) {
+            if (mouseStartY - mouseEndY > 30) {
                 enterStore();
             }
             isDragging = false;
         });
 
-        // دعم عجلة الماوس (Scroll) للأعلى أو الأسفل للدخول فوراً
+        // دعم عجلة الماوس والتمرير السريع
         welcomePage.addEventListener('wheel', function(e) {
-            if (e.deltaY > 20) {
+            if (e.deltaY > 15) {
                 enterStore();
             }
         }, {passive: true});
@@ -497,9 +499,4 @@
         let subCats = categories.filter(c => c.name !== 'الكل');
         if(subCats.length === 0) {
             listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد أقسام مضافة حالياً</div>';
-            return;
-        }
-
-        subCats.forEach(c => {
-            listContainer.innerHTML += `
-    
+            return

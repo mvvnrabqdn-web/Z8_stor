@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع Razer الاحترافي</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f9; margin: 0; padding: 0; text-align: center; }
+        .page { display: none; padding: 20px; }
+        .active { display: block; }
+        .btn { background: #007bff; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px; margin: 10px; }
+        .btn:hover { background: #0056b3; }
+        input, select { padding: 10px; margin: 10px; width: 80%; max-width: 300px; }
+        .dashboard-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: inline-block; margin-top: 20px; }
+        
+        /* تأثير اللون الأحمر النيون لاسم رايزر */
+        .neon-razer {
+            color: #ff073a;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px #ff073a, 0 0 20px #ff073a, 0 0 30px #ff073a;
+            margin: 10px 0;
+        }
+        .section-card {
+            background: white;
+            margin: 20px auto;
+            padding: 15px;
+            border: 1px solid #ddd;
+            max-width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body onload="loadSiteData()">
+
+    <!-- 1. واجهة الدخول الترحيبية -->
+    <div id="welcomePage" class="page active">
+        <div class="neon-razer">Razer</div>
+        <h1>مرحباً بك في موقعي الرقمي</h1>
+        <p>تصميم وتطوير المواقع والحلول الذكية</p>
+        <button class="btn" onclick="goToMain()">دخول إلى الموقع</button>
+        <br>
+        <button class="btn" style="background: #6c757d;" onclick="showLogin()">تسجيل دخول المشرف (لوحة التحكم)</button>
+    </div>
+
+    <!-- نافذة تسجيل دخول المشرف -->
+    <div id="loginPage" class="page">
+        <h2>تسجيل دخول لوحة التحكم</h2>
+        <input type="password" id="adminPass" placeholder="أدخل كلمة المرور"><br>
+        <button class="btn" onclick="checkPassword()">دخول</button>
+        <button class="btn" style="background: #dc3545;" onclick="goToWelcome()">رجوع</button>
+    </div>
+
+    <!-- 2. الموقع الرئيسي للزوار -->
+    <div id="mainPage" class="page">
+        <img id="displayLogo" src="" alt="الشعار" style="max-height: 80px; display:none; margin: 10px auto;"><br>
+        <div class="neon-razer" style="font-size: 1.8rem;">Razer</div>
+        <h1 id="siteTitle">موقعي الرئيسي</h1>
+        <div id="dynamicSections"></div>
+        <br><br>
+        <button class="btn" style="background: #28a745;" onclick="showLogin()">الدخول للوحة التحكم</button>
+        <button class="btn" style="background: #6c757d;" onclick="goToWelcome()">الرجوع للبداية</button>
+    </div>
+
+    <!-- 3. لوحة التحكم المخفية -->
+    <div id="dashboardPage" class="page">
+        <div class="dashboard-box">
+            <h2>لوحة التحكم السرية</h2>
+            
+            <h3>تغيير الشعار (Logo)</h3>
+            <input type="file" id="logoInput" accept="image/*"><br>
+            <button class="btn" onclick="updateLogo()">حفظ الشعار</button>
+
+            <h3>إضافة قسم جديد مع صورة</h3>
+            <input type="text" id="sectionTitle" placeholder="عنوان القسم الجديد"><br>
+            <input type="file" id="sectionImage" accept="image/*"><br>
+            <button class="btn" onclick="addNewSection()">إضافة القسم</button>
+            
+            <br><br>
+            <button class="btn" style="background: #dc3545;" onclick="clearData()" style="background: #dc3545;">مسح الذاكرة وإعادة الضبط</button>
+            <br>
+            <button class="btn" style="background: #333;" onclick="goToMain()">خروج إلى الموقع</button>
+        </div>
+    </div>
+
+    <script>
+        // التنقل بين الصفحات
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function goToWelcome() { showPage('welcomePage'); }
+        function goToMain() { showPage('mainPage'); }
+        function showLogin() { showPage('loginPage'); }
+
+        // التحقق من كلمة سر لوحة التحكم (1234)
+        function checkPassword() {
+            let pass = document.getElementById('adminPass').value;
+            if (pass === "1234") {
+                showPage('dashboardPage');
+                document.getElementById('adminPass').value = "";
+            } else {
+                alert("كلمة المرور غير صحيحة!");
+            }
+        }
+
+        // تحميل البيانات المحفوظة تلقائياً عند فتح الموقع
+        function loadSiteData() {
+            // تحميل الشعار إذا كان موجوداً في الذاكرة
+            let savedLogo = localStorage.getItem('razer_logo');
+            if (savedLogo) {
+                let logoImg = document.getElementById('displayLogo');
+                logoImg.src = savedLogo;
+                logoImg.style.display = 'block';
+            }
+
+            // تحميل الأقسام المحفوظة
+            let savedSections = JSON.parse(localStorage.getItem('razer_sections')) || [];
+            let container = document.getElementById('dynamicSections');
+            container.innerHTML = "";
+            
+            savedSections.forEach(sec => {
+                let sectionDiv = document.createElement('div');
+                sectionDiv.className = "section-card";
+                sectionDiv.innerHTML = `<h3>${sec.title}</h3>` + (sec.image ? `<img src="${sec.image}" style="max-width:100%; border-radius:5px;">` : '');
+                container.appendChild(sectionDiv);
+            });
+        }
+
+        // تحديث وحفظ الشعار في الذاكرة
+        function updateLogo() {
+            let fileInput = document.getElementById('logoInput');
+            if (fileInput.files && fileInput.files[0]) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let base64Image = e.target.result;
+                    localStorage.setItem('razer_logo', base64Image); // حفظ في الذاكرة
+                    
+                    let logoImg = document.getElementById('displayLogo');
+                    logoImg.src = base64Image;
+                    logoImg.style.display = 'block';
+                    alert("تم حفظ وتحديث الشعار بنجاح!");
+                }
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                alert("الرجاء اختيار صورة للشعار أولاً!");
+            }
+        }
+
+        // إضافة قسم جديد وحفظه في الذاكرة
+        function addNewSection() {
+            let title = document.getElementById('sectionTitle').value;
+            let fileInput = document.getElementById('sectionImage');
+            
+            if(!title) {
+                alert("الرجاء كتابة عنوان القسم");
+                return;
+            }
+
+            let savedSections = JSON.parse(localStorage.getItem('razer_sections')) || [];
+
+            if (fileInput.files && fileInput.files[0]) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let base64Image = e.target.result;
+                    savedSections.push({ title: title, image: base64Image });
+                    localStorage.setItem('razer_sections', JSON.stringify(savedSections)); // حفظ في الذاكرة
+                    
+                    document.getElementById('sectionTitle').value = "";
+                    fileInput.value = "";
+                    loadSiteData(); // تحديث العرض
+                    alert("تم إضافة القسم وحفظه بنجاح!");
+                }
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                savedSections.push({ title: title, image: "" });
+                localStorage.setItem('razer_sections', JSON.stringify(savedSections)); // حفظ في الذاكرة
+                
+                document.getElementById('sectionTitle').value = "";
+                loadSiteData(); // تحديث العرض
+                alert("تم إضافة القسم وحفظه بنجاح!");
+            }
+        }
+
+        // مسح الذاكرة في حال أردت تصفير الموقع
+        function clearData() {
+            if(confirm("هل أنت متأكد من مسح جميع البيانات والشعار؟")) {
+                localStorage.removeItem('razer_logo');
+                localStorage.removeItem('razer_sections');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
+                    

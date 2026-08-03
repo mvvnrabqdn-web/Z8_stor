@@ -62,7 +62,7 @@
 </head>
 <body>
 
-<!-- واجهة الترحيب مع زر شغال واسم مطور طوخ وكبير -->
+<!-- واجهة الترحيب -->
 <div id="welcome-modal" style="position: fixed; inset: 0; z-index: 999999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.96); padding: 15px;">
     <div style="position: relative; background: #0b1710; border: 2px solid #00ff66; border-radius: 20px; padding: 20px; max-width: 320px; width: 100%; text-align: center; box-shadow: 0 0 30px rgba(0,255,102,0.3);">
         
@@ -75,7 +75,7 @@
         <h2 style="font-size: 1.2rem; font-weight: bold; color: #fff; margin: 0 0 5px 0;">Z8 GAMING STORE</h2>
         <p style="font-size: 0.8rem; color: #8aa895; margin: 0 0 15px 0;">أهلاً بك، متجرك الأول لشحن الألعاب والحسابات.</p>
 
-        <!-- اسم المطور طوخ وكبير وبارز -->
+        <!-- اسم المطور -->
         <div style="background: #050b07; border: 1px solid #132d1d; border-radius: 10px; padding: 12px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
             <div style="text-align: right;">
                 <span style="display: block; font-size: 10px; color: #8aa895; font-weight: bold;">مطور الموقع</span>
@@ -86,7 +86,7 @@
             </a>
         </div>
 
-        <!-- زر الدخول الشغال -->
+        <!-- زر الدخول -->
         <button type="button" onclick="document.getElementById('welcome-modal').style.display='none';" style="width: 100%; padding: 12px; background: #00ff66; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; font-size: 0.95rem;">
             دخول للمتجر ⚡
         </button>
@@ -150,7 +150,7 @@
 <!-- الأقسام الفلاتر -->
 <div class="filters" id="filtersContainer"></div>
 
-<!-- المنتجات -->
+<!-- المنتجات (تم إرجاعها بالكامل) -->
 <div class="box">
     <h3>المنتجات المعروضة</h3>
     <div class="grid" id="productsGrid"></div>
@@ -163,7 +163,6 @@
 </div>
 
 <script>
-    // إعدادات Firebase الخاصة بك
     const firebaseConfig = {
       apiKey: "AIzaSyDUNN-QVK6-81yheeE22TiLnLsrFpjNNRD0",
       authDomain: "z8-store.firebaseapp.com",
@@ -454,4 +453,8 @@
         let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
 
         if(filtered.length === 0) {
-            grid.innerHTML = '<p style="color:#8aa895; grid-column:1/-1; text-align:center;">لا توجد منتجات في هذا القسم حالياً</p>
+            grid.innerHTML = '<p style="color:#8aa895; grid-column:1/-1; text-align:center;">لا توجد منتجات في هذا القسم حالياً</p>';
+            return;
+        }
+        
+        filtered.forEach(

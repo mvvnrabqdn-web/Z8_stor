@@ -60,25 +60,14 @@
         .slide-img:nth-child(1) { animation-delay: 0s; }
         .slide-img:nth-child(2) { animation-delay: 4s; }
         .slide-img:nth-child(3) { animation-delay: 8s; }
-
-        /* إخفاء نافذة الترحيب تلقائياً بعد 10 ثوانٍ عبر CSS البحت بدون جافاسكريبت */
-        @keyframes hideModal {
-            0% { opacity: 1; visibility: visible; }
-            90% { opacity: 1; visibility: visible; }
-            100% { opacity: 0; visibility: hidden; display: none; }
-        }
-        #welcome-modal {
-            animation: hideModal 10s forwards;
-        }
     </style>
 </head>
 <body>
 
-<!-- نافذة الترحيب مع إغلاق تلقائي وتخطي مضمون عبر CSS وإنلاين أوبجكت -->
+<!-- نافذة الترحيب السريعة مع زر تخطي فوري آمن -->
 <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4">
     <div class="relative bg-zinc-950 border-2 border-[#00ff66] rounded-3xl p-6 max-w-sm w-full text-center shadow-[0_0_30px_rgba(0,255,102,0.3)] overflow-hidden">
         
-        <!-- خلفية سلايدر صور الألعاب -->
         <div class="relative w-full h-36 rounded-2xl overflow-hidden mb-4 border border-[#00ff66]/40 shadow-inner bg-zinc-900">
             <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-black/40 z-10"></div>
             <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Pubg">
@@ -93,7 +82,6 @@
         <h2 class="text-xl font-black text-white tracking-wide drop-shadow-[0_0_10px_rgba(0,255,102,0.5)]">Z8 GAMING STORE</h2>
         <p class="text-xs text-gray-400 mt-1 mb-4">أهلاً بك، متجرك الأول لشحن الألعاب والحسابات.</p>
 
-        <!-- بطاقة المطور -->
         <div class="relative bg-zinc-900/90 border border-[#00ff66]/30 rounded-2xl p-3 mb-4 flex items-center justify-between">
             <div class="text-right">
                 <span class="block text-[10px] text-gray-500 uppercase font-semibold">مطور الموقع</span>
@@ -104,14 +92,8 @@
             </a>
         </div>
 
-        <!-- رسالة الترحيب -->
-        <div class="w-full py-2.5 bg-zinc-900 border border-[#00ff66]/30 text-[#00ff66] font-bold rounded-xl text-xs shadow-inner mb-2">
-            تم تحميل المتجر بنجاح، أهلاً بك!
-        </div>
-
-        <!-- زر تخطي مباشر ومضمون 100% -->
-        <button type="button" onclick="document.getElementById('welcome-modal').style.display='none';" class="w-full py-2.5 bg-zinc-800 text-gray-200 hover:bg-zinc-700 font-bold rounded-xl text-xs transition border border-zinc-600 cursor-pointer">
-            تخطي الدخول فوراً ⚡
+        <button type="button" onclick="closeWelcomeModal()" class="w-full py-3 bg-[#00ff66] text-black font-black rounded-xl text-sm transition hover:scale-[1.02] shadow-[0_0_15px_rgba(0,255,102,0.4)] cursor-pointer">
+            دخول للمتجر ⚡
         </button>
     </div>
 </div>
@@ -186,6 +168,13 @@
 </div>
 
 <script>
+    function closeWelcomeModal() {
+        const modal = document.getElementById('welcome-modal');
+        if(modal) {
+            modal.style.display = 'none';
+        }
+    }
+
     // إعدادات Firebase الخاصة بك
     const firebaseConfig = {
       apiKey: "AIzaSyDUNN-QVK6-81yheeE22TiLnLsrFpjNNRD0",
@@ -462,4 +451,19 @@
                 <div class="admin-item-row">
                     <span><b>${p.name}</b><br><small style="color:#8aa895;">${statusText}</small></span>
                     <div>
-                        <button cla
+                        <button class="status-toggle-btn" onclick="toggleProductStatus('${p.firebaseKey}', '${p.status}')">تبديل الحالة</button>
+                        <button class="del-btn" onclick="deleteProduct('${p.firebaseKey}')">حذف</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function renderProducts() {
+        let grid = document.getElementById('productsGrid');
+        grid.innerHTML = '';
+
+        let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
+
+        if(filtered.length === 0) {
+            grid.innerHTML = '<p style="co

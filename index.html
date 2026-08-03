@@ -7,7 +7,6 @@
     <!-- استدعاء مكتبات Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     <!-- مكتبة الأيقونات FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -18,8 +17,7 @@
         input, select { width: 100%; padding: 8px; margin: 5px 0 10px 0; background: #050b07; border: 1px solid #132d1d; color: #fff; border-radius: 5px; box-sizing: border-box; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
         .card { background: #050b07; border: 1px solid #132d1d; padding: 10px; border-radius: 8px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
-        .card img { width: 100%; height: 120px; object-fit: cover; border-radius: 5px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
-        .card img:hover { opacity: 0.8; }
+        .card img { width: 100%; height: 120px; object-fit: cover; border-radius: 5px; margin-bottom: 8px; cursor: pointer; }
         .admin-panel { display: none; }
         .logo-circle { width: 45px; height: 45px; border: 2px solid #00ff66; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; }
         .logo-circle img { width: 100%; height: 100%; object-fit: cover; }
@@ -31,67 +29,14 @@
         .status-badge { display: inline-block; padding: 4px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; margin-bottom: 8px; }
         .status-available { background: rgba(0, 255, 102, 0.2); color: #00ff66; border: 1px solid #00ff66; }
         .status-busy { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
-        
         .admin-manage-list { max-height: 180px; overflow-y: auto; background: #050b07; border: 1px solid #132d1d; padding: 10px; border-radius: 5px; margin-top: 10px; }
         .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #132d1d; font-size: 0.85rem; }
-
         .modal { display: none; position: fixed; z-index: 999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
         .modal img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid #00ff66; }
         .close-modal { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 30px; cursor: pointer; background: #ef4444; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-
-        @keyframes slideShow {
-            0% { opacity: 0; transform: scale(1.05); }
-            20% { opacity: 1; transform: scale(1); }
-            33% { opacity: 1; transform: scale(1); }
-            53% { opacity: 0; transform: scale(1.05); }
-            100% { opacity: 0; }
-        }
-        .slide-img {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            animation: slideShow 12s infinite;
-        }
-        .slide-img:nth-child(1) { animation-delay: 0s; }
-        .slide-img:nth-child(2) { animation-delay: 4s; }
-        .slide-img:nth-child(3) { animation-delay: 8s; }
     </style>
 </head>
 <body>
-
-<!-- واجهة الترحيب -->
-<div id="welcome-modal" style="position: fixed; inset: 0; z-index: 999999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.96); padding: 15px;">
-    <div style="position: relative; background: #0b1710; border: 2px solid #00ff66; border-radius: 20px; padding: 20px; max-width: 320px; width: 100%; text-align: center; box-shadow: 0 0 30px rgba(0,255,102,0.3);">
-        
-        <div style="position: relative; width: 100%; height: 130px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; border: 1px solid #132d1d; background: #000;">
-            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Pubg">
-            <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Gaming">
-            <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Store">
-        </div>
-
-        <h2 style="font-size: 1.2rem; font-weight: bold; color: #fff; margin: 0 0 5px 0;">Z8 GAMING STORE</h2>
-        <p style="font-size: 0.8rem; color: #8aa895; margin: 0 0 15px 0;">أهلاً بك، متجرك الأول لشحن الألعاب والحسابات.</p>
-
-        <!-- اسم المطور -->
-        <div style="background: #050b07; border: 1px solid #132d1d; border-radius: 10px; padding: 12px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
-            <div style="text-align: right;">
-                <span style="display: block; font-size: 10px; color: #8aa895; font-weight: bold;">مطور الموقع</span>
-                <span style="font-size: 1.15rem; font-weight: 900; color: #00ff66; text-shadow: 0 0 10px rgba(0,255,102,0.6);">@uv_d0</span>
-            </div>
-            <a href="https://instagram.com/uv_d0" target="_blank" style="width: 36px; height: 36px; background: linear-gradient(to top right, #f59e0b, #ec4899, #8b5cf6); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; font-size: 1.1rem;">
-                <i class="fa-brands fa-instagram"></i>
-            </a>
-        </div>
-
-        <!-- زر التخطي -->
-        <button type="button" onclick="document.getElementById('welcome-modal').style.display='none';" style="width: 100%; padding: 12px; background: #00ff66; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; font-size: 0.95rem;">
-            تخطي ⚡
-        </button>
-    </div>
-</div>
 
 <div class="box" style="display: flex; justify-content: space-between; align-items: center;">
     <button onclick="toggleAdmin()">لوحة التحكم (Admin)</button>
@@ -107,7 +52,7 @@
 <div class="box admin-panel" id="adminPanel">
     <h3>⚙️ لوحة التحكم</h3>
     
-    <label>إضافة شعار للمتجر (من الألبوم):</label>
+    <label>إضافة شعار للمتجر:</label>
     <input type="file" id="logoImage" accept="image/*" onchange="updateLogo()">
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
@@ -143,7 +88,7 @@
     <button onclick="addProduct()">حفظ ونشر المنتج</button>
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
-    <label>📦 إدارة المنتجات (الحذف وتغيير الحالة):</label>
+    <label>📦 إدارة المنتجات:</label>
     <div class="admin-manage-list" id="adminManageList"></div>
 </div>
 
@@ -191,6 +136,8 @@
         storeLogo = snapshot.val() || '';
         if(storeLogo) {
             document.getElementById('logoContainer').innerHTML = `<img src="${storeLogo}">`;
+        } else {
+            document.getElementById('logoContainer').innerHTML = `<span style="font-size: 10px; color: #00ff66;">Z8</span>`;
         }
     });
 
@@ -232,7 +179,7 @@
             let reader = new FileReader();
             reader.onload = function(e) {
                 db.ref('settings/storeLogo').set(e.target.result, (error) => {
-                    if(!error) alert("تم تحديث الشعار بنجاح للجميع!");
+                    if(!error) alert("تم تحديث الشعار بنجاح!");
                 });
             }
             reader.readAsDataURL(file);
@@ -247,7 +194,6 @@
             alert("كلمة التأكيد غير صحيحة!");
             return;
         }
-
         if(!np) {
             alert("الرجاء كتابة كلمة المرور الجديدة!");
             return;
@@ -273,7 +219,7 @@
             newCatRef.set({id: newCatRef.key, name: name}, (error) => {
                 if(!error) {
                     document.getElementById('catName').value = '';
-                    alert("تم إضافة القسم بنجاح للجميع!");
+                    alert("تم إضافة القسم بنجاح!");
                 }
             });
         } else {
@@ -286,7 +232,7 @@
             alert("لا يمكن حذف قسم الكل!");
             return;
         }
-        if(confirm(`هل أنت متأكد من حذف قسم "${catName}"؟ سيتم حذف جميع المنتجات التابعة له أيضاً.`)) {
+        if(confirm(`هل أنت متأكد من حذف قسم "${catName}"؟`)) {
             db.ref('categories').once('value', (snapshot) => {
                 snapshot.forEach((childSnapshot) => {
                     if(childSnapshot.val().name === catName) {
@@ -294,17 +240,8 @@
                     }
                 });
             });
-
-            db.ref('products').once('value', (snapshot) => {
-                snapshot.forEach((childSnapshot) => {
-                    if(childSnapshot.val().cat === catName) {
-                        db.ref('products/' + childSnapshot.key).remove();
-                    }
-                });
-            });
-
             if(currentFilter === catName) currentFilter = 'الكل';
-            alert("تم حذف القسم بنجاح!");
+            alert("تم حذف القسم!");
         }
     }
 
@@ -344,9 +281,8 @@
             alert("املأ اسم المنتج والسعر!");
             return;
         }
-
         if(!cat) {
-            alert("يرجى إضافة قسم أولاً لتتمكن من اختيار قسم للمنتج!");
+            alert("يرجى إضافة قسم أولاً!");
             return;
         }
 
@@ -375,13 +311,13 @@
                 document.getElementById('pName').value = '';
                 document.getElementById('pPrice').value = '';
                 document.getElementById('pImage').value = '';
-                alert("تم نشر المنتج بنجاح ليظهر لكل الزبائن فوراً!");
+                alert("تم نشر المنتج بنجاح!");
             }
         });
     }
 
     function deleteProduct(firebaseKey) {
-        if(confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
+        if(confirm("هل أنت متأكد من الحذف؟")) {
             db.ref('products/' + firebaseKey).remove();
         }
     }
@@ -405,18 +341,16 @@
         let listContainer = document.getElementById('adminCatsList');
         if(!listContainer) return;
         listContainer.innerHTML = '';
-
         let subCats = categories.filter(c => c.name !== 'الكل');
         if(subCats.length === 0) {
-            listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد أقسام مضافة حالياً</div>';
+            listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد أقسام</div>';
             return;
         }
-
         subCats.forEach(c => {
             listContainer.innerHTML += `
                 <div class="admin-item-row">
                     <span><b>${c.name}</b></span>
-                    <button class="del-btn" onclick="deleteCategory('${c.name}')">حذف القسم</button>
+                    <button class="del-btn" onclick="deleteCategory('${c.name}')">حذف</button>
                 </div>
             `;
         });
@@ -426,19 +360,17 @@
         let listContainer = document.getElementById('adminManageList');
         if(!listContainer) return;
         listContainer.innerHTML = '';
-
         if(products.length === 0) {
-            listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد منتجات حالياً</div>';
+            listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد منتجات</div>';
             return;
         }
-
         products.forEach(p => {
             let statusText = p.status === 'available' ? '🟢 متوفر' : '🔴 غير متوفر';
             listContainer.innerHTML += `
                 <div class="admin-item-row">
                     <span><b>${p.name}</b><br><small style="color:#8aa895;">${statusText}</small></span>
                     <div>
-                        <button class="status-toggle-btn" onclick="toggleProductStatus('${p.firebaseKey}', '${p.status}')">تبديل الحالة</button>
+                        <button class="status-toggle-btn" onclick="toggleProductStatus('${p.firebaseKey}', '${p.status}')">تبديل</button>
                         <button class="del-btn" onclick="deleteProduct('${p.firebaseKey}')">حذف</button>
                     </div>
                 </div>
@@ -449,7 +381,6 @@
     function renderProducts() {
         let grid = document.getElementById('productsGrid');
         grid.innerHTML = '';
-
         let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
 
         if(filtered.length === 0) {
@@ -458,4 +389,30 @@
         }
         
         filtered.forEach(p => {
-            let statu
+            let statusHtml = p.status === 'available' 
+                ? '<div class="status-badge status-available">🟢 متوفر</div>' 
+                : '<div class="status-badge status-busy">🔴 غير متوفر</div>';
+
+            let imgHtml = p.img ? `<img src="${p.img}" onclick="openImageModal('${p.img}')" alt="صورة">` : '';
+
+            grid.innerHTML += `
+                <div class="card">
+                    <div>
+                        ${imgHtml}
+                        <h4>${p.name}</h4>
+                        <p style="color:#00ff66; font-weight:bold; margin:5px 0;">${p.price}</p>
+                        ${statusHtml}
+                        <br><small style="color:#8aa895;">القسم: ${p.cat}</small>
+                    </div>
+                    <div style="margin-top: 12px; text-align: center;">
+                        <a href="https://discord.gg/z8" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; background: #5865F2; color: #fff; padding: 8px 10px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold; box-sizing: border-box;">
+                            <i class="fa-brands fa-discord"></i> استفسار / فتح تكت
+                        </a>
+                    </div>
+                </div>
+            `;
+        });
+    }
+</script>
+</body>
+</html>

@@ -65,14 +65,13 @@
 </head>
 <body>
 
-<!-- نافذة الترحيب المتحركة بالأخضر المشع مع صور الألعاب والعداد التنازلي التلقائي -->
+<!-- نافذة الترحيب المتحركة بالأخضر المشع مع العداد التنازلي المباشر -->
 <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 transition-opacity duration-500">
     <div class="relative bg-zinc-950 border-2 border-[#00ff66] rounded-3xl p-6 max-w-sm w-full text-center shadow-[0_0_30px_rgba(0,255,102,0.3)] overflow-hidden">
         
         <!-- خلفية سلايدر صور الألعاب المتحركة -->
         <div class="relative w-full h-36 rounded-2xl overflow-hidden mb-4 border border-[#00ff66]/40 shadow-inner bg-zinc-900">
             <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-black/40 z-10"></div>
-            <!-- صور ألعاب وببجي ونتفلكس متحركة -->
             <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Pubg">
             <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Gaming">
             <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Store">
@@ -96,10 +95,15 @@
             </a>
         </div>
 
-        <!-- عداد تنازلي يعمل فوراً -->
-        <div class="w-full py-2.5 bg-zinc-900 border border-[#00ff66]/30 text-[#00ff66] font-bold rounded-xl text-xs shadow-inner">
+        <!-- العداد التنازلي المباشر -->
+        <div class="w-full py-2.5 bg-zinc-900 border border-[#00ff66]/30 text-[#00ff66] font-bold rounded-xl text-xs shadow-inner mb-2">
             جاري فتح المتجر تلقائياً خلال (<span id="countdown">10</span>) ثوانٍ...
         </div>
+
+        <!-- زر تخطي اختياري احتياطي -->
+        <button onclick="closeWelcomeModal()" class="w-full py-2 bg-zinc-800 text-gray-300 hover:bg-zinc-700 font-bold rounded-xl text-xs transition border border-zinc-700">
+            تخطي الدخول فوراً ⚡
+        </button>
     </div>
 </div>
 
@@ -173,22 +177,27 @@
 </div>
 
 <script>
-    // تشغيل العداد بصورة مستقلة وفورية لمنع التعليق
+    // تشغيل العداد الفوري المباشر بمعزل عن أي أحداث ثقيلة
     let timeLeft = 10;
+    const countSpan = document.getElementById('countdown');
+    
     const countdownTimer = setInterval(() => {
         timeLeft--;
-        const countSpan = document.getElementById('countdown');
         if (countSpan) countSpan.innerText = timeLeft;
 
         if (timeLeft <= 0) {
             clearInterval(countdownTimer);
-            const modal = document.getElementById('welcome-modal');
-            if(modal) {
-                modal.style.opacity = '0';
-                setTimeout(() => modal.style.display = 'none', 500);
-            }
+            closeWelcomeModal();
         }
     }, 1000);
+
+    function closeWelcomeModal() {
+        const modal = document.getElementById('welcome-modal');
+        if(modal && modal.style.display !== 'none') {
+            modal.style.opacity = '0';
+            setTimeout(() => modal.style.display = 'none', 400);
+        }
+    }
 
     // إعدادات Firebase الخاصة بك
     const firebaseConfig = {
@@ -458,11 +467,4 @@
 
         if(products.length === 0) {
             listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد منتجات حالياً</div>';
-            return;
-        }
-
-        products.forEach(p => {
-            let statusText = p.status === 'available' ? '🟢 متوفر' : '🔴 غير متوفر';
-            listContainer.innerHTML += `
-                <div class="admin-item-row">
-                    <span><b>${p.name}</b><br><small style="color:#8aa895;">${status
+            retu

@@ -60,11 +60,21 @@
         .slide-img:nth-child(1) { animation-delay: 0s; }
         .slide-img:nth-child(2) { animation-delay: 4s; }
         .slide-img:nth-child(3) { animation-delay: 8s; }
+
+        /* إخفاء نافذة الترحيب تلقائياً بعد 10 ثوانٍ عبر CSS البحت بدون جافاسكريبت */
+        @keyframes hideModal {
+            0% { opacity: 1; visibility: visible; }
+            90% { opacity: 1; visibility: visible; }
+            100% { opacity: 0; visibility: hidden; display: none; }
+        }
+        #welcome-modal {
+            animation: hideModal 10s forwards;
+        }
     </style>
 </head>
 <body>
 
-<!-- نافذة الترحيب المتحركة مع عداد مضمون 100% وزر تخطي تفاعلي -->
+<!-- نافذة الترحيب مع إغلاق تلقائي وتخطي مضمون عبر CSS وإنلاين أوبجكت -->
 <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4">
     <div class="relative bg-zinc-950 border-2 border-[#00ff66] rounded-3xl p-6 max-w-sm w-full text-center shadow-[0_0_30px_rgba(0,255,102,0.3)] overflow-hidden">
         
@@ -94,13 +104,13 @@
             </a>
         </div>
 
-        <!-- العداد التنازلي -->
+        <!-- رسالة الترحيب -->
         <div class="w-full py-2.5 bg-zinc-900 border border-[#00ff66]/30 text-[#00ff66] font-bold rounded-xl text-xs shadow-inner mb-2">
-            جاري فتح المتجر تلقائياً خلال (<span id="countdown">10</span>) ثوانٍ...
+            تم تحميل المتجر بنجاح، أهلاً بك!
         </div>
 
-        <!-- زر تخطي يعمل بضغطة مباشرة ومضمونة -->
-        <button type="button" onclick="forceCloseModal()" class="w-full py-2.5 bg-zinc-800 text-gray-200 hover:bg-zinc-700 font-bold rounded-xl text-xs transition border border-zinc-600 cursor-pointer">
+        <!-- زر تخطي مباشر ومضمون 100% -->
+        <button type="button" onclick="document.getElementById('welcome-modal').style.display='none';" class="w-full py-2.5 bg-zinc-800 text-gray-200 hover:bg-zinc-700 font-bold rounded-xl text-xs transition border border-zinc-600 cursor-pointer">
             تخطي الدخول فوراً ⚡
         </button>
     </div>
@@ -176,31 +186,6 @@
 </div>
 
 <script>
-    // عداد تنازلي مضمون ومستقل تماماً باستخدام setTimeout المتداخل لتفادي تجميد المتصفح
-    let timeLeft = 10;
-    const countSpan = document.getElementById('countdown');
-    const welcomeModal = document.getElementById('welcome-modal');
-
-    function updateTimer() {
-        if (timeLeft > 0) {
-            timeLeft--;
-            if (countSpan) countSpan.innerText = timeLeft;
-            setTimeout(updateTimer, 1000);
-        } else {
-            forceCloseModal();
-        }
-    }
-
-    // بدء العد بعد جزء من الثانية لضمان تحميل عناصر الـ DOM بالكامل على الجوال
-    setTimeout(updateTimer, 1000);
-
-    // دالة تخطي فورية وقاطعة لإغلاق النافذة بنقرة واحدة
-    function forceCloseModal() {
-        if (welcomeModal) {
-            welcomeModal.style.display = 'none';
-        }
-    }
-
     // إعدادات Firebase الخاصة بك
     const firebaseConfig = {
       apiKey: "AIzaSyDUNN-QVK6-81yheeE22TiLnLsrFpjNNRD0",
@@ -467,4 +452,14 @@
         listContainer.innerHTML = '';
 
         if(products.length === 0) {
-            listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد منتجات حالياً</div>'
+            listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد منتجات حالياً</div>';
+            return;
+        }
+
+        products.forEach(p => {
+            let statusText = p.status === 'available' ? '🟢 متوفر' : '🔴 غير متوفر';
+            listContainer.innerHTML += `
+                <div class="admin-item-row">
+                    <span><b>${p.name}</b><br><small style="color:#8aa895;">${statusText}</small></span>
+                    <div>
+                        <button cla

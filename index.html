@@ -64,7 +64,7 @@
 </head>
 <body>
 
-<!-- نافذة الترحيب مع ربط مباشر ومبسط لزر التخطي -->
+<!-- واجهة الترحيب والدخول المضافة -->
 <div id="welcome-modal" style="position: fixed; inset: 0; z-index: 999999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.96); padding: 15px;">
     <div style="position: relative; background: #0b1710; border: 2px solid #00ff66; border-radius: 20px; padding: 20px; max-width: 320px; width: 100%; text-align: center; box-shadow: 0 0 30px rgba(0,255,102,0.3);">
         
@@ -115,7 +115,7 @@
     <label>تغيير كلمة المرور:</label>
     <input type="password" id="confirmKey" placeholder="أدخل كلمة التأكيد">
     <input type="password" id="newPass" placeholder="كلمة المرور الجديدة">
-    <button onclick="changePass()" style="background:#f59e0b; color:#000;">تغيير كلمة المرور</button>
+    <button onclick="changePass()" style="background:#f59e0b;">تغيير كلمة المرور</button>
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
 
@@ -163,7 +163,7 @@
 </div>
 
 <script>
-    // تفعيل زر التخطي مباشرة بلغة البرمجة لضمان عمله 100%
+    // تفعيل زر التخطي لفتح المتجر
     document.getElementById('enterStoreBtn').addEventListener('click', function() {
         let modal = document.getElementById('welcome-modal');
         if (modal) {
@@ -192,6 +192,7 @@
     let currentFilter = 'الكل';
     let storeLogo = '';
 
+    // جلب البيانات مباشرة من السحاب لتتحدث عند كل الزبائن فوراً
     db.ref('settings/adminPass').on('value', (snapshot) => {
         if(snapshot.exists()) adminPass = snapshot.val();
     });
@@ -459,4 +460,4 @@
         let grid = document.getElementById('productsGrid');
         grid.innerHTML = '';
 
-        let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
+        let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === 

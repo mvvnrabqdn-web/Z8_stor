@@ -10,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     <!-- مكتبة الأيقونات FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- مكتبة Tailwind CSS للتصميم السريع -->
+    <!-- مكتبة Tailwind CSS للتصميم -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
@@ -40,37 +40,66 @@
         .modal { display: none; position: fixed; z-index: 999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
         .modal img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid #00ff66; }
         .close-modal { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 30px; cursor: pointer; background: #ef4444; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+        /* ستايل سلايدر الصور المتحركة للألعاب */
+        @keyframes slideShow {
+            0% { opacity: 0; transform: scale(1.05); }
+            20% { opacity: 1; transform: scale(1); }
+            33% { opacity: 1; transform: scale(1); }
+            53% { opacity: 0; transform: scale(1.05); }
+            100% { opacity: 0; }
+        }
+        .slide-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            animation: slideShow 12s infinite;
+        }
+        .slide-img:nth-child(1) { animation-delay: 0s; }
+        .slide-img:nth-child(2) { animation-delay: 4s; }
+        .slide-img:nth-child(3) { animation-delay: 8s; }
     </style>
 </head>
 <body>
 
-<!-- نافذة الترحيب المتحركة والفخمة تظهر أول ما يدخل الزبون -->
-<div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-    <div class="relative bg-zinc-900 border border-purple-500/30 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl overflow-hidden">
+<!-- نافذة الترحيب المتحركة بالأخضر المشع مع صور الألعاب والعداد التنازلي التلقائي -->
+<div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 transition-opacity duration-500">
+    <div class="relative bg-zinc-950 border-2 border-[#00ff66] rounded-3xl p-6 max-w-sm w-full text-center shadow-[0_0_30px_rgba(0,255,102,0.3)] overflow-hidden">
         
-        <div class="absolute -top-10 -right-10 w-32 h-32 bg-purple-600/20 rounded-full blur-2xl animate-pulse"></div>
-        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-600/20 rounded-full blur-2xl animate-pulse"></div>
-
-        <div class="relative w-20 h-20 bg-gradient-to-tr from-purple-600 to-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg shadow-purple-600/40 animate-bounce">
-            <i class="fa-solid fa-gamepad"></i>
+        <!-- خلفية سلايدر صور الألعاب المتحركة -->
+        <div class="relative w-full h-36 rounded-2xl overflow-hidden mb-4 border border-[#00ff66]/40 shadow-inner">
+            <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-black/40 z-10"></div>
+            <!-- صور ألعاب وببجي ونتفلكس متحركة -->
+            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Pubg">
+            <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Gaming">
+            <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Store">
+            
+            <div class="absolute top-2 right-2 z-20 bg-black/70 px-2.5 py-1 rounded-lg border border-[#00ff66]/50 text-[10px] text-[#00ff66] font-bold">
+                ⚡ أقوى العروض
+            </div>
         </div>
-        
-        <h2 class="text-xl font-black text-white tracking-wide">Z8 GAMING STORE</h2>
-        <p class="text-xs text-gray-400 mt-1 mb-5">أهلاً بك، استعرض أقوى عروض شحن الألعاب.</p>
 
-        <div class="relative bg-zinc-950/80 border border-zinc-800 rounded-2xl p-3.5 mb-5 flex items-center justify-between">
+        <h2 class="text-xl font-black text-white tracking-wide drop-shadow-[0_0_10px_rgba(0,255,102,0.5)]">Z8 GAMING STORE</h2>
+        <p class="text-xs text-gray-400 mt-1 mb-4">أهلاً بك، متجرك الأول لشحن الألعاب والحسابات.</p>
+
+        <!-- بطاقة المطور -->
+        <div class="relative bg-zinc-900/90 border border-[#00ff66]/30 rounded-2xl p-3 mb-4 flex items-center justify-between">
             <div class="text-right">
                 <span class="block text-[10px] text-gray-500 uppercase font-semibold">مطور الموقع</span>
-                <span class="text-sm font-bold text-purple-400">@uv_d0</span>
+                <span class="text-sm font-bold text-[#00ff66]">@uv_d0</span>
             </div>
-            <a href="https://instagram.com/uv_d0" target="_blank" class="w-10 h-10 bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg hover:scale-110 transition">
+            <a href="https://instagram.com/uv_d0" target="_blank" class="w-9 h-9 bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg hover:scale-110 transition">
                 <i class="fa-brands fa-instagram text-lg"></i>
             </a>
         </div>
 
-        <button onclick="closeWelcomeModal()" class="relative w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-xl transition shadow-lg shadow-purple-600/30 text-sm" style="color: #fff;">
-            دخول إلى المتجر ⚡
-        </button>
+        <!-- عداد تنازلي فقط بدون زر -->
+        <div class="w-full py-2.5 bg-zinc-900 border border-[#00ff66]/30 text-[#00ff66] font-bold rounded-xl text-xs shadow-inner">
+            جاري فتح المتجر تلقائياً خلال (<span id="countdown">10</span>) ثوانٍ...
+        </div>
     </div>
 </div>
 
@@ -165,17 +194,29 @@
     let currentFilter = 'الكل';
     let storeLogo = '';
 
-    // دالة إغلاق نافذة الترحيب
+    // العداد التنازلي 10 ثوانٍ لفتح الموقع تلقائياً وإخفاء النافذة
+    let timeLeft = 10;
+    const countdownTimer = setInterval(() => {
+        timeLeft--;
+        const countSpan = document.getElementById('countdown');
+        if (countSpan) countSpan.innerText = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(countdownTimer);
+            closeWelcomeModal();
+        }
+    }, 1000);
+
+    // دالة إغلاق النافذة تلقائياً
     function closeWelcomeModal() {
         const modal = document.getElementById('welcome-modal');
-        if(modal) {
+        if(modal && modal.style.display !== 'none') {
             modal.style.opacity = '0';
-            modal.style.transition = 'all 0.3s ease';
-            setTimeout(() => modal.style.display = 'none', 300);
+            setTimeout(() => modal.style.display = 'none', 500);
         }
     }
 
-    // جلب البيانات مباشرة من السحاب لتتحدث عند كل الزبائن فوراً
+    // جلب البيانات من السحاب
     db.ref('settings/adminPass').on('value', (snapshot) => {
         if(snapshot.exists()) adminPass = snapshot.val();
     });
@@ -428,40 +469,4 @@
         products.forEach(p => {
             let statusText = p.status === 'available' ? '🟢 متوفر' : '🔴 غير متوفر';
             listContainer.innerHTML += `
-                <div class="admin-item-row">
-                    <span><b>${p.name}</b><br><small style="color:#8aa895;">${statusText}</small></span>
-                    <div>
-                        <button class="status-toggle-btn" onclick="toggleProductStatus('${p.firebaseKey}', '${p.status}')">تبديل الحالة</button>
-                        <button class="del-btn" onclick="deleteProduct('${p.firebaseKey}')">حذف</button>
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    function renderProducts() {
-        let grid = document.getElementById('productsGrid');
-        grid.innerHTML = '';
-
-        let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
-
-        if(filtered.length === 0) {
-            grid.innerHTML = '<p style="color:#8aa895; grid-column:1/-1; text-align:center;">لا توجد منتجات في هذا القسم حالياً</p>';
-            return;
-        }
-        
-        filtered.forEach(p => {
-            let statusHtml = p.status === 'available' 
-                ? '<div class="status-badge status-available">🟢 متوفر</div>' 
-                : '<div class="status-badge status-busy">🔴 غير متوفر</div>';
-
-            let imgHtml = p.img ? `<img src="${p.img}" onclick="openImageModal('${p.img}')" alt="صورة المنتج">` : '';
-
-            grid.innerHTML += `
-                <div class="card">
-                    <div>
-                        ${imgHtml}
-                        <h4>${p.name}</h4>
-                        <p style="color:#00ff66; font-weight:bold; margin:5px 0;">${p.price}</p>
-                        ${statusHtml}
-                        <br><small style="color:#8aa895;">القسم: ${p.cat}</small
+ 

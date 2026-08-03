@@ -7,8 +7,7 @@
     <!-- استدعاء مكتبات Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <!-- مكتبة الأيقونات FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
     <style>
         body { background: #050b07; color: #fff; font-family: Tahoma, sans-serif; padding: 10px; margin: 0; }
@@ -37,60 +36,9 @@
         .modal { display: none; position: fixed; z-index: 999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
         .modal img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid #00ff66; }
         .close-modal { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 30px; cursor: pointer; background: #ef4444; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-
-        @keyframes slideShow {
-            0% { opacity: 0; transform: scale(1.05); }
-            20% { opacity: 1; transform: scale(1); }
-            33% { opacity: 1; transform: scale(1); }
-            53% { opacity: 0; transform: scale(1.05); }
-            100% { opacity: 0; }
-        }
-        .slide-img {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            animation: slideShow 12s infinite;
-        }
-        .slide-img:nth-child(1) { animation-delay: 0s; }
-        .slide-img:nth-child(2) { animation-delay: 4s; }
-        .slide-img:nth-child(3) { animation-delay: 8s; }
     </style>
 </head>
 <body>
-
-<!-- واجهة الترحيب -->
-<div id="welcome-modal" style="position: fixed; inset: 0; z-index: 999999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.96); padding: 15px;">
-    <div style="position: relative; background: #0b1710; border: 2px solid #00ff66; border-radius: 20px; padding: 20px; max-width: 320px; width: 100%; text-align: center; box-shadow: 0 0 30px rgba(0,255,102,0.3);">
-        
-        <div style="position: relative; width: 100%; height: 130px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; border: 1px solid #132d1d; background: #000;">
-            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Pubg">
-            <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Gaming">
-            <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Store">
-        </div>
-
-        <h2 style="font-size: 1.2rem; font-weight: bold; color: #fff; margin: 0 0 5px 0;">Z8 GAMING STORE</h2>
-        <p style="font-size: 0.8rem; color: #8aa895; margin: 0 0 15px 0;">أهلاً بك، متجرك الأول لشحن الألعاب والحسابات.</p>
-
-        <!-- اسم المطور -->
-        <div style="background: #050b07; border: 1px solid #132d1d; border-radius: 10px; padding: 12px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
-            <div style="text-align: right;">
-                <span style="display: block; font-size: 10px; color: #8aa895; font-weight: bold;">مطور الموقع</span>
-                <span style="font-size: 1.15rem; font-weight: 900; color: #00ff66; text-shadow: 0 0 10px rgba(0,255,102,0.6);">@uv_d0</span>
-            </div>
-            <a href="https://instagram.com/uv_d0" target="_blank" style="width: 36px; height: 36px; background: linear-gradient(to top right, #f59e0b, #ec4899, #8b5cf6); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; font-size: 1.1rem;">
-                <i class="fa-brands fa-instagram"></i>
-            </a>
-        </div>
-
-        <!-- زر التخطي -->
-        <button type="button" onclick="document.getElementById('welcome-modal').style.display='none';" style="width: 100%; padding: 12px; background: #00ff66; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; font-size: 0.95rem;">
-            تخطي ⚡
-        </button>
-    </div>
-</div>
 
 <div class="box" style="display: flex; justify-content: space-between; align-items: center;">
     <button onclick="toggleAdmin()">لوحة التحكم (Admin)</button>
@@ -114,7 +62,7 @@
     <label>تغيير كلمة المرور:</label>
     <input type="password" id="confirmKey" placeholder="أدخل كلمة التأكيد">
     <input type="password" id="newPass" placeholder="كلمة المرور الجديدة">
-    <button onclick="changePass()" style="background:#f59e0b; color:#000;">تغيير كلمة المرور</button>
+    <button onclick="changePass()" style="background:#f59e0b;">تغيير كلمة المرور</button>
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
 
@@ -162,6 +110,7 @@
 </div>
 
 <script>
+    // إعدادات Firebase الخاصة بك
     const firebaseConfig = {
       apiKey: "AIzaSyDUNN-QVK6-81yheeE22TiLnLsrFpjNNRD0",
       authDomain: "z8-store.firebaseapp.com",
@@ -182,6 +131,7 @@
     let currentFilter = 'الكل';
     let storeLogo = '';
 
+    // جلب البيانات مباشرة من السحاب لتتحدث عند كل الزبائن فوراً
     db.ref('settings/adminPass').on('value', (snapshot) => {
         if(snapshot.exists()) adminPass = snapshot.val();
     });
@@ -206,16 +156,7 @@
     db.ref('products').on('value', (snapshot) => {
         products = [];
         snapshot.forEach((childSnapshot) => {
-            let item = childSnapshot.val();
-            products.push({ 
-                firebaseKey: childSnapshot.key,
-                id: item.id || childSnapshot.key,
-                name: item.name || '',
-                price: item.price || '',
-                cat: item.cat || 'الكل',
-                status: item.status || 'available',
-                img: item.img || ''
-            });
+            products.push({ ...childSnapshot.val(), firebaseKey: childSnapshot.key });
         });
         renderProducts();
         renderAdminManageList();
@@ -458,7 +399,50 @@
         let grid = document.getElementById('productsGrid');
         grid.innerHTML = '';
 
+        
+        
+        
+        
         let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
 
         if(filtered.length === 0) {
-            gr
+            grid.innerHTML = '<p style="color:#8aa895; grid-column:1/-1; text-align:center;">لا توجد منتجات في هذا القسم حالياً</p>';
+            return;
+        }
+        
+        filtered.forEach(p => {
+            let statusHtml = p.status === 'available' 
+                ? '<div class="status-badge status-available">🟢 متوفر</div>' 
+                : '<div class="status-badge status-busy">🔴 غير متوفر</div>';
+
+            let imgHtml = p.img ? `<img src="${p.img}" onclick="openImageModal('${p.img}')" alt="صورة المنتج">` : '';
+
+            grid.innerHTML += `
+                <div class="card">
+                    <div>
+                        ${imgHtml}
+                        <h4>${p.name}</h4>
+                        <p style="color:#00ff66; font-weight:bold; margin:5px 0;">${p.price}</p>
+                        ${statusHtml}
+                        <br><small style="color:#8aa895;">القسم: ${p.cat}</small>
+                    </div>
+            <div style="margin-top: 12px; text-align: center;">
+                <a href="https://discord.gg/z8" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; background: #5865F2; color: #fff; padding: 8px 10px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold; font-family: Tahoma, sans-serif; box-sizing: border-box;">
+                    <svg width="16" height="16" viewBox="0 0 127.14 96.36" fill="currentColor">
+                        <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6,5.4,80.21h0A105.73,105.73,0,0,0,32.79,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.81,11.1,105.25,105.25,0,0,0,27.39-16.15c8.33-27.14-3.56-50.5-5.67-54.34ZM42.45,65.69c-6.18,0-11.28-5.69-11.28-12.7s5.07-12.7,11.28-12.7c6.27,0,11.37,5.72,11.28,12.7C53.73,60,48.72,65.69,42.45,65.69Zm42.24,0c-6.18,0-11.28-5.69-11.28-12.7s5.07-12.7,11.28-12.7c6.27,0,11.37,5.72,11.28,12.7C95.96,60,91,65.69,84.69,65.69Z"/>
+                    </svg>
+                    استفسار / فتح تكت
+                </a>
+            </div>
+            
+            
+        </div>
+    </div>
+`;
+});
+}
+</script>
+</body>
+</html>
+
+

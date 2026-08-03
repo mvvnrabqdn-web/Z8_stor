@@ -204,10 +204,20 @@
         renderAdminCatsList();
     });
 
+    // جلب وتحديث المنتجات فوراً عند أي تغيير في قاعدة البيانات
     db.ref('products').on('value', (snapshot) => {
         products = [];
         snapshot.forEach((childSnapshot) => {
-            products.push({ ...childSnapshot.val(), firebaseKey: childSnapshot.key });
+            let item = childSnapshot.val();
+            products.push({ 
+                firebaseKey: childSnapshot.key,
+                id: item.id || childSnapshot.key,
+                name: item.name || '',
+                price: item.price || '',
+                cat: item.cat || 'الكل',
+                status: item.status || 'available',
+                img: item.img || ''
+            });
         });
         renderProducts();
         renderAdminManageList();
@@ -449,13 +459,3 @@
     function renderProducts() {
         let grid = document.getElementById('productsGrid');
         grid.innerHTML = '';
-
-        let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
-
-        if(filtered.length === 0) {
-            grid.innerHTML = '<p style="color:#8aa895; grid-column:1/-1; text-align:center;">لا توجد منتجات في هذا القسم حالياً</p>';
-            return;
-        }
-        
-        filtered.forEach(p => {
-            let statu

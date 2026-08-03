@@ -3,111 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قائمة الطعام - La Flamme</title>
-    <!-- استخدام Tailwind CSS للتصميم السريع -->
+    <title>La Flamme - القائمة الرقمية</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #121212; color: #ffffff; }
+        body { font-family: 'Tajawal', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-zinc-950 text-gray-100 min-h-screen relative">
+<body class="bg-[#0b0f19] text-gray-100 min-h-screen selection:bg-amber-500 selection:text-black">
 
-    <!-- نافذة الترحيب / المطور (تظهر أول ما يدخل الشخص) -->
-    <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-        <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl relative animate-fade-in">
-            <!-- أيقونة أو شعار مصغر -->
-            <div class="w-16 h-16 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold border border-amber-500/20">
-                <i class="fa-solid fa-utensils"></i>
+    <!-- نافذة الترحيب / حساب المطور -->
+    <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
+        <div class="bg-[#131b2e] border border-gray-800 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl relative">
+            <div class="w-16 h-16 bg-amber-500/10 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl border border-amber-500/20 shadow-inner">
+                <i class="fa-solid fa-fire-flame-curved"></i>
             </div>
-            
-            <h2 class="text-xl font-bold text-white">أهلاً بك في منيو La Flamme</h2>
-            <p class="text-xs text-gray-400 mt-2 mb-6">استعرض أشهى المأكولات والأطباق لدينا بكل سهولة.</p>
+            <h2 class="text-xl font-bold text-white tracking-wide">La Flamme Menu</h2>
+            <p class="text-xs text-gray-400 mt-1 mb-5">تصفح أشهى الأطباق والمشروبات لدينا بكل سهولة</p>
 
-            <!-- بطاقة مطور الموقع -->
-            <div class="bg-zinc-950/80 border border-zinc-800 rounded-2xl p-4 mb-6 flex items-center justify-between">
+            <div class="bg-[#0b0f19] border border-gray-800/80 rounded-2xl p-3.5 mb-5 flex items-center justify-between">
                 <div class="text-right">
-                    <span class="block text-[10px] text-gray-500 uppercase tracking-wider">مطور الموقع</span>
-                    <span class="text-sm font-semibold text-amber-400">@uv_d0</span>
+                    <span class="block text-[10px] text-gray-400 uppercase font-medium">تصميم وبرمجة</span>
+                    <span class="text-sm font-bold text-amber-400">@uv_d0</span>
                 </div>
-                <a href="https://instagram.com/uv_d0" target="_blank" class="w-10 h-10 bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg hover:scale-105 transition">
+                <a href="https://instagram.com/uv_d0" target="_blank" class="w-10 h-10 bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-md hover:scale-105 transition">
                     <i class="fa-brands fa-instagram text-lg"></i>
                 </a>
             </div>
 
-            <!-- زر دخول المنيو -->
-            <button onclick="closeModal()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold rounded-xl transition shadow-lg shadow-amber-500/25">
-                دخول إلى القائمة
+            <button onclick="closeModal()" class="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-gray-950 font-bold rounded-xl transition shadow-lg shadow-amber-500/20 text-sm">
+                الدخول إلى القائمة
             </button>
         </div>
     </div>
 
-    <!-- رأس الصفحة / شعار المطعم -->
-    <header class="py-8 text-center bg-zinc-900 border-b border-zinc-800 shadow-md">
-        <h1 class="text-3xl font-bold tracking-wider text-amber-500">LA FLAMME</h1>
-        <p class="text-sm text-gray-400 mt-1">مرحباً بكم في قائمة طعامنا المميزة</p>
+    <!-- هيدر المطعم الاحترافي -->
+    <header class="relative bg-[#131b2e] border-b border-gray-800/60 pt-8 pb-6 px-4 text-center shadow-lg">
+        <div class="w-20 h-20 bg-gray-900 border-2 border-amber-500/40 rounded-full mx-auto flex items-center justify-center shadow-xl mb-3 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=200" alt="Logo" class="w-full h-full object-cover">
+        </div>
+        <h1 class="text-2xl font-black text-white tracking-wider">LA FLAMME</h1>
+        <p class="text-xs text-amber-400/90 font-medium mt-1">مطعم وكافيه • المنيو الرقمي الرسمي</p>
     </header>
 
-    <!-- شريط التصنيفات (Categories) -->
-    <nav class="flex justify-center gap-3 p-4 overflow-x-auto bg-zinc-900/50 sticky top-0 backdrop-blur-md z-10 border-b border-zinc-800">
-        <button onclick="filterCategory('all')" class="px-5 py-2 rounded-full bg-amber-500 text-zinc-950 font-semibold text-sm transition">الكل</button>
-        <button onclick="filterCategory('meals')" class="px-5 py-2 rounded-full bg-zinc-800 text-gray-300 hover:bg-zinc-700 text-sm transition">وجبات رئيسية</button>
-        <button onclick="filterCategory('appetizers')" class="px-5 py-2 rounded-full bg-zinc-800 text-gray-300 hover:bg-zinc-700 text-sm transition">مقبلات</button>
-        <button onclick="filterCategory('drinks')" class="px-5 py-2 rounded-full bg-zinc-800 text-gray-300 hover:bg-zinc-700 text-sm transition">مشروبات</button>
+    <!-- شريط البحث السريع -->
+    <div class="max-w-2xl mx-auto px-4 mt-4">
+        <div class="relative">
+            <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400">
+                <i class="fa-solid fa-magnifying-glass text-sm"></i>
+            </span>
+            <input type="text" id="search-input" onkeyup="searchItems()" placeholder="ابحث عن وجبتك المفضلة..." class="w-full bg-[#131b2e] border border-gray-800 rounded-2xl py-3 pr-11 pl-4 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 transition shadow-inner">
+        </div>
+    </div>
+
+    <!-- شريط التصنيفات (Categories) المتحرك -->
+    <nav class="flex gap-2 p-4 overflow-x-auto hide-scrollbar max-w-2xl mx-auto sticky top-0 bg-[#0b0f19]/90 backdrop-blur-md z-10">
+        <button onclick="filterCategory('all', this)" class="category-btn px-5 py-2.5 rounded-xl bg-amber-500 text-gray-950 font-bold text-xs whitespace-nowrap transition shadow-md">الكل</button>
+        <button onclick="filterCategory('burgers', this)" class="category-btn px-5 py-2.5 rounded-xl bg-[#131b2e] border border-gray-800 text-gray-300 hover:border-gray-700 font-medium text-xs whitespace-nowrap transition">برجر لحم وفراخ</button>
+        <button onclick="filterCategory('pizza', this)" class="category-btn px-5 py-2.5 rounded-xl bg-[#131b2e] border border-gray-800 text-gray-300 hover:border-gray-700 font-medium text-xs whitespace-nowrap transition">بيتزا ومعجنات</button>
+        <button onclick="filterCategory('appetizers', this)" class="category-btn px-5 py-2.5 rounded-xl bg-[#131b2e] border border-gray-800 text-gray-300 hover:border-gray-700 font-medium text-xs whitespace-nowrap transition">مقبلات وصوصات</button>
+        <button onclick="filterCategory('drinks', this)" class="category-btn px-5 py-2.5 rounded-xl bg-[#131b2e] border border-gray-800 text-gray-300 hover:border-gray-700 font-medium text-xs whitespace-nowrap transition">مشروبات باردة</button>
     </nav>
 
-    <!-- قائمة الأطباق والأصناف -->
-    <main class="max-w-4xl mx-auto p-4 grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+    <!-- قائمة الأطباق والأصناف المطابقة للموقع الأصلي -->
+    <main class="max-w-2xl mx-auto p-4 space-y-3 pb-16" id="menu-container">
         
         <!-- عنصر 1 -->
-        <div class="menu-item meals flex bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-lg p-3 gap-4 items-center">
-            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500" alt="وجبة" class="w-24 h-24 object-cover rounded-xl">
-            <div class="flex-1">
-                <h3 class="font-bold text-lg text-amber-400">برجر لا فلام المميز</h3>
-                <p class="text-xs text-gray-400 mt-1">لحم بقرى طازج، جبنة، صوص خاص مع بطاطس مقرمشة.</p>
-                <div class="mt-3 flex justify-between items-center">
-                    <span class="text-emerald-400 font-bold text-sm">12,000 د.ع</span>
+        <div class="menu-item burgers flex bg-[#131b2e] border border-gray-800/80 hover:border-gray-700 rounded-2xl overflow-hidden p-3 gap-3.5 items-center transition shadow-md">
+            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500" alt="وجبة" class="w-24 h-24 object-cover rounded-xl flex-shrink-0">
+            <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-sm text-white truncate item-title">دبل تشيز برجر فاير</h3>
+                <p class="text-[11px] text-gray-400 mt-1 line-clamp-2">قطعتين لحم بقرى، جبنة شيدر مدخنة، صوص لا فلام الحار مع خبز البطاطس.</p>
+                <div class="mt-2.5 flex items-center justify-between">
+                    <span class="text-amber-400 font-black text-xs">12,000 د.ع</span>
+                    <span class="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-md font-semibold border border-amber-500/20">الأكثر طلباً</span>
                 </div>
             </div>
         </div>
 
         <!-- عنصر 2 -->
-        <div class="menu-item appetizers flex bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-lg p-3 gap-4 items-center">
-            <img src="https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=500" alt="مقبلات" class="w-24 h-24 object-cover rounded-xl">
-            <div class="flex-1">
-                <h3 class="font-bold text-lg text-amber-400">بطاطس مقلية بالجبنة</h3>
-                <p class="text-xs text-gray-400 mt-1">بطاطس ذهبية مقرمشة مغطاة بجبنة الشيدر السائحة.</p>
-                <div class="mt-3 flex justify-between items-center">
-                    <span class="text-emerald-400 font-bold text-sm">5,000 د.ع</span>
+        <div class="menu-item pizza flex bg-[#131b2e] border border-gray-800/80 hover:border-gray-700 rounded-2xl overflow-hidden p-3 gap-3.5 items-center transition shadow-md">
+            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500" alt="بيتزا" class="w-24 h-24 object-cover rounded-xl flex-shrink-0">
+            <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-sm text-white truncate item-title">بيتزا بيبروني مكسيكي</h3>
+                <p class="text-[11px] text-gray-400 mt-1 line-clamp-2">شرائح بيبروني مقرمشة، جبنة موتزاريلا إضافية، فلفل حار وصلصة الطماطم.</p>
+                <div class="mt-2.5 flex items-center justify-between">
+                    <span class="text-amber-400 font-black text-xs">14,000 د.ع</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- عنصر 3 -->
+        <div class="menu-item appetizers flex bg-[#131b2e] border border-gray-800/80 hover:border-gray-700 rounded-2xl overflow-hidden p-3 gap-3.5 items-center transition shadow-md">
+            <img src="https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=500" alt="مقبلات" class="w-24 h-24 object-cover rounded-xl flex-shrink-0">
+            <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-sm text-white truncate item-title">بطاطس ودجز بالجبنة</h3>
+                <p class="text-[11px] text-gray-400 mt-1 line-clamp-2">أصابع بطاطس ودجز مقرمشة مغطاة بجبنة الشيدر السائحة والهلابينو.</p>
+                <div class="mt-2.5 flex items-center justify-between">
+                    <span class="text-amber-400 font-black text-xs">6,000 د.ع</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- عنصر 4 -->
+        <div class="menu-item drinks flex bg-[#131b2e] border border-gray-800/80 hover:border-gray-700 rounded-2xl overflow-hidden p-3 gap-3.5 items-center transition shadow-md">
+            <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=500" alt="مشروب" class="w-24 h-24 object-cover rounded-xl flex-shrink-0">
+            <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-sm text-white truncate item-title">موهيتو توت ازرق</h3>
+                <p class="text-[11px] text-gray-400 mt-1 line-clamp-2">نعناع طازج، ليمون، نكهة التوت الأزرق الطبيعي ومياه غازية منعشة.</p>
+                <div class="mt-2.5 flex items-center justify-between">
+                    <span class="text-amber-400 font-black text-xs">4,500 د.ع</span>
                 </div>
             </div>
         </div>
 
     </main>
 
-    <!-- حقوق النشر وتوقيع المطور في الأسفل أيضاً -->
-    <footer class="text-center py-6 text-xs text-zinc-500 border-t border-zinc-900 mt-12 flex flex-col items-center gap-1">
+    <!-- حقوق النطور في الأسفل -->
+    <footer class="text-center py-6 text-xs text-gray-500 border-t border-gray-900 bg-[#0b0f19]">
         <p>جميع الحقوق محفوظة © 2026</p>
-        <p>تم تطوير الموقع بواسطة <a href="https://instagram.com/uv_d0" target="_blank" class="text-amber-400 font-bold hover:underline">@uv_d0</a></p>
+        <p class="mt-1">تم تصميم وبرمجة الموقع بواسطة <a href="https://instagram.com/uv_d0" target="_blank" class="text-amber-400 font-bold hover:underline">@uv_d0</a></p>
     </footer>
 
-    <!-- سكربت التحكم بنافذة الترحيب وتصفية الأقسام -->
+    <!-- الأكواد البرمجية التفاعلية -->
     <script>
         function closeModal() {
             const modal = document.getElementById('welcome-modal');
             modal.style.opacity = '0';
-            modal.style.transition = 'opacity 0.3s ease';
-            setTimeout(() => {
-                modal.style.display = 'none';
-            }, 300);
+            modal.style.transition = 'all 0.3s ease';
+            setTimeout(() => modal.style.display = 'none', 300);
         }
 
-        function filterCategory(category) {
+        function filterCategory(category, btn) {
+            document.querySelectorAll('.category-btn').forEach(b => {
+                b.classList.remove('bg-amber-500', 'text-gray-950', 'font-bold');
+                b.classList.add('bg-[#131b2e]', 'text-gray-300', 'border', 'border-gray-800');
+            });
+            btn.classList.remove('bg-[#131b2e]', 'text-gray-300', 'border', 'border-gray-800');
+            btn.classList.add('bg-amber-500', 'text-gray-950', 'font-bold');
+
             const items = document.querySelectorAll('.menu-item');
-            items.filter ? null : null;
             items.forEach(item => {
                 if (category === 'all' || item.classList.contains(category)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function searchItems() {
+            let query = document.getElementById('search-input').value.toLowerCase();
+            let items = document.querySelectorAll('.menu-item');
+            items.forEach(item => {
+                let title = item.querySelector('.item-title').textContent.toLowerCase();
+                if (title.includes(query)) {
                     item.style.display = 'flex';
                 } else {
                     item.style.display = 'none';

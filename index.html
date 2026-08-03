@@ -64,8 +64,8 @@
 </head>
 <body>
 
-<!-- نافذة الترحيب السريعة مع زر التخطي الفعال 100% -->
-<div id="welcome-modal" style="position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.95); padding: 15px;">
+<!-- نافذة الترحيب مع ربط مباشر ومبسط لزر التخطي -->
+<div id="welcome-modal" style="position: fixed; inset: 0; z-index: 999999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.96); padding: 15px;">
     <div style="position: relative; background: #0b1710; border: 2px solid #00ff66; border-radius: 20px; padding: 20px; max-width: 320px; width: 100%; text-align: center; box-shadow: 0 0 30px rgba(0,255,102,0.3);">
         
         <div style="position: relative; width: 100%; height: 130px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; border: 1px solid #132d1d; background: #000;">
@@ -87,7 +87,7 @@
             </a>
         </div>
 
-        <button type="button" onclick="closeWelcomeModal()" style="width: 100%; padding: 10px; background: #00ff66; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; font-size: 0.9rem;">
+        <button type="button" id="enterStoreBtn" style="width: 100%; padding: 12px; background: #00ff66; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; font-size: 0.95rem;">
             دخول للمتجر ⚡
         </button>
     </div>
@@ -163,12 +163,13 @@
 </div>
 
 <script>
-    function closeWelcomeModal() {
-        const modal = document.getElementById('welcome-modal');
-        if(modal) {
+    // تفعيل زر التخطي مباشرة بلغة البرمجة لضمان عمله 100%
+    document.getElementById('enterStoreBtn').addEventListener('click', function() {
+        let modal = document.getElementById('welcome-modal');
+        if (modal) {
             modal.style.display = 'none';
         }
-    }
+    });
 
     // إعدادات Firebase الخاصة بك
     const firebaseConfig = {
@@ -459,6 +460,3 @@
         grid.innerHTML = '';
 
         let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
-
-        if(filtered.length === 0) {
-            grid.innerHTML = '<p style="color:#8aa895; grid

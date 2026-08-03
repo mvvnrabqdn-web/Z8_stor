@@ -7,7 +7,6 @@
     <!-- استدعاء مكتبات Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     <!-- مكتبة الأيقونات FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -204,7 +203,6 @@
         renderAdminCatsList();
     });
 
-    // جلب وتحديث المنتجات فوراً عند أي تغيير في قاعدة البيانات
     db.ref('products').on('value', (snapshot) => {
         products = [];
         snapshot.forEach((childSnapshot) => {
@@ -459,3 +457,8 @@
     function renderProducts() {
         let grid = document.getElementById('productsGrid');
         grid.innerHTML = '';
+
+        let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
+
+        if(filtered.length === 0) {
+            gr

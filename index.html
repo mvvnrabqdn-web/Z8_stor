@@ -8,6 +8,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    <!-- مكتبة الأيقونات FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة Tailwind CSS للتصميم السريع -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
         body { background: #050b07; color: #fff; font-family: Tahoma, sans-serif; padding: 10px; margin: 0; }
@@ -40,6 +44,36 @@
 </head>
 <body>
 
+<!-- نافذة الترحيب المتحركة والفخمة تظهر أول ما يدخل الزبون -->
+<div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
+    <div class="relative bg-zinc-900 border border-purple-500/30 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl overflow-hidden">
+        
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-purple-600/20 rounded-full blur-2xl animate-pulse"></div>
+        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-600/20 rounded-full blur-2xl animate-pulse"></div>
+
+        <div class="relative w-20 h-20 bg-gradient-to-tr from-purple-600 to-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg shadow-purple-600/40 animate-bounce">
+            <i class="fa-solid fa-gamepad"></i>
+        </div>
+        
+        <h2 class="text-xl font-black text-white tracking-wide">Z8 GAMING STORE</h2>
+        <p class="text-xs text-gray-400 mt-1 mb-5">أهلاً بك، استعرض أقوى عروض شحن الألعاب.</p>
+
+        <div class="relative bg-zinc-950/80 border border-zinc-800 rounded-2xl p-3.5 mb-5 flex items-center justify-between">
+            <div class="text-right">
+                <span class="block text-[10px] text-gray-500 uppercase font-semibold">مطور الموقع</span>
+                <span class="text-sm font-bold text-purple-400">@uv_d0</span>
+            </div>
+            <a href="https://instagram.com/uv_d0" target="_blank" class="w-10 h-10 bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg hover:scale-110 transition">
+                <i class="fa-brands fa-instagram text-lg"></i>
+            </a>
+        </div>
+
+        <button onclick="closeWelcomeModal()" class="relative w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-xl transition shadow-lg shadow-purple-600/30 text-sm" style="color: #fff;">
+            دخول إلى المتجر ⚡
+        </button>
+    </div>
+</div>
+
 <div class="box" style="display: flex; justify-content: space-between; align-items: center;">
     <button onclick="toggleAdmin()">لوحة التحكم (Admin)</button>
     <div style="display: flex; align-items: center; gap: 10px;">
@@ -62,7 +96,7 @@
     <label>تغيير كلمة المرور:</label>
     <input type="password" id="confirmKey" placeholder="أدخل كلمة التأكيد">
     <input type="password" id="newPass" placeholder="كلمة المرور الجديدة">
-    <button onclick="changePass()" style="background:#f59e0b;">تغيير كلمة المرور</button>
+    <button onclick="changePass()" style="background:#f59e0b; color:#000;">تغيير كلمة المرور</button>
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
 
@@ -130,6 +164,16 @@
     let products = [];
     let currentFilter = 'الكل';
     let storeLogo = '';
+
+    // دالة إغلاق نافذة الترحيب
+    function closeWelcomeModal() {
+        const modal = document.getElementById('welcome-modal');
+        if(modal) {
+            modal.style.opacity = '0';
+            modal.style.transition = 'all 0.3s ease';
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+    }
 
     // جلب البيانات مباشرة من السحاب لتتحدث عند كل الزبائن فوراً
     db.ref('settings/adminPass').on('value', (snapshot) => {
@@ -399,10 +443,6 @@
         let grid = document.getElementById('productsGrid');
         grid.innerHTML = '';
 
-        
-        
-        
-        
         let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
 
         if(filtered.length === 0) {
@@ -424,68 +464,4 @@
                         <h4>${p.name}</h4>
                         <p style="color:#00ff66; font-weight:bold; margin:5px 0;">${p.price}</p>
                         ${statusHtml}
-                        <br><small style="color:#8aa895;">القسم: ${p.cat}</small>
-                    </div>
-            <div style="margin-top: 12px; text-align: center;">
-                <a href="https://discord.gg/z8" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; background: #5865F2; color: #fff; padding: 8px 10px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold; font-family: Tahoma, sans-serif; box-sizing: border-box;">
-                    <svg width="16" height="16" viewBox="0 0 127.14 96.36" fill="currentColor">
-                        <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6,5.4,80.21h0A105.73,105.73,0,0,0,32.79,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.81,11.1,105.25,105.25,0,0,0,27.39-16.15c8.33-27.14-3.56-50.5-5.67-54.34ZM42.45,65.69c-6.18,0-11.28-5.69-11.28-12.7s5.07-12.7,11.28-12.7c6.27,0,11.37,5.72,11.28,12.7C53.73,60,48.72,65.69,42.45,65.69Zm42.24,0c-6.18,0-11.28-5.69-11.28-12.7s5.07-12.7,11.28-12.7c6.27,0,11.37,5.72,11.28,12.7C95.96,60,91,65.69,84.69,65.69Z"/>
-                    </svg>
-                    استفسار / فتح تكت
-                </a>
-            </div>
-            
-            
-        </div>
-    </div>
-`;
-});
-}
-</sc<!-- نافذة الترحيب المتحركة والفخمة للألعاب -->
-<div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-    <div class="relative bg-zinc-900 border border-purple-500/30 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl overflow-hidden">
-        
-        <!-- خلفية نيون متحركة وخفيفة -->
-        <div class="absolute -top-10 -right-10 w-32 h-32 bg-purple-600/20 rounded-full blur-2xl animate-pulse"></div>
-        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-600/20 rounded-full blur-2xl animate-pulse"></div>
-
-        <!-- أيقونة أو صورة متحركة للألعاب -->
-        <div class="relative w-20 h-20 bg-gradient-to-tr from-purple-600 to-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg shadow-purple-600/40 animate-bounce">
-            <i class="fa-solid fa-gamepad"></i>
-        </div>
-        
-        <h2 class="text-xl font-black text-white tracking-wide">Z8 GAMING STORE</h2>
-        <p class="text-xs text-gray-400 mt-1 mb-5">أهلاً بك، استعرض أقوى عروض شحن الألعاب والحسابات.</p>
-
-        <!-- بطاقة المطور مع رابط إنستغرام الخاص بك -->
-        <div class="relative bg-zinc-950/80 border border-zinc-800 rounded-2xl p-3.5 mb-5 flex items-center justify-between">
-            <div class="text-right">
-                <span class="block text-[10px] text-gray-500 uppercase font-semibold">مطور الموقع</span>
-                <span class="text-sm font-bold text-purple-400">@uv_d0</span>
-            </div>
-            <a href="https://instagram.com/uv_d0" target="_blank" class="w-10 h-10 bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg hover:scale-110 transition">
-                <i class="fa-brands fa-instagram text-lg"></i>
-            </a>
-        </div>
-
-        <button onclick="closeWelcomeModal()" class="relative w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-xl transition shadow-lg shadow-purple-600/30 text-sm">
-            دخول إلى المتجر ⚡
-        </button>
-    </div>
-</div>
-
-<script>
-    function closeWelcomeModal() {
-        const modal = document.getElementById('welcome-modal');
-        if(modal) {
-            modal.style.opacity = '0';
-            modal.style.transition = 'all 0.3s ease';
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
-    }
-</script>
-    
-</body>
-</html>
-
-
+                        <br><small style="color:#8aa895;">القسم: ${p.cat}</small

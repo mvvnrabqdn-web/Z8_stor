@@ -64,35 +64,30 @@
 </head>
 <body>
 
-<!-- نافذة الترحيب السريعة مع زر تخطي فوري آمن -->
-<div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4">
-    <div class="relative bg-zinc-950 border-2 border-[#00ff66] rounded-3xl p-6 max-w-sm w-full text-center shadow-[0_0_30px_rgba(0,255,102,0.3)] overflow-hidden">
+<!-- نافذة الترحيب السريعة مع زر التخطي الفعال 100% -->
+<div id="welcome-modal" style="position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.95); padding: 15px;">
+    <div style="position: relative; background: #0b1710; border: 2px solid #00ff66; border-radius: 20px; padding: 20px; max-width: 320px; width: 100%; text-align: center; box-shadow: 0 0 30px rgba(0,255,102,0.3);">
         
-        <div class="relative w-full h-36 rounded-2xl overflow-hidden mb-4 border border-[#00ff66]/40 shadow-inner bg-zinc-900">
-            <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-black/40 z-10"></div>
+        <div style="position: relative; width: 100%; height: 130px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; border: 1px solid #132d1d; background: #000;">
             <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Pubg">
             <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Gaming">
             <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Store">
-            
-            <div class="absolute top-2 right-2 z-20 bg-black/70 px-2.5 py-1 rounded-lg border border-[#00ff66]/50 text-[10px] text-[#00ff66] font-bold">
-                ⚡ أقوى العروض
-            </div>
         </div>
 
-        <h2 class="text-xl font-black text-white tracking-wide drop-shadow-[0_0_10px_rgba(0,255,102,0.5)]">Z8 GAMING STORE</h2>
-        <p class="text-xs text-gray-400 mt-1 mb-4">أهلاً بك، متجرك الأول لشحن الألعاب والحسابات.</p>
+        <h2 style="font-size: 1.2rem; font-weight: bold; color: #fff; margin: 0 0 5px 0;">Z8 GAMING STORE</h2>
+        <p style="font-size: 0.8rem; color: #8aa895; margin: 0 0 15px 0;">أهلاً بك، متجرك الأول لشحن الألعاب والحسابات.</p>
 
-        <div class="relative bg-zinc-900/90 border border-[#00ff66]/30 rounded-2xl p-3 mb-4 flex items-center justify-between">
-            <div class="text-right">
-                <span class="block text-[10px] text-gray-500 uppercase font-semibold">مطور الموقع</span>
-                <span class="text-sm font-bold text-[#00ff66]">@uv_d0</span>
+        <div style="background: #050b07; border: 1px solid #132d1d; border-radius: 10px; padding: 10px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="text-align: right;">
+                <span style="display: block; font-size: 9px; color: #8aa895;">مطور الموقع</span>
+                <span style="font-size: 0.85rem; font-weight: bold; color: #00ff66;">@uv_d0</span>
             </div>
-            <a href="https://instagram.com/uv_d0" target="_blank" class="w-9 h-9 bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg hover:scale-110 transition">
-                <i class="fa-brands fa-instagram text-lg"></i>
+            <a href="https://instagram.com/uv_d0" target="_blank" style="width: 32px; height: 32px; background: linear-gradient(to top right, #f59e0b, #ec4899, #8b5cf6); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none;">
+                <i class="fa-brands fa-instagram"></i>
             </a>
         </div>
 
-        <button type="button" onclick="closeWelcomeModal()" class="w-full py-3 bg-[#00ff66] text-black font-black rounded-xl text-sm transition hover:scale-[1.02] shadow-[0_0_15px_rgba(0,255,102,0.4)] cursor-pointer">
+        <button type="button" onclick="closeWelcomeModal()" style="width: 100%; padding: 10px; background: #00ff66; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; font-size: 0.9rem;">
             دخول للمتجر ⚡
         </button>
     </div>
@@ -466,4 +461,4 @@
         let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
 
         if(filtered.length === 0) {
-            grid.innerHTML = '<p style="co
+            grid.innerHTML = '<p style="color:#8aa895; grid

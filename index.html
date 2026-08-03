@@ -64,7 +64,7 @@
 </head>
 <body>
 
-<!-- واجهة الترحيب والدخول المضافة -->
+<!-- واجهة الترحيب مع ربط مباشر ومبسط لزر التخطي -->
 <div id="welcome-modal" style="position: fixed; inset: 0; z-index: 999999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.96); padding: 15px;">
     <div style="position: relative; background: #0b1710; border: 2px solid #00ff66; border-radius: 20px; padding: 20px; max-width: 320px; width: 100%; text-align: center; box-shadow: 0 0 30px rgba(0,255,102,0.3);">
         
@@ -77,17 +77,19 @@
         <h2 style="font-size: 1.2rem; font-weight: bold; color: #fff; margin: 0 0 5px 0;">Z8 GAMING STORE</h2>
         <p style="font-size: 0.8rem; color: #8aa895; margin: 0 0 15px 0;">أهلاً بك، متجرك الأول لشحن الألعاب والحسابات.</p>
 
-        <div style="background: #050b07; border: 1px solid #132d1d; border-radius: 10px; padding: 10px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
+        <!-- تعديل اسم المطور ليكون أطوخ، أكبر، وبارز أكثر -->
+        <div style="background: #050b07; border: 1px solid #132d1d; border-radius: 10px; padding: 12px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
             <div style="text-align: right;">
-                <span style="display: block; font-size: 9px; color: #8aa895;">مطور الموقع</span>
-                <span style="font-size: 0.85rem; font-weight: bold; color: #00ff66;">@uv_d0</span>
+                <span style="display: block; font-size: 10px; color: #8aa895; font-weight: bold;">مطور الموقع</span>
+                <span style="font-size: 1.05rem; font-weight: 900; color: #00ff66; text-shadow: 0 0 8px rgba(0,255,102,0.4);">@uv_d0</span>
             </div>
-            <a href="https://instagram.com/uv_d0" target="_blank" style="width: 32px; height: 32px; background: linear-gradient(to top right, #f59e0b, #ec4899, #8b5cf6); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none;">
+            <a href="https://instagram.com/uv_d0" target="_blank" style="width: 36px; height: 36px; background: linear-gradient(to top right, #f59e0b, #ec4899, #8b5cf6); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; font-size: 1.1rem;">
                 <i class="fa-brands fa-instagram"></i>
             </a>
         </div>
 
-        <button type="button" id="enterStoreBtn" style="width: 100%; padding: 12px; background: #00ff66; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; font-size: 0.95rem;">
+        <!-- زر التخطي مع دالة onclick مباشرة تضمن عمله بنسبة 100% -->
+        <button type="button" onclick="document.getElementById('welcome-modal').style.display='none';" style="width: 100%; padding: 12px; background: #00ff66; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; font-size: 0.95rem;">
             دخول للمتجر ⚡
         </button>
     </div>
@@ -115,7 +117,7 @@
     <label>تغيير كلمة المرور:</label>
     <input type="password" id="confirmKey" placeholder="أدخل كلمة التأكيد">
     <input type="password" id="newPass" placeholder="كلمة المرور الجديدة">
-    <button onclick="changePass()" style="background:#f59e0b;">تغيير كلمة المرور</button>
+    <button onclick="changePass()" style="background:#f59e0b; color:#000;">تغيير كلمة المرور</button>
 
     <hr style="border-color: #132d1d; margin: 15px 0;">
 
@@ -163,14 +165,6 @@
 </div>
 
 <script>
-    // تفعيل زر التخطي لفتح المتجر
-    document.getElementById('enterStoreBtn').addEventListener('click', function() {
-        let modal = document.getElementById('welcome-modal');
-        if (modal) {
-            modal.style.display = 'none';
-        }
-    });
-
     // إعدادات Firebase الخاصة بك
     const firebaseConfig = {
       apiKey: "AIzaSyDUNN-QVK6-81yheeE22TiLnLsrFpjNNRD0",
@@ -192,7 +186,6 @@
     let currentFilter = 'الكل';
     let storeLogo = '';
 
-    // جلب البيانات مباشرة من السحاب لتتحدث عند كل الزبائن فوراً
     db.ref('settings/adminPass').on('value', (snapshot) => {
         if(snapshot.exists()) adminPass = snapshot.val();
     });
@@ -460,4 +453,6 @@
         let grid = document.getElementById('productsGrid');
         grid.innerHTML = '';
 
-        let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === 
+        let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
+
+        if(filter

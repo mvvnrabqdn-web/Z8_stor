@@ -86,9 +86,9 @@
             </a>
         </div>
 
-        <!-- زر الدخول -->
+        <!-- زر التخطي -->
         <button type="button" onclick="document.getElementById('welcome-modal').style.display='none';" style="width: 100%; padding: 12px; background: #00ff66; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; border: none; font-size: 0.95rem;">
-            دخول للمتجر ⚡
+            تخطي ⚡
         </button>
     </div>
 </div>
@@ -150,7 +150,7 @@
 <!-- الأقسام الفلاتر -->
 <div class="filters" id="filtersContainer"></div>
 
-<!-- المنتجات (تم إرجاعها بالكامل) -->
+<!-- المنتجات -->
 <div class="box">
     <h3>المنتجات المعروضة</h3>
     <div class="grid" id="productsGrid"></div>
@@ -457,4 +457,5 @@
             return;
         }
         
-        filtered.forEach(
+        filtered.forEach(p => {
+            let statu

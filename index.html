@@ -41,7 +41,6 @@
         .modal img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid #00ff66; }
         .close-modal { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 30px; cursor: pointer; background: #ef4444; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
-        /* ستايل سلايدر الصور المتحركة للألعاب */
         @keyframes slideShow {
             0% { opacity: 0; transform: scale(1.05); }
             20% { opacity: 1; transform: scale(1); }
@@ -65,11 +64,11 @@
 </head>
 <body>
 
-<!-- نافذة الترحيب المتحركة بالأخضر المشع مع العداد التنازلي المباشر -->
-<div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 transition-opacity duration-500">
+<!-- نافذة الترحيب المتحركة مع عداد مضمون 100% وزر تخطي تفاعلي -->
+<div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4">
     <div class="relative bg-zinc-950 border-2 border-[#00ff66] rounded-3xl p-6 max-w-sm w-full text-center shadow-[0_0_30px_rgba(0,255,102,0.3)] overflow-hidden">
         
-        <!-- خلفية سلايدر صور الألعاب المتحركة -->
+        <!-- خلفية سلايدر صور الألعاب -->
         <div class="relative w-full h-36 rounded-2xl overflow-hidden mb-4 border border-[#00ff66]/40 shadow-inner bg-zinc-900">
             <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-black/40 z-10"></div>
             <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&auto=format&fit=crop&q=60" class="slide-img" alt="Pubg">
@@ -95,13 +94,13 @@
             </a>
         </div>
 
-        <!-- العداد التنازلي المباشر -->
+        <!-- العداد التنازلي -->
         <div class="w-full py-2.5 bg-zinc-900 border border-[#00ff66]/30 text-[#00ff66] font-bold rounded-xl text-xs shadow-inner mb-2">
             جاري فتح المتجر تلقائياً خلال (<span id="countdown">10</span>) ثوانٍ...
         </div>
 
-        <!-- زر تخطي اختياري احتياطي -->
-        <button onclick="closeWelcomeModal()" class="w-full py-2 bg-zinc-800 text-gray-300 hover:bg-zinc-700 font-bold rounded-xl text-xs transition border border-zinc-700">
+        <!-- زر تخطي يعمل بضغطة مباشرة ومضمونة -->
+        <button type="button" onclick="forceCloseModal()" class="w-full py-2.5 bg-zinc-800 text-gray-200 hover:bg-zinc-700 font-bold rounded-xl text-xs transition border border-zinc-600 cursor-pointer">
             تخطي الدخول فوراً ⚡
         </button>
     </div>
@@ -177,25 +176,28 @@
 </div>
 
 <script>
-    // تشغيل العداد الفوري المباشر بمعزل عن أي أحداث ثقيلة
+    // عداد تنازلي مضمون ومستقل تماماً باستخدام setTimeout المتداخل لتفادي تجميد المتصفح
     let timeLeft = 10;
     const countSpan = document.getElementById('countdown');
-    
-    const countdownTimer = setInterval(() => {
-        timeLeft--;
-        if (countSpan) countSpan.innerText = timeLeft;
+    const welcomeModal = document.getElementById('welcome-modal');
 
-        if (timeLeft <= 0) {
-            clearInterval(countdownTimer);
-            closeWelcomeModal();
+    function updateTimer() {
+        if (timeLeft > 0) {
+            timeLeft--;
+            if (countSpan) countSpan.innerText = timeLeft;
+            setTimeout(updateTimer, 1000);
+        } else {
+            forceCloseModal();
         }
-    }, 1000);
+    }
 
-    function closeWelcomeModal() {
-        const modal = document.getElementById('welcome-modal');
-        if(modal && modal.style.display !== 'none') {
-            modal.style.opacity = '0';
-            setTimeout(() => modal.style.display = 'none', 400);
+    // بدء العد بعد جزء من الثانية لضمان تحميل عناصر الـ DOM بالكامل على الجوال
+    setTimeout(updateTimer, 1000);
+
+    // دالة تخطي فورية وقاطعة لإغلاق النافذة بنقرة واحدة
+    function forceCloseModal() {
+        if (welcomeModal) {
+            welcomeModal.style.display = 'none';
         }
     }
 
@@ -220,7 +222,6 @@
     let currentFilter = 'الكل';
     let storeLogo = '';
 
-    // جلب البيانات من السحاب
     db.ref('settings/adminPass').on('value', (snapshot) => {
         if(snapshot.exists()) adminPass = snapshot.val();
     });
@@ -466,5 +467,4 @@
         listContainer.innerHTML = '';
 
         if(products.length === 0) {
-            listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد منتجات حالياً</div>';
-            retu
+            listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد منتجات حالياً</div>'

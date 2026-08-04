@@ -3,174 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Flamme - Digital Menu</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <title>LA FLAMME - Restaurant & Cafe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Tajawal', sans-serif; background-color: #0c0f17; color: #f3f4f6; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            font-family: 'Cairo', sans-serif;
+            overflow-x: hidden;
+            background-color: #0c0c0c;
+            color: #fff;
+        }
+        .hero-container {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1000&auto=format&fit=crop') no-repeat center center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .brand-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .logo-icon {
+            font-size: 45px;
+            color: #ff4757;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 10px rgba(255, 71, 87, 0.5));
+        }
+        .brand-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 38px;
+            letter-spacing: 4px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+        .brand-subtitle {
+            font-size: 14px;
+            letter-spacing: 6px;
+            color: #dcdde1;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
+
+        .lang-container {
+            width: 100%;
+            max-width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: auto 0;
+        }
+        .lang-btn {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+        .lang-btn:hover {
+            background: rgba(255, 71, 87, 0.9);
+            border-color: #ff4757;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255, 71, 87, 0.4);
+        }
+
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+        }
+        .social-icons {
+            display: flex;
+            gap: 20px;
+        }
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .social-icon:hover {
+            background: #fff;
+            color: #000;
+            transform: scale(1.1);
+        }
+
+        .developer-credit {
+            font-size: 13px;
+            color: rgba(255, 255, 25, 0.7);
+            letter-spacing: 1px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 10px;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+            color: rgba(255, 25, 255, 0.8);
+        }
+        .developer-credit span {
+            color: #ff4757;
+            font-weight: 700;
+        }
     </style>
 </head>
-<body class="bg-[#0c0f17] text-gray-100 min-h-screen selection:bg-amber-500 selection:text-black">
+<body>
 
-    <!-- نافذة الترحيب وحساب المطور -->
-    <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-        <div class="bg-[#141a29] border border-gray-800/80 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl relative">
-            <div class="w-16 h-16 bg-amber-500/10 text-amber-400 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl border border-amber-500/20 shadow-inner">
-                <i class="fa-solid fa-utensils"></i>
+    <div class="hero-container">
+        <div class="brand-section">
+            <div class="logo-icon">
+                <i class="fa-solid fa-fire-flame-curved"></i>
             </div>
-            <h2 class="text-xl font-bold text-white tracking-wide">منيو La Flamme الرقمي</h2>
-            <p class="text-xs text-gray-400 mt-1 mb-5">تصفح أشهى الأطباق وطلبك المفضل بكل سهولة</p>
+            <h1 class="brand-title">LA FLAMME</h1>
+            <p class="brand-subtitle">Restaurant & Cafe</p>
+        </div>
 
-            <div class="bg-[#0c0f17] border border-gray-800 rounded-2xl p-3.5 mb-5 flex items-center justify-between">
-                <div class="text-right">
-                    <span class="block text-[10px] text-gray-400 uppercase font-medium">مطور الموقع</span>
-                    <span class="text-sm font-bold text-amber-400">@uv_d0</span>
-                </div>
-                <a href="https://instagram.com/uv_d0" target="_blank" class="w-10 h-10 bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-md hover:scale-105 transition">
-                    <i class="fa-brands fa-instagram text-lg"></i>
-                </a>
+        <!-- أزرار اللغات (استبدل # برابط صفحة كل لغة لديك) -->
+        <div class="lang-container">
+            <button class="lang-btn" onclick="changeLanguage('en')">English</button>
+            <button class="lang-btn" onclick="changeLanguage('tr')">Turkish</button>
+            <button class="lang-btn" onclick="changeLanguage('ar')">العربية</button>
+        </div>
+
+        <div class="footer-section">
+            <div class="social-icons">
+                <a href="https://instagram.com" target="_blank" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://facebook.com" target="_blank" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="https://maps.google.com" target="_blank" class="social-icon"><i class="fa-solid fa-location-dot"></i></a>
+                <a href="tel:+9640000000000" class="social-icon"><i class="fa-solid fa-phone"></i></a>
             </div>
-
-            <button onclick="closeModal()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-gray-950 font-bold rounded-xl transition shadow-lg shadow-amber-500/20 text-sm">
-                استعراض القائمة
-            </button>
+            <div class="developer-credit">
+                Designed & Developed by <span>uv_d0</span>
+            </div>
         </div>
     </div>
 
-    <!-- رأس الصفحة والشعار -->
-    <header class="relative bg-[#141a29] border-b border-gray-800/65 py-6 px-4 text-center shadow-md">
-        <div class="w-20 h-20 bg-gray-900 border-2 border-amber-500/40 rounded-full mx-auto flex items-center justify-center shadow-xl mb-3 overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=200" alt="Logo" class="w-full h-full object-cover">
-        </div>
-        <h1 class="text-2xl font-black text-white tracking-wider">LA FLAMME</h1>
-        <p class="text-xs text-amber-400 font-medium mt-1">مطعم وكافيه • القائمة الرسمية</p>
-    </header>
-
-    <!-- شريط البحث السريع -->
-    <div class="max-w-xl mx-auto px-4 mt-4">
-        <div class="relative">
-            <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400">
-                <i class="fa-solid fa-magnifying-glass text-sm"></i>
-            </span>
-            <input type="text" id="search-input" onkeyup="searchItems()" placeholder="ابحث في القائمة..." class="w-full bg-[#141a29] border border-gray-800 rounded-2xl py-3 pr-11 pl-4 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 transition shadow-inner">
-        </div>
-    </div>
-
-    <!-- شريط التصنيفات المتحرك -->
-    <nav class="flex gap-2 p-4 overflow-x-auto no-scrollbar max-w-xl mx-auto sticky top-0 bg-[#0c0f17]/90 backdrop-blur-md z-10">
-        <button onclick="filterCategory('all', this)" class="cat-btn px-4 py-2 rounded-xl bg-amber-500 text-gray-950 font-bold text-xs whitespace-nowrap transition shadow-md">الكل</button>
-        <button onclick="filterCategory('burgers', this)" class="cat-btn px-4 py-2 rounded-xl bg-[#141a29] border border-gray-800 text-gray-300 hover:border-gray-700 font-medium text-xs whitespace-nowrap transition">البرجر</button>
-        <button onclick="filterCategory('pizza', this)" class="cat-btn px-4 py-2 rounded-xl bg-[#141a29] border border-gray-800 text-gray-300 hover:border-gray-700 font-medium text-xs whitespace-nowrap transition">البيتزا</button>
-        <button onclick="filterCategory('appetizers', this)" class="cat-btn px-4 py-2 rounded-xl bg-[#141a29] border border-gray-800 text-gray-300 hover:border-gray-700 font-medium text-xs whitespace-nowrap transition">المقبلات</button>
-        <button onclick="filterCategory('drinks', this)" class="cat-btn px-4 py-2 rounded-xl bg-[#141a29] border border-gray-800 text-gray-300 hover:border-gray-700 font-medium text-xs whitespace-nowrap transition">المشروبات</button>
-    </nav>
-
-    <!-- قائمة الوجبات والأطباق -->
-    <main class="max-w-xl mx-auto p-4 space-y-3 pb-16" id="menu-list">
-        <div class="menu-item burgers flex bg-[#141a29] border border-gray-800 hover:border-gray-700 rounded-2xl overflow-hidden p-3 gap-3.5 items-center transition shadow-md cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500" alt="Burger" class="w-24 h-24 object-cover rounded-xl flex-shrink-0">
-            <div class="flex-1 min-w-0">
-                <h3 class="font-bold text-sm text-white truncate item-title">دبل كلاسيك برجر</h3>
-                <p class="text-[11px] text-gray-400 mt-1 line-clamp-2">قطعتين لحم بقرى طازج، جبنة شيدر، صوص لا فلام الخاص وخس طازج.</p>
-                <div class="mt-2.5 flex items-center justify-between">
-                    <span class="text-amber-400 font-black text-xs">11,500 د.ع</span>
-                    <span class="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-md font-semibold border border-amber-500/20">الأكثر طلباً</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-item burgers flex bg-[#141a29] border border-gray-800 hover:border-gray-700 rounded-2xl overflow-hidden p-3 gap-3.5 items-center transition shadow-md cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=500" alt="Burger" class="w-24 h-24 object-cover rounded-xl flex-shrink-0">
-            <div class="flex-1 min-w-0">
-                <h3 class="font-bold text-sm text-white truncate item-title">كريسبي تشيكن برجر</h3>
-                <p class="text-[11px] text-gray-400 mt-1 line-clamp-2">صدر دجاج مقرمش حار، جبنة سويسرية، صوص الرانچ وخس.</p>
-                <div class="mt-2.5 flex items-center justify-between">
-                    <span class="text-amber-400 font-black text-xs">10,000 د.ع</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-item pizza flex bg-[#141a29] border border-gray-800 hover:border-gray-700 rounded-2xl overflow-hidden p-3 gap-3.5 items-center transition shadow-md cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500" alt="Pizza" class="w-24 h-24 object-cover rounded-xl flex-shrink-0">
-            <div class="flex-1 min-w-0">
-                <h3 class="font-bold text-sm text-white truncate item-title">بيتزا بيبروني مميزة</h3>
-                <p class="text-[11px] text-gray-400 mt-1 line-clamp-2">شرائح بيبروني إيطالي، جبنة موتزاريلا دوبل، صلصة طماطم أصلية.</p>
-                <div class="mt-2.5 flex items-center justify-between">
-                    <span class="text-amber-400 font-black text-xs">13,000 د.ع</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-item appetizers flex bg-[#141a29] border border-gray-800 hover:border-gray-700 rounded-2xl overflow-hidden p-3 gap-3.5 items-center transition shadow-md cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=500" alt="Fries" class="w-24 h-24 object-cover rounded-xl flex-shrink-0">
-            <div class="flex-1 min-w-0">
-                <h3 class="font-bold text-sm text-white truncate item-title">بطاطس مقلية بالجبنة والبيكن</h3>
-                <p class="text-[11px] text-gray-400 mt-1 line-clamp-2">بطاطس ذهبية مقرمشة مغطاة بجبنة شيدر سائلة وقطع بيكن مقرمش.</p>
-                <div class="mt-2.5 flex items-center justify-between">
-                    <span class="text-amber-400 font-black text-xs">5,500 د.ع</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu-item drinks flex bg-[#141a29] border border-gray-800 hover:border-gray-700 rounded-2xl overflow-hidden p-3 gap-3.5 items-center transition shadow-md cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=500" alt="Mojito" class="w-24 h-24 object-cover rounded-xl flex-shrink-0">
-            <div class="flex-1 min-w-0">
-                <h3 class="font-bold text-sm text-white truncate item-title">موهيتو فراولة منعش</h3>
-                <p class="text-[11px] text-gray-400 mt-1 line-clamp-2">فراولة طازجة، نعناع، ليمون، ومشروب غازي مثلج.</p>
-                <div class="mt-2.5 flex items-center justify-between">
-                    <span class="text-amber-400 font-black text-xs">4,500 د.ع</span>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- الفوتر وحقوق المطور -->
-    <footer class="text-center py-6 text-xs text-gray-500 border-t border-gray-900 bg-[#0c0f17]">
-        <p>جميع الحقوق محفوظة © 2026</p>
-        <p class="mt-1">تصميم وتطوير بواسطة <a href="https://instagram.com/uv_d0" target="_blank" class="text-amber-400 font-bold hover:underline">@uv_d0</a></p>
-    </footer>
-
-    <!-- سكربتات التفاعل والبحث والتصنيف -->
     <script>
-        function closeModal() {
-            const modal = document.getElementById('welcome-modal');
-            modal.style.opacity = '0';
-            modal.style.transition = 'all 0.3s ease';
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
-
-        function filterCategory(category, btn) {
-            document.querySelectorAll('.cat-btn').forEach(b => {
-                b.classList.remove('bg-amber-500', 'text-gray-950', 'font-bold');
-                b.classList.add('bg-[#141a29]', 'text-gray-300', 'border', 'border-gray-800');
-            });
-            btn.classList.remove('bg-[#141a29]', 'text-gray-300', 'border', 'border-gray-800');
-            btn.classList.add('bg-amber-500', 'text-gray-950', 'font-bold');
-
-            const items = document.querySelectorAll('.menu-item');
-            items.forEach(item => {
-                if (category === 'all' || item.classList.contains(category)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        function searchItems() {
-            let query = document.getElementById('search-input').value.toLowerCase();
-            let items = document.querySelectorAll('.menu-item');
-            items.forEach(item => {
-                let title = item.querySelector('.item-title').textContent.toLowerCase();
-                if (title.includes(query)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+        function changeLanguage(lang) {
+            // يمكنك هنا توجيه المستخدم لملف المنيو الخاص باللغة المطلوبة
+            // مثال: window.location.href = 'menu-' + lang + '.html';
+            alert('تم اختيار اللغة: ' + lang);
         }
     </script>
 </body>

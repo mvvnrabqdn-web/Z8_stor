@@ -10,31 +10,32 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
     <style>
-        body { background: #050b07; color: #fff; font-family: Tahoma, sans-serif; padding: 10px; margin: 0; }
-        .box { background: #0b1710; border: 1px solid #132d1d; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
-        button { background: #00ff66; color: #000; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
-        input, select { width: 100%; padding: 8px; margin: 5px 0 10px 0; background: #050b07; border: 1px solid #132d1d; color: #fff; border-radius: 5px; box-sizing: border-box; }
+        body { background: #0f172a; color: #fff; font-family: Tahoma, sans-serif; padding: 10px; margin: 0; }
+        .box { background: #1e293b; border: 1px solid #334155; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+        button { background: #3a6ef5; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button:hover { background: #00d2ff; color: #000; }
+        input, select { width: 100%; padding: 8px; margin: 5px 0 10px 0; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 5px; box-sizing: border-box; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
-        .card { background: #050b07; border: 1px solid #132d1d; padding: 10px; border-radius: 8px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
+        .card { background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 8px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
         .card img { width: 100%; height: 120px; object-fit: cover; border-radius: 5px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
         .card img:hover { opacity: 0.8; }
         .admin-panel { display: none; }
-        .logo-circle { width: 45px; height: 45px; border: 2px solid #00ff66; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; }
+        .logo-circle { width: 45px; height: 45px; border: 2px solid #00d2ff; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; }
         .logo-circle img { width: 100%; height: 100%; object-fit: cover; }
         .filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px; }
-        .filter-btn { background: #0b1710; color: #8aa895; border: 1px solid #132d1d; padding: 6px 12px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
-        .filter-btn.active { background: #00ff66; color: #000; font-weight: bold; }
+        .filter-btn { background: #1e293b; color: #94a3b8; border: 1px solid #334155; padding: 6px 12px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
+        .filter-btn.active { background: #3a6ef5; color: #fff; font-weight: bold; }
         .del-btn { background: #ef4444; color: #fff; padding: 5px 10px; font-size: 0.8rem; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; }
         .status-toggle-btn { background: #3b82f6; color: #fff; padding: 5px 10px; font-size: 0.8rem; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; margin-left: 5px; }
         .status-badge { display: inline-block; padding: 4px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; margin-bottom: 8px; }
-        .status-available { background: rgba(0, 255, 102, 0.2); color: #00ff66; border: 1px solid #00ff66; }
+        .status-available { background: rgba(0, 210, 255, 0.2); color: #00d2ff; border: 1px solid #00d2ff; }
         .status-busy { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
         
-        .admin-manage-list { max-height: 180px; overflow-y: auto; background: #050b07; border: 1px solid #132d1d; padding: 10px; border-radius: 5px; margin-top: 10px; }
-        .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #132d1d; font-size: 0.85rem; }
+        .admin-manage-list { max-height: 180px; overflow-y: auto; background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 5px; margin-top: 10px; }
+        .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #334155; font-size: 0.85rem; }
 
         .modal { display: none; position: fixed; z-index: 999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
-        .modal img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid #00ff66; }
+        .modal img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid #00d2ff; }
         .close-modal { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 30px; cursor: pointer; background: #ef4444; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
@@ -45,7 +46,7 @@
     <div style="display: flex; align-items: center; gap: 10px;">
         <h2>Z8 Store</h2>
         <div class="logo-circle" id="logoContainer">
-            <span style="font-size: 10px; color: #00ff66;">Z8</span>
+            <span style="font-size: 10px; color: #00d2ff;">Z8</span>
         </div>
     </div>
 </div>
@@ -57,14 +58,14 @@
     <label>إضافة شعار للمتجر (من الألبوم):</label>
     <input type="file" id="logoImage" accept="image/*" onchange="updateLogo()">
 
-    <hr style="border-color: #132d1d; margin: 15px 0;">
+    <hr style="border-color: #334155; margin: 15px 0;">
 
     <label>تغيير كلمة المرور:</label>
     <input type="password" id="confirmKey" placeholder="أدخل كلمة التأكيد">
     <input type="password" id="newPass" placeholder="كلمة المرور الجديدة">
-    <button onclick="changePass()" style="background:#f59e0b;">تغيير كلمة المرور</button>
+    <button onclick="changePass()" style="background:#f59e0b; color:#000;">تغيير كلمة المرور</button>
 
-    <hr style="border-color: #132d1d; margin: 15px 0;">
+    <hr style="border-color: #334155; margin: 15px 0;">
 
     <label>إضافة قسم جديد:</label>
     <input type="text" id="catName" placeholder="اسم القسم الجديد...">
@@ -73,7 +74,7 @@
     <label>🗑️ إدارة ومسح الأقسام:</label>
     <div class="admin-manage-list" id="adminCatsList"></div>
 
-    <hr style="border-color: #132d1d; margin: 15px 0;">
+    <hr style="border-color: #334155; margin: 15px 0;">
 
     <label>إضافة منتج جديد:</label>
     <input type="text" id="pName" placeholder="اسم المنتج">
@@ -89,7 +90,7 @@
     <input type="file" id="pImage" accept="image/*">
     <button onclick="addProduct()">حفظ ونشر المنتج</button>
 
-    <hr style="border-color: #132d1d; margin: 15px 0;">
+    <hr style="border-color: #334155; margin: 15px 0;">
     <label>📦 إدارة المنتجات (الحذف وتغيير الحالة):</label>
     <div class="admin-manage-list" id="adminManageList"></div>
 </div>
@@ -357,7 +358,7 @@
 
         let subCats = categories.filter(c => c.name !== 'الكل');
         if(subCats.length === 0) {
-            listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد أقسام مضافة حالياً</div>';
+            listContainer.innerHTML = '<div style="color:#94a3b8; text-align:center; font-size:0.8rem;">لا توجد أقسام مضافة حالياً</div>';
             return;
         }
 
@@ -377,7 +378,7 @@
         listContainer.innerHTML = '';
 
         if(products.length === 0) {
-            listContainer.innerHTML = '<div style="color:#8aa895; text-align:center; font-size:0.8rem;">لا توجد منتجات حالياً</div>';
+            listContainer.innerHTML = '<div style="color:#94a3b8; text-align:center; font-size:0.8rem;">لا توجد منتجات حالياً</div>';
             return;
         }
 
@@ -385,7 +386,7 @@
             let statusText = p.status === 'available' ? '🟢 متوفر' : '🔴 غير متوفر';
             listContainer.innerHTML += `
                 <div class="admin-item-row">
-                    <span><b>${p.name}</b><br><small style="color:#8aa895;">${statusText}</small></span>
+                    <span><b>${p.name}</b><br><small style="color:#94a3b8;">${statusText}</small></span>
                     <div>
                         <button class="status-toggle-btn" onclick="toggleProductStatus('${p.firebaseKey}', '${p.status}')">تبديل الحالة</button>
                         <button class="del-btn" onclick="deleteProduct('${p.firebaseKey}')">حذف</button>
@@ -399,14 +400,10 @@
         let grid = document.getElementById('productsGrid');
         grid.innerHTML = '';
 
-        
-        
-        
-        
         let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
 
         if(filtered.length === 0) {
-            grid.innerHTML = '<p style="color:#8aa895; grid-column:1/-1; text-align:center;">لا توجد منتجات في هذا القسم حالياً</p>';
+            grid.innerHTML = '<p style="color:#94a3b8; grid-column:1/-1; text-align:center;">لا توجد منتجات في هذا القسم حالياً</p>';
             return;
         }
         
@@ -422,9 +419,9 @@
                     <div>
                         ${imgHtml}
                         <h4>${p.name}</h4>
-                        <p style="color:#00ff66; font-weight:bold; margin:5px 0;">${p.price}</p>
+                        <p style="color:#00d2ff; font-weight:bold; margin:5px 0;">${p.price}</p>
                         ${statusHtml}
-                        <br><small style="color:#8aa895;">القسم: ${p.cat}</small>
+                        <br><small style="color:#94a3b8;">القسم: ${p.cat}</small>
                     </div>
             <div style="margin-top: 12px; text-align: center;">
                 <a href="https://discord.gg/z8" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; background: #5865F2; color: #fff; padding: 8px 10px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold; font-family: Tahoma, sans-serif; box-sizing: border-box;">
@@ -434,8 +431,6 @@
                     استفسار / فتح تكت
                 </a>
             </div>
-            
-            
         </div>
     </div>
 `;
@@ -444,5 +439,3 @@
 </script>
 </body>
 </html>
-
-

@@ -1,6 +1,7 @@
 from instapy import InstaPy
 from instapy import smart_run
 
+# بيانات الدخول
 session = InstaPy(username="your_username", password="your_password")
 
 with smart_run(session):
@@ -16,11 +17,8 @@ with smart_run(session):
         "💯 محتوى قيم"
     ])
     
-    # التعليق على ريلزات هاشتاغ معين
+    # التفاعل مع هاشتاغات معينة (إعجاب + تعليق)
     session.like_by_tags(["photography", "nature"], amount=10)
     
-    # أو التعليق على ريلزات حساب محدد
-    # session.set_do_comment(True, percentage=100)
-    # session.set_comments(COMMENTS_LIST)
-    # session.set_do_follow(True, percentage=30)
+    # (اختياري) التفاعل مع حساب محدد
     # session.interact_by_users(["target_username"], amount=5, randomize=True)

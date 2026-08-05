@@ -1,102 +1,26 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أكواد خصم حقيقية – من السيرفر المباشر</title>
-    <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Segoe UI',Tahoma,sans-serif; background:#f5f5f5; direction:rtl; }
-        .header { background:linear-gradient(135deg,#d32f2f,#b71c1c); color:#fff; padding:20px; text-align:center; }
-        .header h1 { font-size:2em; }
-        .container { max-width:900px; margin:30px auto; padding:0 15px; }
-        .card { background:#fff; border-radius:16px; padding:25px; margin-bottom:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
-        .card h2 { margin-bottom:20px; color:#b71c1c; display:flex; align-items:center; gap:10px; }
-        .code-row { display:flex; align-items:center; background:#f9f9f9; border-radius:10px; padding:15px; margin-bottom:10px; border:1px solid #eee; }
-        .code-info { flex:1; }
-        .code-store { font-weight:bold; font-size:1.2em; }
-        .code-discount { color:#2e7d32; margin-top:5px; }
-        .code-value { background:#333; color:#ffd700; padding:10px 15px; border-radius:8px; font-family:monospace; font-size:1.2em; cursor:pointer; margin:0 15px; }
-        .btn { padding:10px 20px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; color:#fff; }
-        .btn-copy { background:#d32f2f; }
-        .btn-use { background:#0d47a1; }
-        .loader { text-align:center; padding:20px; display:none; }
-        .loader.active { display:block; }
-        .error { color:red; text-align:center; }
-        .refresh-btn { background:#ff9800; color:#000; padding:12px 30px; border-radius:25px; cursor:pointer; font-weight:bold; display:block; margin:20px auto 0; }
-        .footer { text-align:center; margin-top:40px; color:#777; }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>🎫 أكواد خصم حقيقية – محدثة تلقائياً</h1>
-        <p>يتم جلب الأكواد من سيرفر مباشر – صالحة للاستخدام</p>
-    </div>
+from instapy import InstaPy
+from instapy import smart_run
 
-    <div class="container">
-        <div class="card">
-            <h2>🔄 أكواد الخصم المتاحة الآن</h2>
-            <div class="loader" id="loader">⏳ جاري جلب الأكواد من السيرفر...</div>
-            <div id="codesContainer"></div>
-            <button class="refresh-btn" onclick="fetchCodes()">🔄 تحديث الأكواد من السيرفر</button>
-        </div>
-    </div>
-    <div class="footer">📌 الأكواد تُجلب من ملف محدث باستمرار – استخدمها مباشرة في المتاجر</div>
+session = InstaPy(username="your_username", password="your_password")
 
-    <script>
-        // رابط ملف JSON الحي (تستطيع تغييره إلى رابط ملفك الخاص)
-        const CODES_URL = "https://gist.githubusercontent.com/your-username/your-gist-id/raw/codes.json";
-
-        async function fetchCodes() {
-            const loader = document.getElementById('loader');
-            const container = document.getElementById('codesContainer');
-            loader.classList.add('active');
-            container.innerHTML = '';
-
-            try {
-                const response = await fetch(CODES_URL);
-                if (!response.ok) throw new Error("تعذر الاتصال بالسيرفر");
-                const data = await response.json();
-                displayCodes(data.codes);
-            } catch (error) {
-                container.innerHTML = '<p class="error">⚠️ فشل جلب الأكواد. تأكد من اتصالك أو أن الملف متاح.</p>';
-            } finally {
-                loader.classList.remove('active');
-            }
-        }
-
-        function displayCodes(codes) {
-            const container = document.getElementById('codesContainer');
-            if (!codes || codes.length === 0) {
-                container.innerHTML = '<p>لا توجد أكواد حالياً.</p>';
-                return;
-            }
-            container.innerHTML = codes.map(code => `
-                <div class="code-row">
-                    <div class="code-info">
-                        <div class="code-store">${code.store}</div>
-                        <div class="code-discount">${code.discount} – ${code.description}</div>
-                        <small style="color:#666;">تنتهي: ${code.expiry}</small>
-                    </div>
-                    <div class="code-value" onclick="copyCode('${code.code}')" title="اضغط للنسخ">${code.code}</div>
-                    <button class="btn btn-use" onclick="useCode('${code.link}', '${code.code}')">🛒 استخدم الكود</button>
-                </div>
-            `).join('');
-        }
-
-        function copyCode(code) {
-            navigator.clipboard.writeText(code).then(() => {
-                alert('تم نسخ الكود: ' + code);
-            });
-        }
-
-        function useCode(link, code) {
-            window.open(link, '_blank');
-            copyCode(code);
-        }
-
-        // تحميل الأكواد تلقائياً عند فتح الصفحة
-        window.addEventListener('load', fetchCodes);
-    </script>
-</body>
-</html>
+with smart_run(session):
+    # تفعيل التعليق بنسبة 100%
+    session.set_do_comment(True, percentage=100)
+    
+    # قائمة التعليقات العشوائية
+    session.set_comments([
+        "🔥 ريلز رائع!",
+        "❤️ تحفة فنية",
+        "😍 إبداع بكل معنى الكلمة",
+        "🚀 يستحق المشاهدة",
+        "💯 محتوى قيم"
+    ])
+    
+    # التعليق على ريلزات هاشتاغ معين
+    session.like_by_tags(["photography", "nature"], amount=10)
+    
+    # أو التعليق على ريلزات حساب محدد
+    # session.set_do_comment(True, percentage=100)
+    # session.set_comments(COMMENTS_LIST)
+    # session.set_do_follow(True, percentage=30)
+    # session.interact_by_users(["target_username"], amount=5, randomize=True)

@@ -19,7 +19,7 @@ bot_thread = None
 stop_flag = False
 username = password = comment_text = target_hashtag = ""
 
-# ===== واجهة الموقع (نظيفة وبسيطة) =====
+# ===== واجهة الموقع (مضبوطة 100%) =====
 HTML_PAGE = """
 <!DOCTYPE html>
 <html>
@@ -65,48 +65,37 @@ setInterval(updateStatus,2000);updateStatus();
 </html>
 """
 
-# ===== منطق البوت (مرتب ومضمون) =====
+# ===== منطق البوت =====
 def run_bot():
     global bot_status, stop_flag, username, password, comment_text, target_hashtag
     driver = None
     try:
         bot_status = "🔄 تهيئة المتصفح..."
-        
-        # إعدادات Chrome
         options = Options()
         options.add_argument("--start-maximized")
         options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('useAutomationExtension', False)
-        
-        # تشغيل المتصفح
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=options)
         driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
-        # 1. تسجيل الدخول
         bot_status = "🔓 جاري تسجيل الدخول..."
         driver.get("https://www.instagram.com/accounts/login/")
         time.sleep(3)
-        
         WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.NAME, "username"))).send_keys(username)
         driver.find_element(By.NAME, "password").send_keys(password + Keys.RETURN)
         time.sleep(5)
-        
-        # تخطي "حفظ المعلومات"
         try:
             not_now = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, "//div[contains(text(),'ليس الآن')]")))
             not_now.click()
             time.sleep(2)
         except: pass
 
-        # 2. الدخول للريلز
         bot_status = f"🔍 جاري البحث عن #{
   target_hashtag}..."
         driver.get(f"https://www.instagram.com/explore/tags/{target_hashtag}/")
         time.sleep(4)
-        
-        # النقر على أول ريلز
         try:
             first_reel = WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, "//div[@class='_aagv']//a[contains(@href, '/reel/')]")))
             first_reel.click()
@@ -116,14 +105,11 @@ def run_bot():
   target_hashtag}"
             return
 
-        # 3. الحلقة الرئيسية
         counter = 0
         while not stop_flag:
             counter += 1
             bot_status = f"🔄 جولة {counter}..."
-            
             try:
-                # --- إعجاب ---
                 try:
                     like_btn = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, "//*[local-name()='svg' and @aria-label='إعجاب']")))
                     like_btn.click()
@@ -131,38 +117,28 @@ def run_bot():
                     bot_status = f"❤️ جولة {counter}: تم الإعجاب!"
                 except:
                     bot_status = f"⚠️ جولة {counter}: ماعجبته (مكرر)"
-                
-                # --- تعليق ---
                 try:
                     comment_input = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//textarea[@placeholder='أضف تعليقًا...']")))
                     comment_input.click()
                     time.sleep(1)
                     comment_input.send_keys(comment_text)
                     time.sleep(1)
-                    
-                    # زر النشر
                     post_btn = driver.find_element(By.XPATH, "//div[contains(text(),'نشر')]")
                     post_btn.click()
                     bot_status = f"💬 جولة {counter}: تم التعليق!"
                     time.sleep(random.uniform(2, 4))
                 except Exception as e:
                     bot_status = f"⚠️ جولة {counter}: فشل التعليق"
-
-                # --- الانتقال للريلز التالي ---
                 driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ARROW_DOWN)
                 time.sleep(random.uniform(3, 6))
-                
-                # انتظار طويل عشان ما ينحظر
                 wait_time = random.randint(10, 20)
                 bot_status = f"⏳ انتظار {wait_time} ثانية..."
                 for _ in range(wait_time):
                     if stop_flag: break
                     time.sleep(1)
-                    
             except Exception as e:
                 bot_status = f"❌ خطأ: حاول إعادة التشغيل"
                 time.sleep(5)
-                # محاولة العودة للريلزات
                 try:
                     driver.get(f"https://www.instagram.com/explore/tags/{target_hashtag}/")
                     time.sleep(4)
@@ -170,9 +146,7 @@ def run_bot():
                     first_reel.click()
                     time.sleep(4)
                 except: pass
-                
         bot_status = "🛑 تم الإيقاف"
-        
     except Exception as e:
         bot_status = f"💀 خطأ: {str(e)[:70]}"
         print("="*40)
@@ -191,16 +165,13 @@ def start():
     global bot_thread, stop_flag, bot_status, username, password, comment_text, target_hashtag
     if bot_thread and bot_thread.is_alive():
         return jsonify({"status": "⚠️ البوت شغال"})
-    
     data = request.json
     username = data.get('username')
     password = data.get('password')
     target_hashtag = data.get('hashtag', 'photography')
     comment_text = data.get('comment', '🔥 رائع')
-    
     if not username or not password:
         return jsonify({"status": "❌ اكتب اسم المستخدم وكلمة المرور"})
-    
     stop_flag = False
     bot_status = "🚀 يتم التشغيل..."
     bot_thread = threading.Thread(target=run_bot)

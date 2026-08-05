@@ -1,24 +1,235 @@
+from flask import Flask, request, jsonify, render_template_string
 from instapy import InstaPy
 from instapy import smart_run
+import threading
+import time
 
-# بيانات الدخول
-session = InstaPy(username="your_username", password="your_password")
+app = Flask(__name__)
 
-with smart_run(session):
-    # تفعيل التعليق بنسبة 100%
-    session.set_do_comment(True, percentage=100)
+# ===== متغيرات التحكم =====
+bot_status = "متوقف"
+bot_thread = None
+stop_flag = False
+username = ""
+password = ""
+
+# ===== واجهة HTML مدمجة =====
+HTML_PAGE = """
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوت إنستغرام - لوحة تحكم</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body {
+            background: #0a0e17;
+            color: #e6edf3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .card {
+            background: #161f2e;
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid #30363d;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+        }
+        h1 {
+            text-align: center;
+            color: #58a6ff;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+            font-size: 26px;
+        }
+        h1 span { color: #f0883e; }
+        .input-group { margin-bottom: 18px; }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #8b949e;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            color: #e6edf3;
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+        }
+        input:focus { border-color: #58a6ff; }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin: 25px 0 20px;
+        }
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-start { background: #238636; color: #fff; }
+        .btn-start:hover { background: #2ea043; transform: scale(1.02); }
+        .btn-stop { background: #da3633; color: #fff; }
+        .btn-stop:hover { background: #f85149; transform: scale(1.02); }
+        .status-box {
+            background: #0d1117;
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+            border: 1px solid #21262d;
+            margin-top: 10px;
+        }
+        .status-box span {
+            color: #58a6ff;
+            font-weight: bold;
+        }
+        .hint {
+            font-size: 12px;
+            color: #484f58;
+            text-align: center;
+            margin-top: 20px;
+            border-top: 1px solid #21262d;
+            padding-top: 15px;
+        }
+        .hint i { color: #f0883e; font-style: normal; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>⚡ <span>نينجا</span> التعليقات</h1>
     
-    # قائمة التعليقات العشوائية
-    session.set_comments([
-        "🔥 ريلز رائع!",
-        "❤️ تحفة فنية",
-        "😍 إبداع بكل معنى الكلمة",
-        "🚀 يستحق المشاهدة",
-        "💯 محتوى قيم"
-    ])
+    <div class="input-group">
+        <label>👤 اسم المستخدم</label>
+        <input type="text" id="username" placeholder="your_username">
+    </div>
+    <div class="input-group">
+        <label>🔑 كلمة المرور</label>
+        <input type="password" id="password" placeholder="••••••••">
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-start" onclick="startBot()">▶ تشغيل</button>
+        <button class="btn-stop" onclick="stopBot()">⏹ إيقاف</button>
+    </div>
+
+    <div class="status-box">
+        📡 الحالة: <span id="statusText">متوقف</span>
+    </div>
+    <div class="hint">
+        <i>🔥</i> يعلق تلقائياً على ريلزات #photography و #nature <i>🔥</i>
+    </div>
+</div>
+
+<script>
+    function updateStatus() {
+        fetch('/status')
+            .then(r => r.json())
+            .then(d => document.getElementById('statusText').innerText = d.status)
+            .catch(() => {});
+    }
+
+    function startBot() {
+        const u = document.getElementById('username').value;
+        const p = document.getElementById('password').value;
+        if (!u || !p) return alert('❌ أدخل اسم المستخدم وكلمة المرور!');
+        
+        fetch('/start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: u, password: p })
+        })
+        .then(r => r.json())
+        .then(d => { alert(d.status); updateStatus(); });
+    }
+
+    function stopBot() {
+        fetch('/stop', { method: 'POST' })
+            .then(r => r.json())
+            .then(d => { alert(d.status); updateStatus(); });
+    }
+
+    setInterval(updateStatus, 2000);
+    updateStatus();
+</script>
+</body>
+</html>
+"""
+
+# ===== وظائف البوت =====
+def run_bot():
+    global bot_status, stop_flag, username, password
+    try:
+        bot_status = "جاري التشغيل..."
+        session = InstaPy(username=username, password=password, headless_browser=False)
+        
+        with smart_run(session):
+            session.set_do_comment(True, percentage=100)
+            session.set_comments([
+                "🔥 ريلز رائع!", "❤️ تحفة فنية", "😍 إبداع",
+                "🚀 يستحق المشاهدة", "💯 محتوى قيم"
+            ])
+            
+            while not stop_flag:
+                session.like_by_tags(["photography", "nature"], amount=5)
+                time.sleep(15)
+                
+        bot_status = "متوقف (تم الإنهاء)"
+    except Exception as e:
+        bot_status = f"خطأ: {str(e)[:50]}"
+
+# ===== مسارات الموقع =====
+@app.route('/')
+def index():
+    return render_template_string(HTML_PAGE)
+
+@app.route('/start', methods=['POST'])
+def start():
+    global bot_thread, stop_flag, bot_status, username, password
+    if bot_thread and bot_thread.is_alive():
+        return jsonify({"status": "⚠️ البوت يعمل بالفعل!"})
     
-    # التفاعل مع هاشتاغات معينة (إعجاب + تعليق)
-    session.like_by_tags(["photography", "nature"], amount=10)
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+    stop_flag = False
     
-    # (اختياري) التفاعل مع حساب محدد
-    # session.interact_by_users(["target_username"], amount=5, randomize=True)
+    bot_thread = threading.Thread(target=run_bot)
+    bot_thread.start()
+    return jsonify({"status": "✅ تم تشغيل البوت!"})
+
+@app.route('/stop', methods=['POST'])
+def stop():
+    global stop_flag, bot_status
+    stop_flag = True
+    bot_status = "⏳ جاري الإيقاف..."
+    return jsonify({"status": "⏹ تم إرسال أمر الإيقاف"})
+
+@app.route('/status')
+def status():
+    return jsonify({"status": bot_status})
+
+# ===== الإقلاع =====
+if __name__ == '__main__':
+    print("🔥 Shadow Bot جاهز! افتح المتصفح على: http://127.0.0.1:5000")
+    app.run(debug=True, host='0.0.0.0', port=5000)

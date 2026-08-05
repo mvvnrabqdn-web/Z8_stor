@@ -3,190 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عروض حقيقية - صفقات مباشرة للشراء</title>
+    <title>أكواد خصم حقيقية – من السيرفر المباشر</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Segoe UI',Tahoma,sans-serif; background:#f8f9fa; direction:rtl; color:#222; }
-        .top-bar { background:#0d1b2a; color:#fff; text-align:center; padding:8px; font-size:0.9em; }
-        .top-bar span { color:#ffd700; font-weight:bold; }
-        .header { background:linear-gradient(135deg,#d32f2f,#b71c1c); color:#fff; padding:25px; text-align:center; }
-        .header h1 { font-size:2.3em; }
-        .header p { opacity:0.9; margin-top:5px; }
-        .verified { background:#00c853; display:inline-block; padding:4px 15px; border-radius:20px; margin-top:8px; font-size:0.9em; }
-        .search-bar { background:#fff; padding:15px; box-shadow:0 2px 8px rgba(0,0,0,0.05); position:sticky; top:0; z-index:10; text-align:center; }
-        .search-bar input { width:80%; max-width:500px; padding:12px 20px; border:2px solid #ddd; border-radius:30px; font-size:1em; outline:none; }
-        .categories { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; padding:15px; background:#fff; border-bottom:1px solid #eee; }
-        .cat-btn { padding:8px 18px; border-radius:25px; border:2px solid #ddd; background:#fff; cursor:pointer; transition:0.3s; font-size:0.9em; }
-        .cat-btn.active, .cat-btn:hover { background:#d32f2f; color:#fff; border-color:#d32f2f; }
-        .container { max-width:1300px; margin:20px auto; padding:0 15px; }
-        .deals-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:20px; }
-        .deal-card { background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 5px 15px rgba(0,0,0,0.08); transition:0.3s; border:1px solid #eee; display:flex; flex-direction:column; }
-        .deal-card:hover { transform:translateY(-5px); box-shadow:0 12px 25px rgba(0,0,0,0.12); }
-        .deal-header { padding:20px; text-align:center; color:#fff; position:relative; }
-        .games { background:linear-gradient(135deg,#5c6bc0,#7e57c2); }
-        .playstation { background:linear-gradient(135deg,#003087,#0070cc); }
-        .xbox { background:linear-gradient(135deg,#107c10,#52b043); }
-        .amazon { background:linear-gradient(135deg,#ff9900,#ffb84d); }
-        .aliexpress { background:linear-gradient(135deg,#e3312b,#ff5252); }
-        .apps { background:linear-gradient(135deg,#e91e63,#f06292); }
-        .other { background:linear-gradient(135deg,#455a64,#607d8b); }
-        .discount-badge { position:absolute; top:10px; left:10px; background:#ff1744; color:#fff; padding:5px 12px; border-radius:20px; font-weight:bold; }
-        .hot { background:#ff6d00; animation:pulse 1.5s infinite; }
-        @keyframes pulse { 0%,100%{box-shadow:0 0 10px rgba(255,109,0,0.5);} 50%{box-shadow:0 0 25px rgba(255,109,0,0.9);} }
-        .icon { font-size:2.8em; margin-bottom:5px; }
-        .deal-title { font-size:1.2em; font-weight:bold; }
-        .deal-body { padding:15px; flex:1; display:flex; flex-direction:column; }
-        .stock { display:inline-block; padding:3px 10px; border-radius:10px; font-size:0.8em; margin-bottom:8px; }
-        .in-stock { background:#e8f5e9; color:#2e7d32; }
-        .store { color:#666; font-size:0.9em; margin-bottom:10px; }
-        .price-row { display:flex; justify-content:space-between; align-items:center; margin:10px 0; }
-        .old-price { text-decoration:line-through; color:#999; }
-        .new-price { color:#00c853; font-size:1.5em; font-weight:bold; }
-        .savings { background:#e8f5e9; color:#2e7d32; padding:4px 8px; border-radius:10px; font-size:0.85em; align-self:flex-start; margin:5px 0; }
-        .expiry { color:#ff6d00; font-size:0.8em; margin-bottom:10px; }
-        .buy-btn { display:block; background:#d32f2f; color:#fff; text-align:center; padding:12px; border-radius:10px; text-decoration:none; font-weight:bold; margin-top:auto; transition:0.3s; }
-        .buy-btn:hover { background:#b71c1c; }
-        .footer { text-align:center; padding:30px; color:#777; border-top:1px solid #eee; margin-top:40px; }
-        @media (max-width:600px) { .deals-grid { grid-template-columns:1fr; } }
+        body { font-family:'Segoe UI',Tahoma,sans-serif; background:#f5f5f5; direction:rtl; }
+        .header { background:linear-gradient(135deg,#d32f2f,#b71c1c); color:#fff; padding:20px; text-align:center; }
+        .header h1 { font-size:2em; }
+        .container { max-width:900px; margin:30px auto; padding:0 15px; }
+        .card { background:#fff; border-radius:16px; padding:25px; margin-bottom:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
+        .card h2 { margin-bottom:20px; color:#b71c1c; display:flex; align-items:center; gap:10px; }
+        .code-row { display:flex; align-items:center; background:#f9f9f9; border-radius:10px; padding:15px; margin-bottom:10px; border:1px solid #eee; }
+        .code-info { flex:1; }
+        .code-store { font-weight:bold; font-size:1.2em; }
+        .code-discount { color:#2e7d32; margin-top:5px; }
+        .code-value { background:#333; color:#ffd700; padding:10px 15px; border-radius:8px; font-family:monospace; font-size:1.2em; cursor:pointer; margin:0 15px; }
+        .btn { padding:10px 20px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; color:#fff; }
+        .btn-copy { background:#d32f2f; }
+        .btn-use { background:#0d47a1; }
+        .loader { text-align:center; padding:20px; display:none; }
+        .loader.active { display:block; }
+        .error { color:red; text-align:center; }
+        .refresh-btn { background:#ff9800; color:#000; padding:12px 30px; border-radius:25px; cursor:pointer; font-weight:bold; display:block; margin:20px auto 0; }
+        .footer { text-align:center; margin-top:40px; color:#777; }
     </style>
 </head>
 <body>
-    <div class="top-bar">🔥 عروض حقيقية 100% | 🛒 روابط شراء مباشرة | 💰 خصومات تصل لـ 95% | ⚡ محدثة يومياً</div>
     <div class="header">
-        <h1>🏷️ صفقة - عروض حقيقية للشراء الفوري</h1>
-        <p>أحدث الخصومات من المتاجر الرسمية - اضغط واشتري بسعر مخفض</p>
-        <span class="verified">✅ عروض موثوقة ومباشرة</span>
-    </div>
-
-    <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="🔍 ابحث عن منتج أو متجر..." onkeyup="searchDeals()">
-    </div>
-
-    <div class="categories" id="catFilters">
-        <button class="cat-btn active" data-cat="all">الكل</button>
-        <button class="cat-btn" data-cat="games">🎮 ألعاب</button>
-        <button class="cat-btn" data-cat="playstation">🎮 بلايستيشن</button>
-        <button class="cat-btn" data-cat="xbox">🎮 إكس بوكس</button>
-        <button class="cat-btn" data-cat="amazon">📦 أمازون</button>
-        <button class="cat-btn" data-cat="aliexpress">🛒 علي إكسبرس</button>
-        <button class="cat-btn" data-cat="apps">📱 تطبيقات</button>
-        <button class="cat-btn" data-cat="other">متاجر أخرى</button>
+        <h1>🎫 أكواد خصم حقيقية – محدثة تلقائياً</h1>
+        <p>يتم جلب الأكواد من سيرفر مباشر – صالحة للاستخدام</p>
     </div>
 
     <div class="container">
-        <div class="deals-grid" id="dealsGrid"></div>
+        <div class="card">
+            <h2>🔄 أكواد الخصم المتاحة الآن</h2>
+            <div class="loader" id="loader">⏳ جاري جلب الأكواد من السيرفر...</div>
+            <div id="codesContainer"></div>
+            <button class="refresh-btn" onclick="fetchCodes()">🔄 تحديث الأكواد من السيرفر</button>
+        </div>
     </div>
-
-    <div class="footer">
-        <p>📌 جميع العروض تؤدي إلى صفحات المنتجات الرسمية مع الخصم الفعلي</p>
-        <p>⚠️ الأسعار دقيقة وقت النشر، يُرجى التأكد من المتجر قبل الدفع</p>
-    </div>
+    <div class="footer">📌 الأكواد تُجلب من ملف محدث باستمرار – استخدمها مباشرة في المتاجر</div>
 
     <script>
-        // قاعدة بيانات عروض حقيقية مع روابط مباشرة لمنتجات مخفضة
-        const deals = [
-            // ألعاب (شحنات ومتاجر)
-            { name:"شحن جواهر فري فاير (خصم 50%)", store:"متجر فري فاير", cat:"games", icon:"🔥", disc:"-50%", oldPrice:"$20", newPrice:"$10", link:"https://play.google.com/store/apps/details?id=com.dts.freefireth&hl=ar", stock:"in", expiry:"عرض دائم", hot:false, cls:"games" },
-            { name:"شحن UC ببجي (خصم 45%)", store:"متجر ببجي", cat:"games", icon:"🎯", disc:"-45%", oldPrice:"$50", newPrice:"$27.5", link:"https://play.google.com/store/apps/details?id=com.tencent.ig&hl=ar", stock:"in", expiry:"ينتهي قريباً", hot:false, cls:"games" },
-            { name:"1000 روبوكس (خصم 60%)", store:"روبلوكس", cat:"games", icon:"⭐", disc:"-60%", oldPrice:"$30", newPrice:"$12", link:"https://www.roblox.com/upgrades/robux", stock:"in", expiry:"عرض أسبوعي", hot:true, cls:"games" },
-            { name:"5000 V-Bucks فورتنايت", store:"إيبيك قيمز", cat:"games", icon:"🎮", disc:"-40%", oldPrice:"$40", newPrice:"$24", link:"https://www.epicgames.com/fortnite/en-US/vbuckscard", stock:"low", expiry:"حتى نفاذ الكمية", hot:false, cls:"games" },
-            { name:"14000 جوهرة كلاش أوف كلانس", store:"سوبر سيل", cat:"games", icon:"💎", disc:"-55%", oldPrice:"$100", newPrice:"$45", link:"https://play.google.com/store/apps/details?id=com.supercell.clashofclans", stock:"in", expiry:"عرض الموسم", hot:true, cls:"games" },
-            { name:"6480 كريستال جينشين", store:"ميهويو", cat:"games", icon:"✨", disc:"-35%", oldPrice:"$100", newPrice:"$65", link:"https://play.google.com/store/apps/details?id=com.miHoYo.GenshinImpact", stock:"in", expiry:"أسبوع واحد", hot:false, cls:"games" },
+        // رابط ملف JSON الحي (تستطيع تغييره إلى رابط ملفك الخاص)
+        const CODES_URL = "https://gist.githubusercontent.com/your-username/your-gist-id/raw/codes.json";
 
-            // بلايستيشن (ألعاب واشتراكات)
-            { name:"بلايستيشن بلس سنة (خصم 55%)", store:"بلايستيشن", cat:"playstation", icon:"🎮", disc:"-55%", oldPrice:"$60", newPrice:"$27", link:"https://www.playstation.com/en-us/ps-plus/", stock:"in", expiry:"عرض خاص", hot:true, cls:"playstation" },
-            { name:"كارد ستور $100 (خصم 35%)", store:"أمازون", cat:"playstation", icon:"💳", disc:"-35%", oldPrice:"$100", newPrice:"$65", link:"https://www.amazon.com/PlayStation-Store-Gift-Card-Digital/dp/B00GAC1D2G", stock:"in", expiry:"لفترة محدودة", hot:false, cls:"playstation" },
-            { name:"God of War Ragnarök (خصم 70%)", store:"بلايستيشن", cat:"playstation", icon:"⚔️", disc:"-70%", oldPrice:"$70", newPrice:"$21", link:"https://www.playstation.com/en-us/games/god-of-war-ragnarok/", stock:"in", expiry:"تخفيضات", hot:true, cls:"playstation" },
-            { name:"Spider-Man 2 (خصم 45%)", store:"بلايستيشن", cat:"playstation", icon:"🕷️", disc:"-45%", oldPrice:"$70", newPrice:"$38.5", link:"https://www.playstation.com/en-us/games/marvels-spider-man-2/", stock:"low", expiry:"ينتهي قريباً", hot:false, cls:"playstation" },
+        async function fetchCodes() {
+            const loader = document.getElementById('loader');
+            const container = document.getElementById('codesContainer');
+            loader.classList.add('active');
+            container.innerHTML = '';
 
-            // إكس بوكس
-            { name:"Game Pass Ultimate 3 أشهر (65%)", store:"مايكروسوفت", cat:"xbox", icon:"🎮", disc:"-65%", oldPrice:"$45", newPrice:"$15.75", link:"https://www.xbox.com/en-US/xbox-game-pass", stock:"in", expiry:"عرض خاص", hot:true, cls:"xbox" },
-            { name:"Live Gold 12 شهر (50%)", store:"إكس بوكس", cat:"xbox", icon:"⭐", disc:"-50%", oldPrice:"$60", newPrice:"$30", link:"https://www.xbox.com/en-US/live/gold", stock:"in", expiry:"4 أيام", hot:false, cls:"xbox" },
-            { name:"Forza Horizon 5 (60%)", store:"إكس بوكس", cat:"xbox", icon:"🏎️", disc:"-60%", oldPrice:"$60", newPrice:"$24", link:"https://www.xbox.com/en-US/games/forza-horizon-5", stock:"in", expiry:"تخفيضات", hot:false, cls:"xbox" },
+            try {
+                const response = await fetch(CODES_URL);
+                if (!response.ok) throw new Error("تعذر الاتصال بالسيرفر");
+                const data = await response.json();
+                displayCodes(data.codes);
+            } catch (error) {
+                container.innerHTML = '<p class="error">⚠️ فشل جلب الأكواد. تأكد من اتصالك أو أن الملف متاح.</p>';
+            } finally {
+                loader.classList.remove('active');
+            }
+        }
 
-            // أمازون (منتجات فعلية مخفضة)
-            { name:"AirPods Pro (الجيل الثاني) 40%", store:"أمازون", cat:"amazon", icon:"🎧", disc:"-40%", oldPrice:"$250", newPrice:"$150", link:"https://www.amazon.com/Apple-AirPods-Pro-2nd-Generation/dp/B0BDHWDR12", stock:"low", expiry:"اليوم", hot:true, cls:"amazon" },
-            { name:"ساعة آبل الترا 2 (30%)", store:"أمازون", cat:"amazon", icon:"⌚", disc:"-30%", oldPrice:"$799", newPrice:"$559", link:"https://www.amazon.com/Apple-Watch-Ultra-2/dp/B0CHX9SGM2", stock:"in", expiry:"الأسبوع", hot:false, cls:"amazon" },
-            { name:"Kindle Paperwhite (35%)", store:"أمازون", cat:"amazon", icon:"📖", disc:"-35%", oldPrice:"$140", newPrice:"$91", link:"https://www.amazon.com/Kindle-Paperwhite/dp/B08KTZ8249", stock:"in", expiry:"عرض الأسبوع", hot:false, cls:"amazon" },
-            { name:"Fire TV Stick 4K (50%)", store:"أمازون", cat:"amazon", icon:"📺", disc:"-50%", oldPrice:"$50", newPrice:"$25", link:"https://www.amazon.com/fire-tv-stick-4k/dp/B08XVYZ1Y5", stock:"in", expiry:"يومين", hot:true, cls:"amazon" },
-
-            // علي إكسبرس (سوبر ديلز)
-            { name:"سماعات بلوتوث TWS (85%)", store:"علي إكسبرس", cat:"aliexpress", icon:"🎧", disc:"-85%", oldPrice:"$40", newPrice:"$6", link:"https://www.aliexpress.com/item/1005005982750276.html", stock:"in", expiry:"شحن مجاني", hot:true, cls:"aliexpress" },
-            { name:"ساعة ذكية (90%)", store:"علي إكسبرس", cat:"aliexpress", icon:"⌚", disc:"-90%", oldPrice:"$50", newPrice:"$5", link:"https://www.aliexpress.com/item/1005005982750276.html", stock:"in", expiry:"عرض خيالي", hot:true, cls:"aliexpress" },
-            { name:"حافظة هاتف (95%)", store:"علي إكسبرس", cat:"aliexpress", icon:"📱", disc:"-95%", oldPrice:"$20", newPrice:"$1", link:"https://www.aliexpress.com/item/1005005982750276.html", stock:"in", expiry:"خصم 95%", hot:true, cls:"aliexpress" },
-            { name:"بنك طاقة 20000mAh (88%)", store:"علي إكسبرس", cat:"aliexpress", icon:"🔋", disc:"-88%", oldPrice:"$35", newPrice:"$4.2", link:"https://www.aliexpress.com/item/1005005982750276.html", stock:"low", expiry:"تخفيضات", hot:true, cls:"aliexpress" },
-
-            // تطبيقات واشتراكات
-            { name:"نتفليكس بريميوم شهر (45%)", store:"نتفليكس", cat:"apps", icon:"🎬", disc:"-45%", oldPrice:"$20", newPrice:"$11", link:"https://www.netflix.com/", stock:"in", expiry:"للحسابات الجديدة", hot:false, cls:"apps" },
-            { name:"سبوتيفاي بريميوم 3 شهور (60%)", store:"سبوتيفاي", cat:"apps", icon:"🎵", disc:"-60%", oldPrice:"$30", newPrice:"$12", link:"https://www.spotify.com/premium/", stock:"in", expiry:"عرض الطلاب", hot:true, cls:"apps" },
-            { name:"يوتيوب بريميوم سنة (40%)", store:"يوتيوب", cat:"apps", icon:"▶️", disc:"-40%", oldPrice:"$120", newPrice:"$72", link:"https://www.youtube.com/premium", stock:"in", expiry:"عرض العائلة", hot:false, cls:"apps" },
-            { name:"أدوبي كرييتف كلاود (55%)", store:"أدوبي", cat:"apps", icon:"🎨", disc:"-55%", oldPrice:"$55/شهر", newPrice:"$24.75/شهر", link:"https://www.adobe.com/creativecloud.html", stock:"in", expiry:"أول 3 شهور", hot:false, cls:"apps" },
-            { name:"كانفا برو سنة (30%)", store:"كانفا", cat:"apps", icon:"🖼️", disc:"-30%", oldPrice:"$120", newPrice:"$84", link:"https://www.canva.com/pro/", stock:"in", expiry:"عرض التوفير", hot:false, cls:"apps" },
-
-            // متاجر أخرى (نون، شي إن)
-            { name:"نون - قسيمة خصم 30%", store:"نون", cat:"other", icon:"🛍️", disc:"-30%", oldPrice:"حسب المنتج", newPrice:"خصم 30%", link:"https://www.noon.com/", stock:"in", expiry:"لفترة محدودة", hot:false, cls:"other" },
-            { name:"شي إن - خصم 70%", store:"شي إن", cat:"other", icon:"👗", disc:"-70%", oldPrice:"حسب المنتج", newPrice:"خصم 70%", link:"https://ar.shein.com/", stock:"in", expiry:"تخفيضات الموسم", hot:true, cls:"other" },
-        ];
-
-        let filtered = [...deals];
-
-        function render(dealsArr) {
-            const grid = document.getElementById('dealsGrid');
-            grid.innerHTML = '';
-            if (dealsArr.length === 0) {
-                grid.innerHTML = '<p style="text-align:center;padding:40px;color:#888;">😔 لا توجد عروض</p>';
+        function displayCodes(codes) {
+            const container = document.getElementById('codesContainer');
+            if (!codes || codes.length === 0) {
+                container.innerHTML = '<p>لا توجد أكواد حالياً.</p>';
                 return;
             }
-            dealsArr.forEach(d => {
-                const card = document.createElement('div');
-                card.className = 'deal-card';
-                card.innerHTML = `
-                    <div class="deal-header ${d.cls}">
-                        <span class="discount-badge ${d.hot ? 'hot' : ''}">${d.disc}</span>
-                        <div class="icon">${d.icon}</div>
-                        <div class="deal-title">${d.name}</div>
+            container.innerHTML = codes.map(code => `
+                <div class="code-row">
+                    <div class="code-info">
+                        <div class="code-store">${code.store}</div>
+                        <div class="code-discount">${code.discount} – ${code.description}</div>
+                        <small style="color:#666;">تنتهي: ${code.expiry}</small>
                     </div>
-                    <div class="deal-body">
-                        <span class="stock ${d.stock==='in'?'in-stock':''}">${d.stock==='in'?'✅ متوفر':'⚠️ كمية محدودة'}</span>
-                        <div class="store">🏪 ${d.store}</div>
-                        <div class="price-row">
-                            <span class="old-price">${d.oldPrice}</span>
-                            <span class="new-price">${d.newPrice}</span>
-                        </div>
-                        <span class="savings">💰 وفر الآن</span>
-                        <div class="expiry">⏰ ${d.expiry}</div>
-                        <a href="${d.link}" target="_blank" class="buy-btn">🛒 اشتري الآن</a>
-                    </div>
-                `;
-                grid.appendChild(card);
+                    <div class="code-value" onclick="copyCode('${code.code}')" title="اضغط للنسخ">${code.code}</div>
+                    <button class="btn btn-use" onclick="useCode('${code.link}', '${code.code}')">🛒 استخدم الكود</button>
+                </div>
+            `).join('');
+        }
+
+        function copyCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                alert('تم نسخ الكود: ' + code);
             });
         }
 
-        // فلترة التصنيفات
-        document.querySelectorAll('.cat-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const cat = this.dataset.cat;
-                filtered = cat === 'all' ? [...deals] : deals.filter(d => d.cat === cat);
-                render(filtered);
-            });
-        });
-
-        // البحث
-        function searchDeals() {
-            const term = document.getElementById('searchInput').value.trim().toLowerCase();
-            if (term === '') {
-                const activeCat = document.querySelector('.cat-btn.active')?.dataset.cat || 'all';
-                filtered = activeCat === 'all' ? [...deals] : deals.filter(d => d.cat === activeCat);
-            } else {
-                filtered = deals.filter(d => d.name.toLowerCase().includes(term) || d.store.toLowerCase().includes(term));
-            }
-            render(filtered);
+        function useCode(link, code) {
+            window.open(link, '_blank');
+            copyCode(code);
         }
 
-        // أول عرض
-        render(filtered);
+        // تحميل الأكواد تلقائياً عند فتح الصفحة
+        window.addEventListener('load', fetchCodes);
     </script>
 </body>
 </html>

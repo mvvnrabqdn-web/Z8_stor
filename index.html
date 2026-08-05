@@ -37,6 +37,7 @@
         .modal { display: none; position: fixed; z-index: 999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
         .modal img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid #00d2ff; }
         .close-modal { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 30px; cursor: pointer; background: #ef4444; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .loading-msg { text-align: center; color: #00d2ff; padding: 20px; font-weight: bold; grid-column: 1/-1; }
     </style>
 </head>
 <body>
@@ -398,6 +399,13 @@
 
     function renderProducts() {
         let grid = document.getElementById('productsGrid');
+        
+        // عرض رسالة تحميل ريثما تستجيب قاعدة البيانات
+        if(products.length === 0) {
+            grid.innerHTML = '<div class="loading-msg">⚡ جاري تحميل المنتجات...</div>';
+            return;
+        }
+
         grid.innerHTML = '';
 
         let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
@@ -434,8 +442,8 @@
         </div>
     </div>
 `;
-});
-}
+        });
+    }
 </script>
 </body>
 </html>

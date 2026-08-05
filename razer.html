@@ -3,212 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Grill - قائمة الطعام</title>
+    <title>منصة تخفيضات الخدمات والبطاقات الرقمية</title>
     <style>
         :root {
-            --primary-color: #e67e22;
-            --dark-color: #2c3e50;
-            --bg-color: #f9f9f9;
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --text-color: #2d3436;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
             padding: 0;
-            color: #333;
         }
         header {
-            background-color: var(--dark-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             text-align: center;
-            padding: 20px;
+            padding: 30px 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        header p {
+            margin: 10px 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
         }
         .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 30px auto;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
         }
-        .menu-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
+        .form-group {
+            margin-bottom: 20px;
         }
-        .menu-item h3 {
-            margin: 0 0 5px 0;
-            color: var(--dark-color);
-        }
-        .price {
-            color: var(--primary-color);
+        label {
+            display: block;
+            margin-bottom: 8px;
             font-weight: bold;
+            color: var(--text-color);
+        }
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        select:focus, input:focus {
+            border-color: var(--primary-color);
         }
         button {
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
+            padding: 12px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
+            transition: background 0.3s, transform 0.1s;
         }
         button:hover {
-            opacity: 0.9;
+            background-color: #5b4cc4;
         }
-        /* قسم السلة والخصم */
-        .cart-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px dashed #ddd;
+        button:active {
+            transform: scale(0.98);
         }
-        .cart-items {
-            list-style: none;
-            padding: 0;
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-right: 5px solid var(--primary-color);
+            border-radius: 6px;
+            display: none;
         }
-        .cart-items li {
+        .result-box h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        .result-item {
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
+            font-size: 1.05rem;
         }
-        .discount-box {
-            display: flex;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        .discount-box input {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            flex: 1;
-        }
-        .total-section {
-            font-size: 1.2rem;
+        .error-msg {
+            color: #e74c3c;
             font-weight: bold;
-            text-align: left;
             margin-top: 15px;
+            display: none;
+            text-align: center;
         }
-        .developer-credit {
+        .footer {
             text-align: center;
             margin-top: 40px;
+            color: #888;
             font-size: 0.9rem;
-            color: #7f8c8d;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Royal Grill</h1>
-        <p>أهلاً بكم في مطعمنا - تلذذ بأفضل الأطباق</p>
+        <h1>حاسبة خصومات الخدمات والتطبيقات</h1>
+        <p>احصل على خصومات فورية لتاكسي بلي، كريم، نتفليكس، والألعاب الشهيرة</p>
     </header>
 
     <div class="container">
-        <h2>قائمة الطعام</h2>
-        
-        <!-- عناصر القائمة -->
-        <div class="menu-item">
-            <div>
-                <h3>وجبة برجر مشوي</h3>
-                <p>برجر لحم بقري مع الصوص الخاص</p>
-            </div>
-            <div>
-                <span class="price">8.50 $</span>
-                <button onclick="addToCart('برجر مشوي', 8.50)">إضافة للسلة</button>
-            </div>
+        <!-- اختيار الخدمة -->
+        <div class="form-group">
+            <label for="serviceSelect">اختر الخدمة أو التطبيق:</label>
+            <select id="serviceSelect" onchange="updateBasePrice()">
+                <option value="taxi_bali" data-price="10">تاكسي بلي (Taxi Bali) - الرحلة الافتراضية</option>
+                <option value="careem" data-price="12">كريم (Careem) - مشوار قياسي</option>
+                <option value="netflix" data-price="15">نتفليكس (Netflix) - اشتراك شهري</option>
+                <option value="pubg" data-price="20">لعبة باوبجي (PUBG UC) - شحن شدات</option>
+                <option value="playstation" data-price="50">بطاقة بلايستيشن (PSN Card)</option>
+            </select>
         </div>
 
-        <div class="menu-item">
-            <div>
-                <h3>بيتزا مأكولات بحرية</h3>
-                <p>جبنة موزاريلا، روبيان، وكاليماري</p>
-            </div>
-            <div>
-                <span class="price">12.00 $</span>
-                <button onclick="addToCart('بيتزا مأكولات بحرية', 12.00)">إضافة للسلة</button>
-            </div>
+        <!-- السعر الأصلي (يتم تحديثه تلقائياً) -->
+        <div class="form-group">
+            <label>السعر الأصلي:</label>
+            <input type="text" id="originalPriceDisplay" value="10.00 $" disabled style="background-color: #e9ecef; font-weight: bold;">
         </div>
 
-        <!-- قسم سلة الطلبات والخصم -->
-        <div class="cart-section">
-            <h2>سلة الطلبات</h2>
-            <ul id="cartList" class="cart-items">
-                <p>السلة فارغة حالياً.</p>
-            </ul>
-
-            <!-- إدخال كود الخصم -->
-            <div class="discount-box">
-                <input type="text" id="discountInput" placeholder="أدخل كود الخصم (مثال: ROYAL20)">
-                <button onclick="applyDiscount()">تطبيق الخصم</button>
-            </div>
-            <p id="discountMessage" style="color: green; font-size: 0.9rem;"></p>
-
-            <div class="total-section">
-                المجموع الكلي: <span id="totalPrice">0.00</span> $
-            </div>
+        <!-- إدخال كود الخصم -->
+        <div class="form-group">
+            <label for="promoCode">أدخل كود الخصم:</label>
+            <input type="text" id="promoCode" placeholder="مثال: BALI20 أو NETFLIX50">
         </div>
 
-        <div class="developer-credit">
-            تم التطوير بواسطة: <a href="https://instagram.com/uv_d0" target="_blank">@uv_d0</a>
+        <button onclick="calculateDiscount()">تطبيق وتخمين الخصم</button>
+
+        <!-- رسالة الخطأ -->
+        <div id="errorMsg" class="error-msg">كود الخصم غير صحيح أو منتهي الصلاحية لهذه الخدمة!</div>
+
+        <!-- صندوق النتائج -->
+        <div id="resultBox" class="result-box">
+            <h3>نتيجة الخصم</h3>
+            <div class="result-item">
+                <span>الخدمة المختارة:</span>
+                <span id="resServiceName">-</span>
+            </div>
+            <div class="result-item">
+                <span>السعر الأصلي:</span>
+                <span id="resOriginal">-</span>
+            </div>
+            <div class="result-item">
+                <span>قيمة الخصم:</span>
+                <span id="resDiscountValue" style="color: #27ae60;">-</span>
+            </div>
+            <hr style="border: 0; border-top: 1px solid #ddd; margin: 10px 0;">
+            <div class="result-item" style="font-weight: bold; font-size: 1.2rem;">
+                <span>السعر النهائي:</span>
+                <span id="resFinal" style="color: var(--primary-color);">-</span>
+            </div>
         </div>
     </div>
 
-    <script>
-        let cart = [];
-        let discountRate = 0; // نسبة الخصم الافتراضية
+    <div class="footer">
+        جميع الحقوق محفوظة &copy; 2026
+    </div>
 
-        function addToCart(name, price) {
-            cart.push({ name, price });
-            updateCartUI();
+    <script>
+        // تحديث السعر الأصلي تلقائياً عند تغيير القائمة المنسدلة
+        function updateBasePrice() {
+            const select = document.getElementById('serviceSelect');
+            const price = select.options[select.selectedIndex].getAttribute('data-price');
+            document.getElementById('originalPriceDisplay').value = price + ' $';
+            
+            // إخفاء النتائج القديمة عند تغيير الخدمة
+            document.getElementById('resultBox').style.display = 'none';
+            document.getElementById('errorMsg').style.display = 'none';
         }
 
-        function updateCartUI() {
-            const cartList = document.getElementById('cartList');
-            const totalPriceEl = document.getElementById('totalPrice');
+        function calculateDiscount() {
+            const select = document.getElementById('serviceSelect');
+            const serviceKey = select.value;
+            const serviceName = select.options[select.selectedIndex].text;
+            const originalPrice = parseFloat(select.options[select.selectedIndex].getAttribute('data-price'));
+            const code = document.getElementById('promoCode').value.trim().toUpperCase();
             
-            if (cart.length === 0) {
-                cartList.innerHTML = '<p>السلة فارغة حالياً.</p>';
-                totalPriceEl.textContent = '0.00';
+            const errorMsg = document.getElementById('errorMsg');
+            const resultBox = document.getElementById('resultBox');
+
+            let discountPercent = 0;
+            let isValidCode = false;
+
+            // قاعدة بيانات الأكواد المخصصة لكل خدمة أو أكواد عامة
+            if (serviceKey === 'taxi_bali') {
+                if (code === 'BALI20' || code === 'TAXI20') {
+                    discountPercent = 0.20; // خصم 20%
+                    isValidCode = true;
+                } else if (code === 'BALI50') {
+                    discountPercent = 0.50; // خصم 50%
+                    isValidCode = true;
+                }
+            } else if (serviceKey === 'careem') {
+                if (code === 'CAREEM15' || code === 'RIDE10') {
+                    discountPercent = 0.15;
+                    isValidCode = true;
+                }
+            } else if (serviceKey === 'netflix') {
+                if (code === 'NETFLIX30' || code === 'VIP2026') {
+                    discountPercent = 0.30;
+                    isValidCode = true;
+                }
+            } else if (serviceKey === 'pubg' || serviceKey === 'playstation') {
+                if (code === 'GAMER10' || code === 'PROMO25') {
+                    discountPercent = 0.25;
+                    isValidCode = true;
+                }
+            }
+
+            // كود عام ساري على الكل للتجربة
+            if (code === 'SAVE10') {
+                discountPercent = 0.10;
+                isValidCode = true;
+            }
+
+            if (!isValidCode && code !== "") {
+                errorMsg.style.display = 'block';
+                resultBox.style.display = 'none';
+                return;
+            } else if (code === "") {
+                errorMsg.style.display = 'block';
+                errorMsg.textContent = 'الرجاء إدخال كود خصم أولاً!';
+                resultBox.style.display = 'none';
                 return;
             }
 
-            cartList.innerHTML = '';
-            let subtotal = 0;
+            errorMsg.style.display = 'none';
 
-            cart.forEach((item, index) => {
-                subtotal += item.price;
-                cartList.innerHTML += `<li><span>${item.name}</span> <span>${item.price.toFixed(2)} $</span></li>`;
-            });
+            // حساب القيم
+            let discountValue = originalPrice * discountPercent;
+            let finalPrice = originalPrice - discountValue;
 
-            // حساب السعر بعد الخصم
-            let finalTotal = subtotal - (subtotal * discountRate);
-            totalPriceEl.textContent = finalTotal.toFixed(2);
-        }
+            // عرض النتائج في واجهة المستخدم
+            document.getElementById('resServiceName').textContent = serviceName;
+            document.getElementById('resOriginal').textContent = originalPrice.toFixed(2) + ' $';
+            document.getElementById('resDiscountValue').textContent = `- ${discountValue.toFixed(2)} $ (${discountPercent * 100}%)`;
+            document.getElementById('resFinal').textContent = finalPrice.toFixed(2) + ' $';
 
-        function applyDiscount() {
-            const code = document.getElementById('discountInput').value.trim();
-            const messageEl = document.getElementById('discountMessage');
-
-            // الأكواد المعتمدة للخصم (يمكنك تعديلها أو ربطها بقاعدة بيانات لاحقاً)
-            if (code === 'ROYAL20') {
-                discountRate = 0.20; // خصم 20%
-                messageEl.style.color = 'green';
-                messageEl.textContent = 'تم تطبيق خصم 20% بنجاح!';
-            } else if (code === 'ROYAL50') {
-                discountRate = 0.50; // خصم 50%
-                messageEl.style.color = 'green';
-                messageEl.textContent = 'تم تطبيق خصم 50% بنجاح!';
-            } else {
-                discountRate = 0;
-                messageEl.style.color = 'red';
-                messageEl.textContent = 'كود الخصم غير صحيح!';
-            }
-
-            updateCartUI();
+            resultBox.style.display = 'block';
         }
     </script>
-
 </body>
 </html>

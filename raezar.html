@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Chat بسيط</title>
+</head>
+<body style="font-family: Arial; text-align:center; margin-top:50px;">
+
+  <h2>🤖 تطبيق ذكاء اصطناعي بسيط</h2>
+
+  <input id="question" type="text" placeholder="اكتب سؤالك هنا" style="width:300px; padding:10px;">
+  <br><br>
+  <button onclick="askAI()" style="padding:10px 20px;">اسأل</button>
+
+  <p id="answer" style="margin-top:20px;"></p>
+
+  <script>
+    async function askAI() {
+      let question = document.getElementById("question").value;
+      let answerBox = document.getElementById("answer");
+
+      answerBox.innerText = "جاري التفكير...";
+
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_API_KEY"
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [{ role: "user", content: question }]
+        })
+      });
+
+      const data = await response.json();
+      answerBox.innerText = data.choices[0].message.content;
+    }
+  </script>
+
+</body>
+</html>

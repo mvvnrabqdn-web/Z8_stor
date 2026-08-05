@@ -129,17 +129,27 @@
 
     let adminPass = "1234";
     let categories = [{id: 'all', name: 'الكل'}];
-    let products = [];
+    
+    // تحميل المنتجات المخزنة محلياً لتظهر فوراً بدون تأخير
+    let products = JSON.parse(localStorage.getItem('cached_products')) || [];
     let currentFilter = 'الكل';
-    let storeLogo = '';
+    let storeLogo = localStorage.getItem('cached_logo') || '';
 
-    // جلب البيانات مباشرة من السحاب لتتحدث عند كل الزبائن فوراً
+    if(storeLogo) {
+        document.getElementById('logoContainer').innerHTML = `<img src="${storeLogo}">`;
+    }
+
+    // عرض المنتجات المحفوظة محلياً لحظياً عند فتح الصفحة
+    renderProducts();
+
+    // جلب البيانات من السحاب وتحديثها في الخلفية
     db.ref('settings/adminPass').on('value', (snapshot) => {
         if(snapshot.exists()) adminPass = snapshot.val();
     });
 
     db.ref('settings/storeLogo').on('value', (snapshot) => {
         storeLogo = snapshot.val() || '';
+        localStorage.setItem('cached_logo', storeLogo);
         if(storeLogo) {
             document.getElementById('logoContainer').innerHTML = `<img src="${storeLogo}">`;
         }
@@ -160,6 +170,8 @@
         snapshot.forEach((childSnapshot) => {
             products.push({ ...childSnapshot.val(), firebaseKey: childSnapshot.key });
         });
+        // حفظ المنتجات في الذاكرة المحلية لضمان السرعة الفورية في المرات القادمة
+        localStorage.setItem('cached_products', JSON.stringify(products));
         renderProducts();
         renderAdminManageList();
     });
@@ -400,7 +412,6 @@
     function renderProducts() {
         let grid = document.getElementById('productsGrid');
         
-        // عرض رسالة تحميل ريثما تستجيب قاعدة البيانات
         if(products.length === 0) {
             grid.innerHTML = '<div class="loading-msg">⚡ جاري تحميل المنتجات...</div>';
             return;

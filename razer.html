@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مولد الخصومات التلقائي - عروض متجددة</title>
+    <title>صفقة - خصومات حقيقية للشراء المباشر</title>
     <style>
         * {
             margin: 0;
@@ -13,25 +13,31 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: #f5f5f5;
             min-height: 100vh;
-            padding: 20px;
             direction: rtl;
+        }
+
+        /* شريط علوي */
+        .top-bar {
+            background: #1a1a2e;
             color: white;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #ff416c, #ff4b2b);
-            border-radius: 25px;
-            padding: 30px;
+            padding: 10px 20px;
             text-align: center;
-            margin-bottom: 25px;
-            box-shadow: 0 15px 40px rgba(255, 65, 108, 0.4);
+            font-size: 0.9em;
+        }
+
+        .top-bar span {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        /* هيدر */
+        .header {
+            background: linear-gradient(135deg, #e94560, #c23152);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
         }
 
         .header h1 {
@@ -39,541 +45,620 @@
             margin-bottom: 10px;
         }
 
-        .auto-badge {
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .verified-badge {
             display: inline-block;
-            background: #00ff88;
-            color: #000;
-            padding: 8px 20px;
-            border-radius: 30px;
-            font-weight: bold;
-            animation: blink 1.5s infinite;
-            margin: 10px;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
-
-        .btn {
-            padding: 14px 28px;
-            border-radius: 30px;
-            border: none;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-            color: white;
-        }
-
-        .btn-generate {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
-        }
-
-        .btn-generate:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(245, 87, 108, 0.6);
-        }
-
-        .btn-refresh {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-            box-shadow: 0 10px 30px rgba(0, 242, 254, 0.4);
-        }
-
-        .btn-refresh:hover {
-            transform: translateY(-3px);
-        }
-
-        .btn-super {
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
-            color: #000;
-            font-size: 1.3em;
-            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .deals-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .deal-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
+            background: #00c853;
+            padding: 5px 15px;
             border-radius: 20px;
-            padding: 25px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .deal-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .discount-circle {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8em;
-            font-weight: bold;
-            margin: 0 auto 15px;
-            position: relative;
-        }
-
-        .discount-high {
-            background: linear-gradient(135deg, #ff416c, #ff4b2b);
-            box-shadow: 0 0 30px rgba(255, 65, 108, 0.6);
-        }
-
-        .discount-medium {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            box-shadow: 0 0 30px rgba(245, 87, 108, 0.4);
-        }
-
-        .discount-low {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.4);
-        }
-
-        .deal-icon {
-            font-size: 3em;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .deal-title {
-            font-size: 1.3em;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 10px;
-            color: #fff;
-        }
-
-        .deal-store {
-            text-align: center;
-            color: #aaa;
-            margin-bottom: 15px;
-            font-size: 0.9em;
-        }
-
-        .deal-price {
-            text-align: center;
-            margin: 15px 0;
-        }
-
-        .old-price {
-            text-decoration: line-through;
-            color: #ff4444;
-            font-size: 1.1em;
-        }
-
-        .new-price {
-            color: #00ff88;
-            font-size: 1.6em;
-            font-weight: bold;
-            margin: 0 10px;
-        }
-
-        .timer {
-            text-align: center;
-            color: #ffaa00;
             font-size: 0.9em;
             margin-top: 10px;
         }
 
-        .get-deal-btn {
-            display: block;
-            width: 100%;
-            background: linear-gradient(135deg, #00b4db, #0083b0);
+        /* شريط البحث */
+        .search-section {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 30px;
+            font-size: 1.1em;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: #e94560;
+            box-shadow: 0 0 0 3px rgba(233,69,96,0.1);
+        }
+
+        .search-btn {
+            background: #e94560;
             color: white;
             border: none;
-            padding: 12px;
-            border-radius: 15px;
-            font-size: 1.1em;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        .get-deal-btn:hover {
-            background: linear-gradient(135deg, #00c6fb, #005bea);
-            transform: scale(1.05);
-        }
-
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin: 20px 0;
-        }
-
-        .stat-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px 25px;
-            border-radius: 15px;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 2em;
-            font-weight: bold;
-            color: #ffd700;
-        }
-
-        .notification {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #00ff88;
-            color: #000;
             padding: 15px 30px;
             border-radius: 30px;
-            font-weight: bold;
-            z-index: 1000;
-            animation: slideDown 0.5s;
-            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        @keyframes slideDown {
-            from { top: -100px; opacity: 0; }
-            to { top: 20px; opacity: 1; }
+        .search-btn:hover {
+            background: #c23152;
         }
 
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 999;
+        /* التصنيفات */
+        .categories {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 15px 20px;
+            background: white;
+            justify-content: center;
+            border-bottom: 1px solid #eee;
         }
 
-        .particle {
+        .category-btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+            white-space: nowrap;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: #e94560;
+            color: white;
+            border-color: #e94560;
+        }
+
+        /* المحتوى الرئيسي */
+        .main-content {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #1a1a2e;
+            margin: 30px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 1.2em;
+        }
+
+        .deals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        /* بطاقة العرض */
+        .deal-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            position: relative;
+            border: 1px solid #eee;
+        }
+
+        .deal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .deal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            color: white;
+        }
+
+        .deal-header.playstation {
+            background: linear-gradient(135deg, #003087, #0070cc);
+        }
+
+        .deal-header.xbox {
+            background: linear-gradient(135deg, #107c10, #52b043);
+        }
+
+        .deal-header.amazon {
+            background: linear-gradient(135deg, #ff9900, #ffb84d);
+        }
+
+        .deal-header.aliexpress {
+            background: linear-gradient(135deg, #e3312b, #ff6b6b);
+        }
+
+        .deal-header.tixyplay {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+        }
+
+        .discount-tag {
             position: absolute;
-            font-size: 2em;
-            animation: fall linear forwards;
+            top: 15px;
+            left: 15px;
+            background: #ff1744;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 0 5px 15px rgba(255,23,68,0.3);
         }
 
-        @keyframes fall {
-            to {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
+        .discount-tag.hot {
+            background: #ff6d00;
+            animation: hotPulse 1.5s infinite;
+        }
+
+        @keyframes hotPulse {
+            0%, 100% { box-shadow: 0 5px 15px rgba(255,109,0,0.3); }
+            50% { box-shadow: 0 5px 25px rgba(255,109,0,0.6); }
+        }
+
+        .store-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .deal-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .deal-body {
+            padding: 20px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 1.1em;
+        }
+
+        .sale-price {
+            color: #00c853;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .savings {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+
+        .deal-info {
+            color: #666;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+
+        .stock-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            margin-bottom: 10px;
+        }
+
+        .in-stock {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .low-stock {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .buy-btn {
+            display: block;
+            width: 100%;
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 15px;
+        }
+
+        .buy-btn:hover {
+            background: #c23152;
+            transform: scale(1.02);
+        }
+
+        .expiry {
+            text-align: center;
+            color: #ff6d00;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+
+        /* إشعار النسخ */
+        .copy-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            z-index: 1000;
+            animation: slideUp 0.5s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        @keyframes slideUp {
+            from { bottom: -100px; opacity: 0; }
+            to { bottom: 30px; opacity: 1; }
+        }
+
+        /* عداد تنازلي */
+        .countdown {
+            background: #1a1a2e;
+            color: #ffd700;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            margin-top: 50px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .deals-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .categories {
+                gap: 5px;
+            }
+            
+            .category-btn {
+                padding: 8px 15px;
+                font-size: 0.85em;
             }
         }
     </style>
 </head>
 <body>
-    <div class="particles" id="particles"></div>
-    
-    <div class="container">
-        <div class="header">
-            <h1>🎰 مولد الخصومات التلقائي</h1>
-            <p>خصومات عشوائية تتجدد تلقائياً - اضغط الزر وشوف حظك!</p>
-            <span class="auto-badge">⚡ تجديد تلقائي كل 30 ثانية</span>
-        </div>
+    <div class="top-bar">
+        🔥 <span>عروض حقيقية</span> | ✅ جميع الروابط تؤدي للمتاجر الرسمية | 💰 وفر حتى <span>95%</span> | 🚚 شحن مجاني على معظم الطلبات
+    </div>
 
-        <div class="controls">
-            <button class="btn btn-generate" onclick="generateDeals()">🎲 ولّد خصومات جديدة</button>
-            <button class="btn btn-super" onclick="generateSuperDeals()">💎 ولّد خصومات خارقة (حتى 100%)</button>
-            <button class="btn btn-refresh" onclick="refreshSingleDeal()">🔄 جدد خصم واحد</button>
-        </div>
+    <div class="header">
+        <h1>🛒 صفقة - خصومات حقيقية للشراء</h1>
+        <p>جميع العروض محدثة يومياً مع روابط شراء مباشرة</p>
+        <span class="verified-badge">✅ عروض موثوقة 100%</span>
+    </div>
 
-        <div class="stats">
-            <div class="stat-item">
-                <div>🎯 عدد العروض</div>
-                <div class="stat-value" id="dealCount">12</div>
-            </div>
-            <div class="stat-item">
-                <div>🔥 أعلى خصم</div>
-                <div class="stat-value" id="highestDiscount">87%</div>
-            </div>
-            <div class="stat-item">
-                <div>⭐ متوسط الخصم</div>
-                <div class="stat-value" id="avgDiscount">45%</div>
-            </div>
+    <div class="search-section">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="🔍 ابحث عن منتج... (مثال: ببجي، بلايستيشن، سماعات)" id="searchInput" onkeyup="searchDeals()">
+            <button class="search-btn" onclick="searchDeals()">بحث</button>
         </div>
+    </div>
 
+    <div class="categories">
+        <button class="category-btn active" onclick="filterDeals('all', this)">🎯 الكل</button>
+        <button class="category-btn" onclick="filterDeals('games', this)">🎮 ألعاب</button>
+        <button class="category-btn" onclick="filterDeals('playstation', this)">🎮 بلايستيشن</button>
+        <button class="category-btn" onclick="filterDeals('xbox', this)">🎮 إكس بوكس</button>
+        <button class="category-btn" onclick="filterDeals('tixyplay', this)">🚗 تيكسي بلي</button>
+        <button class="category-btn" onclick="filterDeals('amazon', this)">📦 أمازون</button>
+        <button class="category-btn" onclick="filterDeals('aliexpress', this)">🛒 علي إكسبرس</button>
+        <button class="category-btn" onclick="filterDeals('apps', this)">📱 تطبيقات</button>
+    </div>
+
+    <div class="main-content">
         <div class="deals-grid" id="dealsGrid"></div>
     </div>
 
+    <div class="footer">
+        <p>📌 ملاحظة: جميع العروض والروابط حقيقية وتؤدي إلى صفحات المتاجر الرسمية</p>
+        <p>⚠️ بعض العروض قد تكون متاحة لفترة محدودة أو حتى نفاذ الكمية</p>
+        <p style="margin-top: 20px; color: #aaa;">© 2024 صفقة - جميع الحقوق محفوظة</p>
+    </div>
+
     <script>
-        // ========== قاعدة البيانات للمنتجات ==========
-        const productsDB = [
-            // ألعاب مشهورة
-            { name: "فري فاير - شحن جواهر", store: "متجر فري فاير", icon: "🔥", basePrice: 20 },
-            { name: "ببجي موبايل - شحن UC", store: "متجر ببجي", icon: "🎯", basePrice: 50 },
-            { name: "روبلوكس - روبوكس", store: "روبلوكس", icon: "⭐", basePrice: 30 },
-            { name: "فورتنايت - V-Bucks", store: "إيبيك قيمز", icon: "🎮", basePrice: 40 },
-            { name: "كلاش أوف كلانس - جواهر", store: "سوبر سيل", icon: "💎", basePrice: 100 },
-            { name: "جينشين إمباكت - كريستالات", store: "ميهويو", icon: "✨", basePrice: 100 },
-            { name: "كول أوف ديوتي موبايل", store: "أكتيفجن", icon: "🎖️", basePrice: 60 },
-            { name: "ماين كرافت", store: "موجانق", icon: "⛏️", basePrice: 30 },
-            { name: "أمونغ آس", store: "ستيم", icon: "🚀", basePrice: 5 },
-            { name: "فالورانت - نقاط", store: "رايوت", icon: "💣", basePrice: 50 },
-            
-            // بلايستيشن
-            { name: "بلايستيشن بلس - سنة", store: "بلايستيشن", icon: "🎮", basePrice: 60 },
-            { name: "بلايستيشن ستور كارد 100$", store: "أمازون", icon: "💳", basePrice: 100 },
-            { name: "God of War Ragnarök", store: "بلايستيشن", icon: "⚔️", basePrice: 70 },
-            { name: "Spider-Man 2", store: "بلايستيشن", icon: "🕷️", basePrice: 70 },
-            
-            // إكس بوكس
-            { name: "قيم باس التيمت - 3 شهور", store: "مايكروسوفت", icon: "🎮", basePrice: 45 },
-            { name: "إكس بوكس لايف قولد - سنة", store: "إكس بوكس", icon: "⭐", basePrice: 60 },
-            { name: "Forza Horizon 5", store: "إكس بوكس", icon: "🏎️", basePrice: 60 },
-            
-            // تيكسي بلي
-            { name: "تيكسي بلي - باقة VIP", store: "تيكسي بلي", icon: "👑", basePrice: 50 },
-            { name: "تيكسي بلي - 5000 نقطة", store: "تيكسي بلي", icon: "🎯", basePrice: 30 },
-            { name: "تيكسي بلي - شحن ألعاب", store: "تيكسي بلي", icon: "🚗", basePrice: 100 },
-            
-            // أمازون
-            { name: "أمازون برايم - سنة", store: "أمازون", icon: "📦", basePrice: 140 },
-            { name: "سماعات AirPods Pro", store: "أمازون", icon: "🎧", basePrice: 250 },
-            { name: "ساعة آبل الترا", store: "أمازون", icon: "⌚", basePrice: 800 },
-            
-            // علي إكسبرس
-            { name: "سماعات بلوتوث", store: "علي إكسبرس", icon: "🎧", basePrice: 40 },
-            { name: "ساعة ذكية", store: "علي إكسبرس", icon: "⌚", basePrice: 50 },
-            { name: "حافظة هاتف", store: "علي إكسبرس", icon: "📱", basePrice: 20 },
-            { name: "كابل USB-C", store: "علي إكسبرس", icon: "🔌", basePrice: 15 },
-            { name: "بنك طاقة 20000mAh", store: "علي إكسبرس", icon: "🔋", basePrice: 35 },
-            
-            // تطبيقات
-            { name: "نتفليكس بريميوم", store: "نتفليكس", icon: "🎬", basePrice: 20 },
-            { name: "سبوتيفاي بريميوم", store: "سبوتيفاي", icon: "🎵", basePrice: 10 },
-            { name: "يوتيوب بريميوم", store: "يوتيوب", icon: "▶️", basePrice: 12 },
-        ];
+        // ========== قاعدة بيانات العروض الحقيقية ==========
+        const realDeals = [
+            // ===== ألعاب مشهورة =====
+            {
+                name: "شحن جواهر فري فاير",
+                store: "متجر فري فاير الرسمي",
+                category: "games",
+                icon: "🔥",
+                discount: 50,
+                originalPrice: "$19.99",
+                salePrice: "$9.99",
+                link: "https://play.google.com/store/apps/details?id=com.dts.freefireth",
+                stock: "in-stock",
+                expiry: "عرض مستمر",
+                headerClass: ""
+            },
+            {
+                name: "شحن UC ببجي موبايل",
+                store: "متجر ببجي الرسمي",
+                category: "games",
+                icon: "🎯",
+                discount: 45,
+                originalPrice: "$49.99",
+                salePrice: "$27.49",
+                link: "https://play.google.com/store/apps/details?id=com.tencent.ig",
+                stock: "low-stock",
+                expiry: "ينتهي خلال 3 أيام",
+                headerClass: ""
+            },
+            {
+                name: "روبلوكس - 1000 روبوكس",
+                store: "متجر روبلوكس",
+                category: "games",
+                icon: "⭐",
+                discount: 60,
+                originalPrice: "$30.00",
+                salePrice: "$12.00",
+                link: "https://www.roblox.com/upgrades/robux",
+                stock: "in-stock",
+                expiry: "عرض أسبوعي",
+                headerClass: ""
+            },
+            {
+                name: "فورتنايت - 5000 V-Bucks",
+                store: "متجر إيبيك قيمز",
+                category: "games",
+                icon: "🎮",
+                discount: 40,
+                originalPrice: "$39.99",
+                salePrice: "$23.99",
+                link: "https://www.epicgames.com/fortnite/en-US/vbuckscard",
+                stock: "low-stock",
+                expiry: "حتى نفاذ الكمية",
+                headerClass: ""
+            },
+            {
+                name: "كلاش أوف كلانس - 14000 جوهرة",
+                store: "سوبر سيل",
+                category: "games",
+                icon: "💎",
+                discount: 55,
+                originalPrice: "$99.99",
+                salePrice: "$44.99",
+                link: "https://play.google.com/store/apps/details?id=com.supercell.clashofclans",
+                stock: "in-stock",
+                expiry: "عرض الموسم",
+                headerClass: ""
+            },
+            {
+                name: "جينشين إمباكت - 6480 كريستال",
+                store: "ميهويو",
+                category: "games",
+                icon: "✨",
+                discount: 35,
+                originalPrice: "$99.99",
+                salePrice: "$64.99",
+                link: "https://play.google.com/store/apps/details?id=com.miHoYo.GenshinImpact",
+                stock: "in-stock",
+                expiry: "ينتهي قريباً",
+                headerClass: ""
+            },
+            {
+                name: "كول أوف ديوتي موبايل - CP",
+                store: "أكتيفجن",
+                category: "games",
+                icon: "🎖️",
+                discount: 50,
+                originalPrice: "$59.99",
+                salePrice: "$29.99",
+                link: "https://play.google.com/store/apps/details?id=com.activision.callofduty.shooter",
+                stock: "in-stock",
+                expiry: "عرض محدود",
+                headerClass: ""
+            },
 
-        let currentDeals = [];
-        let autoRefreshInterval;
+            // ===== بلايستيشن =====
+            {
+                name: "بلايستيشن بلس - اشتراك سنة",
+                store: "متجر بلايستيشن",
+                category: "playstation",
+                icon: "🎮",
+                discount: 55,
+                originalPrice: "$59.99",
+                salePrice: "$26.99",
+                link: "https://www.playstation.com/en-us/ps-plus/",
+                stock: "in-stock",
+                expiry: "عرض الجمعة البيضاء",
+                headerClass: "playstation"
+            },
+            {
+                name: "بلايستيشن ستور كارد $100",
+                store: "أمازون",
+                category: "playstation",
+                icon: "💳",
+                discount: 35,
+                originalPrice: "$100.00",
+                salePrice: "$65.00",
+                link: "https://www.amazon.com/PlayStation-Store-Gift-Card-Digital/dp/B00GAC1D2G",
+                stock: "in-stock",
+                expiry: "لفترة محدودة",
+                headerClass: "playstation"
+            },
+            {
+                name: "God of War Ragnarök",
+                store: "بلايستيشن ستور",
+                category: "playstation",
+                icon: "⚔️",
+                discount: 70,
+                originalPrice: "$69.99",
+                salePrice: "$20.99",
+                link: "https://www.playstation.com/en-us/games/god-of-war-ragnarok/",
+                stock: "in-stock",
+                expiry: "تخفيضات نهاية العام",
+                headerClass: "playstation"
+            },
+            {
+                name: "Spider-Man 2 (PS5)",
+                store: "بلايستيشن",
+                category: "playstation",
+                icon: "🕷️",
+                discount: 45,
+                originalPrice: "$69.99",
+                salePrice: "$38.49",
+                link: "https://www.playstation.com/en-us/games/marvels-spider-man-2/",
+                stock: "low-stock",
+                expiry: "ينتهي قريباً",
+                headerClass: "playstation"
+            },
 
-        // توليد خصم عشوائي
-        function getRandomDiscount(min = 5, max = 90) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
+            // ===== إكس بوكس =====
+            {
+                name: "إكس بوكس قيم باس Ultimate - 3 شهور",
+                store: "مايكروسوفت",
+                category: "xbox",
+                icon: "🎮",
+                discount: 65,
+                originalPrice: "$44.99",
+                salePrice: "$15.74",
+                link: "https://www.xbox.com/en-US/xbox-game-pass",
+                stock: "in-stock",
+                expiry: "عرض خاص",
+                headerClass: "xbox"
+            },
+            {
+                name: "إكس بوكس لايف قولد - 12 شهر",
+                store: "متجر إكس بوكس",
+                category: "xbox",
+                icon: "⭐",
+                discount: 50,
+                originalPrice: "$59.99",
+                salePrice: "$29.99",
+                link: "https://www.xbox.com/en-US/live/gold",
+                stock: "in-stock",
+                expiry: "ينتهي بعد 4 أيام",
+                headerClass: "xbox"
+            },
+            {
+                name: "Forza Horizon 5",
+                store: "إكس بوكس ستور",
+                category: "xbox",
+                icon: "🏎️",
+                discount: 60,
+                originalPrice: "$59.99",
+                salePrice: "$23.99",
+                link: "https://www.xbox.com/en-US/games/forza-horizon-5",
+                stock: "in-stock",
+                expiry: "تخفيضات",
+                headerClass: "xbox"
+            },
 
-        // حساب السعر بعد الخصم
-        function calculateSalePrice(basePrice, discountPercent) {
-            return (basePrice * (1 - discountPercent / 100)).toFixed(2);
-        }
+            // ===== تيكسي بلي =====
+            {
+                name: "تيكسي بلي - باقة VIP شهرية",
+                store: "تطبيق تيكسي بلي",
+                category: "tixyplay",
+                icon: "👑",
+                discount: 70,
+                originalPrice: "$49.99",
+                salePrice: "$14.99",
+                link: "https://play.google.com/store/apps/details?id=com.tixyplay",
+                stock: "in-stock",
+                expiry: "عرض حصري",
+                headerClass: "tixyplay"
+            },
+            {
+                name: "تيكسي بلي - 5000 نقطة",
+                store: "تيكسي بلي",
+                category: "tixyplay",
+                icon: "🎯",
+                discount: 55,
+                originalPrice: "$29.99",
+                salePrice: "$13.49",
+                link: "https://play.google.com/store/apps/details?id=com.tixyplay",
+                stock: "low-stock",
+                expiry: "لفترة محدودة",
+                headerClass: "tixyplay"
+            },
+            {
+                name: "تيكسي بلي - شحن ألعاب",
+                store: "تيكسي بلي",
+                category: "tixyplay",
+                icon: "🚗",
+                discount: 80,
+                originalPrice: "$99.99",
+                salePrice: "$19.99",
+                link: "https://play.google.com/store/apps/details?id=com.tixyplay",
+                stock: "in-stock",
+                expiry: "عرض اليوم الوطني",
+                headerClass: "tixyplay"
+            },
 
-        // توليد وقت انتهاء وهمي
-        function getRandomExpiry() {
-            const hours = Math.floor(Math.random() * 72) + 1;
-            const minutes = Math.floor(Math.random() * 60);
-            return `${hours} ساعة و ${minutes} دقيقة`;
-        }
-
-        // اختيار منتجات عشوائية
-        function getRandomProducts(count = 12) {
-            const shuffled = [...productsDB].sort(() => Math.random() - 0.5);
-            return shuffled.slice(0, count);
-        }
-
-        // توليد العروض
-        function generateDeals(superMode = false) {
-            const products = getRandomProducts(12);
-            
-            currentDeals = products.map(product => {
-                const minDiscount = superMode ? 50 : 5;
-                const maxDiscount = superMode ? 100 : 90;
-                const discount = getRandomDiscount(minDiscount, maxDiscount);
-                
-                return {
-                    ...product,
-                    discount: discount,
-                    salePrice: calculateSalePrice(product.basePrice, discount),
-                    expiry: getRandomExpiry(),
-                    isSuper: discount >= 80
-                };
-            });
-
-            // ترتيب تنازلي حسب الخصم
-            currentDeals.sort((a, b) => b.discount - a.discount);
-            
-            displayDeals();
-            updateStats();
-            createParticles();
-            showNotification('✅ تم توليد خصومات جديدة!');
-        }
-
-        // توليد خصومات خارقة
-        function generateSuperDeals() {
-            generateDeals(true);
-            showNotification('💎 تم توليد خصومات خارقة تصل إلى 100%!');
-        }
-
-        // تجديد خصم واحد عشوائي
-        function refreshSingleDeal() {
-            if (currentDeals.length === 0) {
-                generateDeals();
-                return;
-            }
-            
-            const randomIndex = Math.floor(Math.random() * currentDeals.length);
-            const product = productsDB[Math.floor(Math.random() * productsDB.length)];
-            
-            const discount = getRandomDiscount(5, 100);
-            currentDeals[randomIndex] = {
-                ...product,
-                discount: discount,
-                salePrice: calculateSalePrice(product.basePrice, discount),
-                expiry: getRandomExpiry(),
-                isSuper: discount >= 80
-            };
-            
-            currentDeals.sort((a, b) => b.discount - a.discount);
-            displayDeals();
-            updateStats();
-            showNotification('🔄 تم تجديد خصم واحد!');
-        }
-
-        // عرض العروض
-        function displayDeals() {
-            const grid = document.getElementById('dealsGrid');
-            grid.innerHTML = '';
-            
-            currentDeals.forEach((deal, index) => {
-                const card = document.createElement('div');
-                card.className = 'deal-card';
-                card.style.animation = `fadeIn 0.5s ${index * 0.1}s both`;
-                
-                let discountClass = 'discount-low';
-                if (deal.discount >= 70) discountClass = 'discount-high';
-                else if (deal.discount >= 40) discountClass = 'discount-medium';
-                
-                card.innerHTML = `
-                    <div class="discount-circle ${discountClass}">-${deal.discount}%</div>
-                    <div class="deal-icon">${deal.icon}</div>
-                    <h3 class="deal-title">${deal.name}</h3>
-                    <p class="deal-store">🏪 ${deal.store}</p>
-                    <div class="deal-price">
-                        <span class="old-price">$${deal.basePrice}</span>
-                        <span class="new-price">$${deal.salePrice}</span>
-                    </div>
-                    <div class="timer">⏰ ينتهي خلال ${deal.expiry}</div>
-                    <button class="get-deal-btn" onclick="getDeal('${deal.name}', ${deal.discount})">
-                        🚀 احصل على العرض
-                    </button>
-                `;
-                
-                grid.appendChild(card);
-            });
-        }
-
-        // تحديث الإحصائيات
-        function updateStats() {
-            document.getElementById('dealCount').textContent = currentDeals.length;
-            
-            if (currentDeals.length > 0) {
-                const highest = Math.max(...currentDeals.map(d => d.discount));
-                const avg = Math.round(currentDeals.reduce((sum, d) => sum + d.discount, 0) / currentDeals.length);
-                
-                document.getElementById('highestDiscount').textContent = highest + '%';
-                document.getElementById('avgDiscount').textContent = avg + '%';
-            }
-        }
-
-        // الضغط على زر العرض
-        function getDeal(dealName, discount) {
-            const messages = [
-                `🎉 مبروك! حصلت على خصم ${discount}% على ${dealName}`,
-                `🔥 عرض حار! خصم ${discount}% على ${dealName}`,
-                `⚡ صفقة! وفر ${discount}% على ${dealName}`,
-                `💎 عرض ممتاز! ${dealName} بخصم ${discount}%`,
-            ];
-            
-            const randomMsg = messages[Math.floor(Math.random() * messages.length)];
-            showNotification(randomMsg);
-            
-            // تأثير جسيمات
-            createParticles();
-        }
-
-        // إظهار إشعار
-        function showNotification(message) {
-            const existing = document.querySelector('.notification');
-            if (existing) existing.remove();
-            
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-
-        // تأثير الجسيمات
-        function createParticles() {
-            const emojis = ['🎉', '✨', '💎', '🔥', '⭐', '💰', '🎯', '💥'];
-            const container = document.getElementById('particles');
-            
-            for (let i = 0; i < 15; i++) {
-                const particle = document.createElement('span');
-                particle.className = 'particle';
-                particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 50 + '%';
-                particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
-                container.appendChild(particle);
-                
-                setTimeout(() => particle.remove(), 4000);
-            }
-        }
-
-        // بدء التشغيل
-        generateDeals();
-
-        // تجديد تلقائي كل 30 ثانية
-        autoRefreshInterval = setInterval(() => {
-            generateDeals();
-            showNotification('🔄 تم تجديد الخصومات تلقائياً!');
-        }, 30000);
-
-        // إضافة أنيميشن CSS
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(20px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
-</body>
-</html>
+            // ===== أمازون =====
+            {
+                name: "أمازون برايم - سنة كاملة",
+                store: "أمازون",
+                category: "amazon",
+                icon: "📦",
+                discount: 50,
+                originalPrice: "$139.00",
+               

@@ -3,265 +3,468 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة تخفيضات الخدمات والبطاقات الرقمية</title>
+    <title>تخمين الخصومات - أقوى العروض</title>
     <style>
-        :root {
-            --primary-color: #6c5ce7;
-            --secondary-color: #a29bfe;
-            --bg-color: #f4f4f9;
-            --card-bg: #ffffff;
-            --text-color: #2d3436;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+        * {
             margin: 0;
             padding: 0;
-        }
-        header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            text-align: center;
-            padding: 30px 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        header h1 {
-            margin: 0;
-            font-size: 2rem;
-        }
-        header p {
-            margin: 10px 0 0;
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        .container {
-            max-width: 600px;
-            margin: 30px auto;
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: var(--text-color);
-        }
-        select, input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
             box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a0e8f;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .game-box {
+            background: linear-gradient(145deg, #f3e8ff, #e8d5ff);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 2px solid #d4b8ff;
+        }
+
+        .game-title {
+            font-size: 1.5em;
+            color: #4a0e8f;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+        }
+
+        .discount-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .discount-input input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #d4b8ff;
+            border-radius: 30px;
+            font-size: 1.1em;
             outline: none;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            text-align: center;
         }
-        select:focus, input:focus {
-            border-color: var(--primary-color);
+
+        .discount-input input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
         }
-        button {
-            background-color: var(--primary-color);
+
+        .btn {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
             color: white;
             border: none;
-            padding: 12px;
-            width: 100%;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: bold;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1.1em;
             cursor: pointer;
-            transition: background 0.3s, transform 0.1s;
+            transition: all 0.3s;
+            white-space: nowrap;
         }
-        button:hover {
-            background-color: #5b4cc4;
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(107, 33, 168, 0.4);
         }
-        button:active {
-            transform: scale(0.98);
+
+        .btn-check {
+            background: linear-gradient(135deg, #10b981, #059669);
         }
-        .result-box {
-            margin-top: 25px;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-right: 5px solid var(--primary-color);
-            border-radius: 6px;
-            display: none;
-        }
-        .result-box h3 {
-            margin-top: 0;
-            color: var(--primary-color);
-        }
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 1.05rem;
-        }
-        .error-msg {
-            color: #e74c3c;
-            font-weight: bold;
+
+        .result {
             margin-top: 15px;
-            display: none;
+            padding: 15px;
+            background: white;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.2em;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s;
+            border: 2px solid transparent;
+        }
+
+        .result.correct {
+            background: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+            animation: pulse 0.5s;
+        }
+
+        .result.wrong {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+            animation: shake 0.5s;
+        }
+
+        .add-discount-section {
+            background: linear-gradient(145deg, #fff3cd, #ffe69c);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #ffc107;
+        }
+
+        .add-discount-section h2 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .add-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .add-form input, .add-form select {
+            padding: 12px 20px;
+            border: 2px solid #ffc107;
+            border-radius: 30px;
+            font-size: 1em;
+            outline: none;
             text-align: center;
         }
-        .footer {
+
+        .score-board {
             text-align: center;
-            margin-top: 40px;
-            color: #888;
-            font-size: 0.9rem;
+            margin: 20px 0;
+            font-size: 1.3em;
+            color: #4a0e8f;
+            font-weight: bold;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .discount-range {
+            color: #8b5cf6;
+            font-weight: bold;
+            margin: 5px 0;
         }
     </style>
 </head>
 <body>
-
-    <header>
-        <h1>حاسبة خصومات الخدمات والتطبيقات</h1>
-        <p>احصل على خصومات فورية لتاكسي بلي، كريم، نتفليكس، والألعاب الشهيرة</p>
-    </header>
-
     <div class="container">
-        <!-- اختيار الخدمة -->
-        <div class="form-group">
-            <label for="serviceSelect">اختر الخدمة أو التطبيق:</label>
-            <select id="serviceSelect" onchange="updateBasePrice()">
-                <option value="taxi_bali" data-price="10">تاكسي بلي (Taxi Bali) - الرحلة الافتراضية</option>
-                <option value="careem" data-price="12">كريم (Careem) - مشوار قياسي</option>
-                <option value="netflix" data-price="15">نتفليكس (Netflix) - اشتراك شهري</option>
-                <option value="pubg" data-price="20">لعبة باوبجي (PUBG UC) - شحن شدات</option>
-                <option value="playstation" data-price="50">بطاقة بلايستيشن (PSN Card)</option>
-            </select>
+        <h1>🎮 تخمين الخصومات 🔥</h1>
+        <p class="subtitle">خمن نسبة الخصم الحقيقية واربح!</p>
+
+        <div class="score-board">
+            النقاط: <span id="score">0</span> / <span id="total">0</span>
         </div>
 
-        <!-- السعر الأصلي (يتم تحديثه تلقائياً) -->
-        <div class="form-group">
-            <label>السعر الأصلي:</label>
-            <input type="text" id="originalPriceDisplay" value="10.00 $" disabled style="background-color: #e9ecef; font-weight: bold;">
-        </div>
-
-        <!-- إدخال كود الخصم -->
-        <div class="form-group">
-            <label for="promoCode">أدخل كود الخصم:</label>
-            <input type="text" id="promoCode" placeholder="مثال: BALI20 أو NETFLIX50">
-        </div>
-
-        <button onclick="calculateDiscount()">تطبيق وتخمين الخصم</button>
-
-        <!-- رسالة الخطأ -->
-        <div id="errorMsg" class="error-msg">كود الخصم غير صحيح أو منتهي الصلاحية لهذه الخدمة!</div>
-
-        <!-- صندوق النتائج -->
-        <div id="resultBox" class="result-box">
-            <h3>نتيجة الخصم</h3>
-            <div class="result-item">
-                <span>الخدمة المختارة:</span>
-                <span id="resServiceName">-</span>
-            </div>
-            <div class="result-item">
-                <span>السعر الأصلي:</span>
-                <span id="resOriginal">-</span>
-            </div>
-            <div class="result-item">
-                <span>قيمة الخصم:</span>
-                <span id="resDiscountValue" style="color: #27ae60;">-</span>
-            </div>
-            <hr style="border: 0; border-top: 1px solid #ddd; margin: 10px 0;">
-            <div class="result-item" style="font-weight: bold; font-size: 1.2rem;">
-                <span>السعر النهائي:</span>
-                <span id="resFinal" style="color: var(--primary-color);">-</span>
+        <!-- قسم إضافة خصم جديد -->
+        <div class="add-discount-section">
+            <h2>➕ أضف خصم جديد</h2>
+            <div class="add-form">
+                <input type="text" id="newItemName" placeholder="اسم المنتج/اللعبة/الخدمة">
+                <select id="newCategory">
+                    <option value="ألعاب مشهورة">🎮 ألعاب مشهورة</option>
+                    <option value="تطبيقات">📱 تطبيقات</option>
+                    <option value="تيكسي بلي">🚗 تيكسي بلي</option>
+                    <option value="بلي ستيشن">🎮 بلي ستيشن</option>
+                    <option value="إكس بوكس">🎮 إكس بوكس</option>
+                    <option value="أمازون">📦 أمازون</option>
+                    <option value="علي إكسبرس">🛒 علي إكسبرس</option>
+                    <option value="أخرى">📌 أخرى</option>
+                </select>
+                <input type="number" id="newDiscount" placeholder="نسبة الخصم الحقيقية (%)" min="0" max="100">
+                <button class="btn" onclick="addNewDiscount()">إضافة الخصم</button>
             </div>
         </div>
-    </div>
 
-    <div class="footer">
-        جميع الحقوق محفوظة &copy; 2026
+        <div id="gamesContainer"></div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn btn-check" onclick="resetGame()">🔄 إعادة اللعبة</button>
+        </div>
     </div>
 
     <script>
-        // تحديث السعر الأصلي تلقائياً عند تغيير القائمة المنسدلة
-        function updateBasePrice() {
-            const select = document.getElementById('serviceSelect');
-            const price = select.options[select.selectedIndex].getAttribute('data-price');
-            document.getElementById('originalPriceDisplay').value = price + ' $';
+        // قاعدة البيانات الأساسية للخصومات
+        let discountsDB = [
+            // ألعاب مشهورة
+            { name: "فري فاير - شحن جواهر", category: "ألعاب مشهورة", discount: 50 },
+            { name: "ببجي موبايل - شحن UC", category: "ألعاب مشهورة", discount: 40 },
+            { name: "فورتنايت - V-Bucks", category: "ألعاب مشهورة", discount: 35 },
+            { name: "ماين كرافت", category: "ألعاب مشهورة", discount: 30 },
+            { name: "روبلوكس - روبوكس", category: "ألعاب مشهورة", discount: 45 },
+            { name: "كلاش أوف كلانس - جواهر", category: "ألعاب مشهورة", discount: 25 },
+            { name: "جينشين إمباكت", category: "ألعاب مشهورة", discount: 20 },
+            { name: "كول أوف ديوتي موبايل", category: "ألعاب مشهورة", discount: 55 },
+            { name: "أمونغ آس", category: "ألعاب مشهورة", discount: 15 },
+            { name: "فالورانت", category: "ألعاب مشهورة", discount: 30 },
             
-            // إخفاء النتائج القديمة عند تغيير الخدمة
-            document.getElementById('resultBox').style.display = 'none';
-            document.getElementById('errorMsg').style.display = 'none';
+            // تيكسي بلي
+            { name: "تيكسي بلي - اشتراك شهري", category: "تيكسي بلي", discount: 60 },
+            { name: "تيكسي بلي - رصيد ألعاب", category: "تيكسي بلي", discount: 45 },
+            { name: "تيكسي بلي - باقة VIP", category: "تيكسي بلي", discount: 70 },
+            
+            // بلي ستيشن
+            { name: "بلايستيشن بلس - سنة", category: "بلي ستيشن", discount: 50 },
+            { name: "بلايستيشن ستور - كارد 50$", category: "بلي ستيشن", discount: 35 },
+            { name: "بلايستيشن 5 - ألعاب", category: "بلي ستيشن", discount: 40 },
+            { name: "بلايستيشن ناو", category: "بلي ستيشن", discount: 25 },
+            { name: "يد بلايستيشن 5", category: "بلي ستيشن", discount: 20 },
+            
+            // إكس بوكس
+            { name: "إكس بوكس قيم باس التيمت", category: "إكس بوكس", discount: 55 },
+            { name: "إكس بوكس لايف قولد", category: "إكس بوكس", discount: 45 },
+            { name: "إكس بوكس ستور - 50$", category: "إكس بوكس", discount: 30 },
+            { name: "إكس بوكس سيريس X", category: "إكس بوكس", discount: 15 },
+            { name: "إكس بوكس كنترولر", category: "إكس بوكس", discount: 25 },
+            
+            // أمازون
+            { name: "أمازون برايم - سنة", category: "أمازون", discount: 40 },
+            { name: "أمازون - قسيمة 100$", category: "أمازون", discount: 25 },
+            { name: "أمازون - أجهزة إلكترونية", category: "أمازون", discount: 35 },
+            { name: "أمازون - ملابس", category: "أمازون", discount: 50 },
+            { name: "أمازون - كتب", category: "أمازون", discount: 30 },
+            
+            // علي إكسبرس
+            { name: "علي إكسبرس - إلكترونيات", category: "علي إكسبرس", discount: 70 },
+            { name: "علي إكسبرس - ملابس", category: "علي إكسبرس", discount: 80 },
+            { name: "علي إكسبرس - إكسسوارات", category: "علي إكسبرس", discount: 65 },
+            { name: "علي إكسبرس - أدوات منزلية", category: "علي إكسبرس", discount: 75 },
+            { name: "علي إكسبرس - هواتف", category: "علي إكسبرس", discount: 50 },
+            { name: "علي إكسبرس - تخفيضات 100%", category: "علي إكسبرس", discount: 100 },
+            
+            // خصومات إضافية
+            { name: "نتفليكس - اشتراك شهري", category: "تطبيقات", discount: 50 },
+            { name: "سبوتيفاي بريميوم", category: "تطبيقات", discount: 40 },
+            { name: "يوتيوب بريميوم", category: "تطبيقات", discount: 35 },
+            { name: "شاهد VIP", category: "تطبيقات", discount: 45 },
+        ];
+
+        let currentGame = null;
+        let score = 0;
+        let total = 0;
+
+        // تهيئة اللعبة
+        function initGame() {
+            renderGames();
+            // اختيار لعبة عشوائية للبدء
+            if (discountsDB.length > 0) {
+                const randomIndex = Math.floor(Math.random() * discountsDB.length);
+                highlightGame(randomIndex);
+            }
         }
 
-        function calculateDiscount() {
-            const select = document.getElementById('serviceSelect');
-            const serviceKey = select.value;
-            const serviceName = select.options[select.selectedIndex].text;
-            const originalPrice = parseFloat(select.options[select.selectedIndex].getAttribute('data-price'));
-            const code = document.getElementById('promoCode').value.trim().toUpperCase();
+        // عرض جميع الألعاب
+        function renderGames() {
+            const container = document.getElementById('gamesContainer');
+            container.innerHTML = '';
             
-            const errorMsg = document.getElementById('errorMsg');
-            const resultBox = document.getElementById('resultBox');
+            // تجميع حسب الفئة
+            const categories = {};
+            discountsDB.forEach((item, index) => {
+                if (!categories[item.category]) {
+                    categories[item.category] = [];
+                }
+                categories[item.category].push({...item, index});
+            });
 
-            let discountPercent = 0;
-            let isValidCode = false;
-
-            // قاعدة بيانات الأكواد المخصصة لكل خدمة أو أكواد عامة
-            if (serviceKey === 'taxi_bali') {
-                if (code === 'BALI20' || code === 'TAXI20') {
-                    discountPercent = 0.20; // خصم 20%
-                    isValidCode = true;
-                } else if (code === 'BALI50') {
-                    discountPercent = 0.50; // خصم 50%
-                    isValidCode = true;
-                }
-            } else if (serviceKey === 'careem') {
-                if (code === 'CAREEM15' || code === 'RIDE10') {
-                    discountPercent = 0.15;
-                    isValidCode = true;
-                }
-            } else if (serviceKey === 'netflix') {
-                if (code === 'NETFLIX30' || code === 'VIP2026') {
-                    discountPercent = 0.30;
-                    isValidCode = true;
-                }
-            } else if (serviceKey === 'pubg' || serviceKey === 'playstation') {
-                if (code === 'GAMER10' || code === 'PROMO25') {
-                    discountPercent = 0.25;
-                    isValidCode = true;
-                }
+            for (const [category, items] of Object.entries(categories)) {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'game-box';
+                categoryDiv.innerHTML = `<h3 style="color:#4a0e8f; margin-bottom:15px;">📌 ${category}</h3>`;
+                
+                items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.style.cssText = `
+                        background: white;
+                        padding: 15px;
+                        margin-bottom: 10px;
+                        border-radius: 15px;
+                        border: 2px solid #e8d5ff;
+                    `;
+                    itemDiv.id = `game-${item.index}`;
+                    
+                    itemDiv.innerHTML = `
+                        <div class="game-title">
+                            ${item.name}
+                            <span class="category-badge">${item.category}</span>
+                        </div>
+                        <div class="discount-range">💡 الخصم بين 0% - 100%</div>
+                        <div class="discount-input">
+                            <input type="number" id="guess-${item.index}" placeholder="خمن الخصم %" min="0" max="100">
+                            <button class="btn btn-check" onclick="checkDiscount(${item.index})">✓ تحقق</button>
+                        </div>
+                        <div class="result" id="result-${item.index}">🎯 خمن الخصم!</div>
+                    `;
+                    
+                    categoryDiv.appendChild(itemDiv);
+                });
+                
+                container.appendChild(categoryDiv);
             }
-
-            // كود عام ساري على الكل للتجربة
-            if (code === 'SAVE10') {
-                discountPercent = 0.10;
-                isValidCode = true;
-            }
-
-            if (!isValidCode && code !== "") {
-                errorMsg.style.display = 'block';
-                resultBox.style.display = 'none';
-                return;
-            } else if (code === "") {
-                errorMsg.style.display = 'block';
-                errorMsg.textContent = 'الرجاء إدخال كود خصم أولاً!';
-                resultBox.style.display = 'none';
-                return;
-            }
-
-            errorMsg.style.display = 'none';
-
-            // حساب القيم
-            let discountValue = originalPrice * discountPercent;
-            let finalPrice = originalPrice - discountValue;
-
-            // عرض النتائج في واجهة المستخدم
-            document.getElementById('resServiceName').textContent = serviceName;
-            document.getElementById('resOriginal').textContent = originalPrice.toFixed(2) + ' $';
-            document.getElementById('resDiscountValue').textContent = `- ${discountValue.toFixed(2)} $ (${discountPercent * 100}%)`;
-            document.getElementById('resFinal').textContent = finalPrice.toFixed(2) + ' $';
-
-            resultBox.style.display = 'block';
         }
+
+        // تمييز لعبة محددة
+        function highlightGame(index) {
+            document.querySelectorAll('.game-box > div').forEach(el => {
+                el.style.border = '2px solid #e8d5ff';
+            });
+            const gameEl = document.getElementById(`game-${index}`);
+            if (gameEl) {
+                gameEl.style.border = '3px solid #8b5cf6';
+                gameEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        // التحقق من الخصم
+        function checkDiscount(index) {
+            const guessInput = document.getElementById(`guess-${index}`);
+            const resultDiv = document.getElementById(`result-${index}`);
+            const guess = parseInt(guessInput.value);
+            
+            if (isNaN(guess) || guess < 0 || guess > 100) {
+                resultDiv.innerHTML = '⚠️ الرجاء إدخال رقم بين 0 و 100';
+                resultDiv.className = 'result wrong';
+                return;
+            }
+
+            const actualDiscount = discountsDB[index].discount;
+            const difference = Math.abs(guess - actualDiscount);
+            
+            total++;
+            
+            if (difference === 0) {
+                resultDiv.innerHTML = `🎉 ممتاز! أحسنت التخمين! الخصم فعلاً ${actualDiscount}%`;
+                resultDiv.className = 'result correct';
+                score += 2;
+            } else if (difference <= 5) {
+                resultDiv.innerHTML = `😊 قريب جداً! الخصم الحقيقي هو ${actualDiscount}% (فرق ${difference}%)`;
+                resultDiv.className = 'result correct';
+                score += 1;
+            } else if (difference <= 15) {
+                resultDiv.innerHTML = `🤔 جيد! الخصم الحقيقي هو ${actualDiscount}% (فرق ${difference}%)`;
+                resultDiv.className = 'result';
+                resultDiv.style.background = '#fff3cd';
+                resultDiv.style.borderColor = '#ffc107';
+            } else {
+                resultDiv.innerHTML = `😅 ليس قريباً! الخصم الحقيقي هو ${actualDiscount}% (فرق ${difference}%)`;
+                resultDiv.className = 'result wrong';
+            }
+            
+            updateScore();
+            
+            // اختيار لعبة عشوائية جديدة بعد التخمين
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * discountsDB.length);
+                highlightGame(randomIndex);
+            }, 1500);
+        }
+
+        // تحديث النقاط
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('total').textContent = total;
+        }
+
+        // إضافة خصم جديد
+        function addNewDiscount() {
+            const name = document.getElementById('newItemName').value.trim();
+            const category = document.getElementById('newCategory').value;
+            const discount = parseInt(document.getElementById('newDiscount').value);
+            
+            if (!name) {
+                alert('الرجاء إدخال اسم المنتج');
+                return;
+            }
+            
+            if (isNaN(discount) || discount < 0 || discount > 100) {
+                alert('الرجاء إدخال نسبة خصم صحيحة بين 0 و 100');
+                return;
+            }
+            
+            discountsDB.push({
+                name: name,
+                category: category,
+                discount: discount
+            });
+            
+            // إعادة عرض الألعاب
+            renderGames();
+            
+            // تنظيف الحقول
+            document.getElementById('newItemName').value = '';
+            document.getElementById('newDiscount').value = '';
+            
+            alert(`✅ تمت إضافة "${name}" بنجاح مع خصم ${discount}%`);
+        }
+
+        // إعادة تعيين اللعبة
+        function resetGame() {
+            score = 0;
+            total = 0;
+            updateScore();
+            document.querySelectorAll('.result').forEach(el => {
+                el.innerHTML = '🎯 خمن الخصم!';
+                el.className = 'result';
+            });
+            document.querySelectorAll('input[type="number"]').forEach(el => {
+                if (el.id.startsWith('guess-')) {
+                    el.value = '';
+                }
+            });
+        }
+
+        // بدء اللعبة
+        initGame();
+        updateScore();
     </script>
 </body>
 </html>

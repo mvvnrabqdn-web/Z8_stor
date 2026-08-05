@@ -3,184 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LA FLAMME - Restaurant & Cafe</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Royal Grill - قائمة الطعام</title>
     <style>
-        * {
-            box-sizing: border-box;
+        :root {
+            --primary-color: #e67e22;
+            --dark-color: #2c3e50;
+            --bg-color: #f9f9f9;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
             margin: 0;
             padding: 0;
+            color: #333;
         }
-        body, html {
-            width: 100%;
-            height: 100%;
-            font-family: 'Cairo', sans-serif;
-            overflow-x: hidden;
-            background-color: #0c0c0c;
-            color: #fff;
+        header {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
         }
-        .hero-container {
-            position: relative;
-            width: 100%;
-            min-height: 100vh;
-            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1000&auto=format&fit=crop') no-repeat center center/cover;
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .menu-item {
             display: flex;
-            flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 40px 20px;
-            text-align: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
         }
-        
-        .brand-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
+        .menu-item h3 {
+            margin: 0 0 5px 0;
+            color: var(--dark-color);
         }
-        .logo-icon {
-            font-size: 45px;
-            color: #ff4757;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 0 10px rgba(255, 71, 87, 0.5));
+        .price {
+            color: var(--primary-color);
+            font-weight: bold;
         }
-        .brand-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 38px;
-            letter-spacing: 4px;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 5px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-        }
-        .brand-subtitle {
-            font-size: 14px;
-            letter-spacing: 6px;
-            color: #dcdde1;
-            text-transform: uppercase;
-            font-weight: 300;
-        }
-
-        .lang-container {
-            width: 100%;
-            max-width: 350px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: auto 0;
-        }
-        .lang-btn {
-            width: 100%;
-            padding: 16px 20px;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 50px;
-            color: #ffffff;
-            font-size: 16px;
-            font-weight: 600;
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            text-decoration: none;
-            display: block;
-            text-align: center;
+            transition: 0.3s;
         }
-        .lang-btn:hover {
-            background: rgba(255, 71, 87, 0.9);
-            border-color: #ff4757;
-            transform: translateY(-3px);
-            box-shadow: 0 12px 25px rgba(255, 71, 87, 0.4);
+        button:hover {
+            opacity: 0.9;
         }
-
-        .footer-section {
+        /* قسم السلة والخصم */
+        .cart-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #ddd;
+        }
+        .cart-items {
+            list-style: none;
+            padding: 0;
+        }
+        .cart-items li {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            width: 100%;
+            justify-content: space-between;
+            margin-bottom: 10px;
         }
-        .social-icons {
+        .discount-box {
             display: flex;
-            gap: 20px;
+            gap: 10px;
+            margin: 15px 0;
         }
-        .social-icon {
-            width: 45px;
-            height: 45px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 18px;
-            transition: all 0.3s ease;
-            text-decoration: none;
+        .discount-box input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            flex: 1;
         }
-        .social-icon:hover {
-            background: #fff;
-            color: #000;
-            transform: scale(1.1);
+        .total-section {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: left;
+            margin-top: 15px;
         }
-
         .developer-credit {
-            font-size: 13px;
-            color: rgba(255, 255, 25, 0.7);
-            letter-spacing: 1px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            padding-top: 10px;
-            width: 100%;
-            max-width: 300px;
             text-align: center;
-            color: rgba(255, 25, 255, 0.8);
-        }
-        .developer-credit span {
-            color: #ff4757;
-            font-weight: 700;
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
         }
     </style>
 </head>
 <body>
 
-    <div class="hero-container">
-        <div class="brand-section">
-            <div class="logo-icon">
-                <i class="fa-solid fa-fire-flame-curved"></i>
+    <header>
+        <h1>Royal Grill</h1>
+        <p>أهلاً بكم في مطعمنا - تلذذ بأفضل الأطباق</p>
+    </header>
+
+    <div class="container">
+        <h2>قائمة الطعام</h2>
+        
+        <!-- عناصر القائمة -->
+        <div class="menu-item">
+            <div>
+                <h3>وجبة برجر مشوي</h3>
+                <p>برجر لحم بقري مع الصوص الخاص</p>
             </div>
-            <h1 class="brand-title">LA FLAMME</h1>
-            <p class="brand-subtitle">Restaurant & Cafe</p>
+            <div>
+                <span class="price">8.50 $</span>
+                <button onclick="addToCart('برجر مشوي', 8.50)">إضافة للسلة</button>
+            </div>
         </div>
 
-        <!-- أزرار اللغات (استبدل # برابط صفحة كل لغة لديك) -->
-        <div class="lang-container">
-            <button class="lang-btn" onclick="changeLanguage('en')">English</button>
-            <button class="lang-btn" onclick="changeLanguage('tr')">Turkish</button>
-            <button class="lang-btn" onclick="changeLanguage('ar')">العربية</button>
+        <div class="menu-item">
+            <div>
+                <h3>بيتزا مأكولات بحرية</h3>
+                <p>جبنة موزاريلا، روبيان، وكاليماري</p>
+            </div>
+            <div>
+                <span class="price">12.00 $</span>
+                <button onclick="addToCart('بيتزا مأكولات بحرية', 12.00)">إضافة للسلة</button>
+            </div>
         </div>
 
-        <div class="footer-section">
-            <div class="social-icons">
-                <a href="https://instagram.com" target="_blank" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://facebook.com" target="_blank" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="https://maps.google.com" target="_blank" class="social-icon"><i class="fa-solid fa-location-dot"></i></a>
-                <a href="tel:+9640000000000" class="social-icon"><i class="fa-solid fa-phone"></i></a>
+        <!-- قسم سلة الطلبات والخصم -->
+        <div class="cart-section">
+            <h2>سلة الطلبات</h2>
+            <ul id="cartList" class="cart-items">
+                <p>السلة فارغة حالياً.</p>
+            </ul>
+
+            <!-- إدخال كود الخصم -->
+            <div class="discount-box">
+                <input type="text" id="discountInput" placeholder="أدخل كود الخصم (مثال: ROYAL20)">
+                <button onclick="applyDiscount()">تطبيق الخصم</button>
             </div>
-            <div class="developer-credit">
-                Designed & Developed by <span>uv_d0</span>
+            <p id="discountMessage" style="color: green; font-size: 0.9rem;"></p>
+
+            <div class="total-section">
+                المجموع الكلي: <span id="totalPrice">0.00</span> $
             </div>
+        </div>
+
+        <div class="developer-credit">
+            تم التطوير بواسطة: <a href="https://instagram.com/uv_d0" target="_blank">@uv_d0</a>
         </div>
     </div>
 
     <script>
-        function changeLanguage(lang) {
-            // يمكنك هنا توجيه المستخدم لملف المنيو الخاص باللغة المطلوبة
-            // مثال: window.location.href = 'menu-' + lang + '.html';
-            alert('تم اختيار اللغة: ' + lang);
+        let cart = [];
+        let discountRate = 0; // نسبة الخصم الافتراضية
+
+        function addToCart(name, price) {
+            cart.push({ name, price });
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cartList = document.getElementById('cartList');
+            const totalPriceEl = document.getElementById('totalPrice');
+            
+            if (cart.length === 0) {
+                cartList.innerHTML = '<p>السلة فارغة حالياً.</p>';
+                totalPriceEl.textContent = '0.00';
+                return;
+            }
+
+            cartList.innerHTML = '';
+            let subtotal = 0;
+
+            cart.forEach((item, index) => {
+                subtotal += item.price;
+                cartList.innerHTML += `<li><span>${item.name}</span> <span>${item.price.toFixed(2)} $</span></li>`;
+            });
+
+            // حساب السعر بعد الخصم
+            let finalTotal = subtotal - (subtotal * discountRate);
+            totalPriceEl.textContent = finalTotal.toFixed(2);
+        }
+
+        function applyDiscount() {
+            const code = document.getElementById('discountInput').value.trim();
+            const messageEl = document.getElementById('discountMessage');
+
+            // الأكواد المعتمدة للخصم (يمكنك تعديلها أو ربطها بقاعدة بيانات لاحقاً)
+            if (code === 'ROYAL20') {
+                discountRate = 0.20; // خصم 20%
+                messageEl.style.color = 'green';
+                messageEl.textContent = 'تم تطبيق خصم 20% بنجاح!';
+            } else if (code === 'ROYAL50') {
+                discountRate = 0.50; // خصم 50%
+                messageEl.style.color = 'green';
+                messageEl.textContent = 'تم تطبيق خصم 50% بنجاح!';
+            } else {
+                discountRate = 0;
+                messageEl.style.color = 'red';
+                messageEl.textContent = 'كود الخصم غير صحيح!';
+            }
+
+            updateCartUI();
         }
     </script>
+
 </body>
 </html>

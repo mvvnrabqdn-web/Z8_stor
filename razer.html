@@ -10,7 +10,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 import threading
 import time
 import random
-import os
 
 app = Flask(__name__)
 
@@ -18,329 +17,171 @@ app = Flask(__name__)
 bot_status = "متوقف"
 bot_thread = None
 stop_flag = False
+username = password = comment_text = target_hashtag = ""
 
-# بيانات الدخول ونص التعليق
-username = ""
-password = ""
-comment_text = ""
-target_hashtag = "photography"  # الهاشتاغ الافتراضي
-
-# ===== واجهة HTML (جميلة ومدمجة) =====
+# ===== واجهة HTML مدمجة =====
 HTML_PAGE = """
 <!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوت إنستغرام الذكي</title>
-    <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-        body {
-            background: #0a0e17;
-            color: #e6edf3;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-        .card {
-            background: #161f2e;
-            padding: 35px;
-            border-radius: 24px;
-            border: 1px solid #30363d;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
-        }
-        h1 { text-align: center; color: #58a6ff; font-weight: 600; margin-bottom: 5px; }
-        .sub { text-align: center; color: #8b949e; font-size: 14px; margin-bottom: 25px; }
-        .input-group { margin-bottom: 18px; }
-        label { display: block; margin-bottom: 6px; color: #8b949e; font-size: 13px; font-weight: 600; }
-        input, textarea {
-            width: 100%;
-            padding: 12px 16px;
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 10px;
-            color: #e6edf3;
-            font-size: 14px;
-            outline: none;
-            transition: 0.2s;
-            resize: vertical;
-        }
-        textarea { min-height: 80px; }
-        input:focus, textarea:focus { border-color: #58a6ff; }
-        .btn-group { display: flex; gap: 12px; margin: 20px 0 15px; }
-        button {
-            flex: 1; padding: 14px; border: none; border-radius: 12px;
-            font-weight: 700; font-size: 15px; cursor: pointer;
-            transition: all 0.25s ease; text-transform: uppercase;
-        }
-        .btn-start { background: #238636; color: #fff; }
-        .btn-start:hover { background: #2ea043; transform: scale(1.02); }
-        .btn-stop { background: #da3633; color: #fff; }
-        .btn-stop:hover { background: #f85149; transform: scale(1.02); }
-        .status-box {
-            background: #0d1117; border-radius: 12px; padding: 14px;
-            text-align: center; border: 1px solid #21262d; margin-top: 10px;
-        }
-        .status-box span { color: #58a6ff; font-weight: bold; word-break: break-word; }
-        .hint {
-            font-size: 12px; color: #484f58; text-align: center;
-            border-top: 1px solid #21262d; padding-top: 15px; margin-top: 20px;
-        }
-        .hint i { color: #f0883e; font-style: normal; }
-    </style>
+<html>
+<head><meta charset="UTF-8"><title>بوت إنستغرام</title>
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{background:#0a0e17;color:#e6edf3;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px}
+.card{background:#161f2e;padding:35px;border-radius:24px;border:1px solid #30363d;max-width:500px;width:100%}
+h1{text-align:center;color:#58a6ff}
+.input-group{margin-bottom:18px}
+label{display:block;margin-bottom:6px;color:#8b949e;font-size:13px}
+input,textarea{width:100%;padding:12px;background:#0d1117;border:1px solid #30363d;border-radius:10px;color:#e6edf3;font-size:14px;outline:none}
+textarea{min-height:80px}
+.btn-group{display:flex;gap:12px;margin:20px 0}
+button{flex:1;padding:14px;border:none;border-radius:12px;font-weight:700;cursor:pointer}
+.btn-start{background:#238636;color:#fff}
+.btn-stop{background:#da3633;color:#fff}
+.status-box{background:#0d1117;border-radius:12px;padding:14px;text-align:center;border:1px solid #21262d}
+.status-box span{color:#58a6ff}
+</style>
 </head>
 <body>
 <div class="card">
-    <h1>⚡ <span style="color:#f0883e;">ذكاء</span> التعليقات</h1>
-    <p class="sub">اكتب تعليقك وابدأ الهجوم الذكي</p>
-    
-    <div class="input-group">
-        <label>👤 اسم المستخدم</label>
-        <input type="text" id="username" placeholder="your_username">
-    </div>
-    <div class="input-group">
-        <label>🔑 كلمة المرور</label>
-        <input type="password" id="password" placeholder="••••••••">
-    </div>
-    <div class="input-group">
-        <label>#️⃣ الهاشتاغ المستهدف (اكتب بدون #)</label>
-        <input type="text" id="hashtag" value="photography" placeholder="photography">
-    </div>
-    <div class="input-group">
-        <label>✍️ نص التعليق (اكتب ما تريد)</label>
-        <textarea id="commentText" placeholder="اكتب تعليقك المخصص هنا...">🔥 ريلز رائع! متابعة ممتازة</textarea>
-    </div>
-
-    <div class="btn-group">
-        <button class="btn-start" onclick="startBot()">▶ تشغيل</button>
-        <button class="btn-stop" onclick="stopBot()">⏹ إيقاف</button>
-    </div>
-
-    <div class="status-box">
-        📡 الحالة: <span id="statusText">متوقف</span>
-    </div>
-    <div class="hint">
-        <i>⚠️</i> سيفتح متصفح Chrome أمامك. لا تغلقه أثناء التشغيل. <i>⚠️</i>
-    </div>
+<h1>⚡ ذكاء التعليقات</h1>
+<div class="input-group"><label>👤 اسم المستخدم</label><input type="text" id="username" placeholder="your_username"></div>
+<div class="input-group"><label>🔑 كلمة المرور</label><input type="password" id="password" placeholder="••••••••"></div>
+<div class="input-group"><label>#️⃣ الهاشتاغ (بدون #)</label><input type="text" id="hashtag" value="photography"></div>
+<div class="input-group"><label>✍️ نص التعليق</label><textarea id="commentText">🔥 ريلز رائع! متابعة ممتازة</textarea></div>
+<div class="btn-group"><button class="btn-start" onclick="startBot()">▶ تشغيل</button><button class="btn-stop" onclick="stopBot()">⏹ إيقاف</button></div>
+<div class="status-box">📡 الحالة: <span id="statusText">متوقف</span></div>
 </div>
-
 <script>
-    function updateStatus() {
-        fetch('/status')
-            .then(r => r.json())
-            .then(d => document.getElementById('statusText').innerText = d.status)
-            .catch(() => {});
-    }
-
-    function startBot() {
-        const u = document.getElementById('username').value;
-        const p = document.getElementById('password').value;
-        const h = document.getElementById('hashtag').value || 'photography';
-        const c = document.getElementById('commentText').value || '🔥 رائع!';
-        
-        if (!u || !p) return alert('❌ أدخل اسم المستخدم وكلمة المرور!');
-        
-        fetch('/start', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                username: u, 
-                password: p,
-                hashtag: h,
-                comment: c
-            })
-        })
-        .then(r => r.json())
-        .then(d => { alert(d.status); updateStatus(); });
-    }
-
-    function stopBot() {
-        fetch('/stop', { method: 'POST' })
-            .then(r => r.json())
-            .then(d => { alert(d.status); updateStatus(); });
-    }
-
-    setInterval(updateStatus, 2000);
-    updateStatus();
+function updateStatus(){fetch('/status').then(r=>r.json()).then(d=>document.getElementById('statusText').innerText=d.status).catch(()=>{});}
+function startBot(){
+const u=document.getElementById('username').value,p=document.getElementById('password').value,h=document.getElementById('hashtag').value||'photography',c=document.getElementById('commentText').value||'🔥 رائع!';
+if(!u||!p)return alert('❌ أدخل اسم المستخدم وكلمة المرور!');
+fetch('/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p,hashtag:h,comment:c})})
+.then(r=>r.json()).then(d=>{alert(d.status);updateStatus();});
+}
+function stopBot(){fetch('/stop',{method:'POST'}).then(r=>r.json()).then(d=>{alert(d.status);updateStatus();});}
+setInterval(updateStatus,2000);updateStatus();
 </script>
 </body>
 </html>
 """
 
-# ===== منطق البوت (Selenium + تعليق مخصص) =====
+# ===== منطق البوت =====
 def run_bot():
     global bot_status, stop_flag, username, password, comment_text, target_hashtag
-    
     driver = None
     try:
-        bot_status = "🔄 جاري تهيئة المتصفح..."
-        
-        # إعدادات Chrome لتجنب الكشف
+        bot_status = "🔄 تهيئة المتصفح..."
         options = Options()
         options.add_argument("--start-maximized")
         options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('useAutomationExtension', False)
-        
-        # تشغيل المتصفح
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=options)
         driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         
-        # ===== 1. تسجيل الدخول =====
+        # تسجيل الدخول
         bot_status = "🔓 جاري تسجيل الدخول..."
         driver.get("https://www.instagram.com/accounts/login/")
         time.sleep(3)
-        
-        # إدخال البيانات
-        username_input = WebDriverWait(driver, 15).until(
-            EC.presence_of_element_located((By.NAME, "username"))
-        )
+        username_input = WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.NAME, "username")))
         username_input.send_keys(username)
-        driver.find_element(By.NAME, "password").send_keys(password)
-        driver.find_element(By.NAME, "password").send_keys(Keys.RETURN)
+        driver.find_element(By.NAME, "password").send_keys(password + Keys.RETURN)
         time.sleep(5)
-        
-        # تخطي "حفظ المعلومات" إذا ظهر
         try:
-            not_now = WebDriverWait(driver, 5).until(
-                EC.element_to_be_clickable((By.XPATH, "//div[contains(text(),'ليس الآن')]"))
-            )
+            not_now = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, "//div[contains(text(),'ليس الآن')]")))
             not_now.click()
             time.sleep(2)
-        except:
-            pass
+        except: pass
         
-        # ===== 2. الدخول للريلزات =====
-        bot_status = f"🔍 جاري البحث عن ريلزات #{
+        # الدخول للريلزات
+        bot_status = f"🔍 جاري البحث عن #{
   target_hashtag}..."
         driver.get(f"https://www.instagram.com/explore/tags/{target_hashtag}/")
         time.sleep(4)
-        
-        # النقر على أول ريلز
         try:
-            first_reel = WebDriverWait(driver, 15).until(
-                EC.element_to_be_clickable((By.XPATH, "//div[@class='_aagv']//a[contains(@href, '/reel/')]"))
-            )
+            first_reel = WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, "//div[@class='_aagv']//a[contains(@href, '/reel/')]")))
             first_reel.click()
             time.sleep(4)
-        except Exception as e:
-            bot_status = f"⚠️ لم أجد ريلزات للهاشتاغ #{
+        except:
+            bot_status = f"⚠️ لم أجد ريلزات لـ #{
   target_hashtag}"
             return
         
-        # ===== 3. حلقة التعليق والإعجاب =====
+        # حلقة التفاعل
         counter = 0
         while not stop_flag:
             counter += 1
-            bot_status = f"🔄 جولة {counter} - جاري التفاعل..."
-            
+            bot_status = f"🔄 جولة {counter}..."
             try:
-                # --- إعجاب (Like) ---
+                # إعجاب
                 try:
-                    like_btn = WebDriverWait(driver, 5).until(
-                        EC.element_to_be_clickable((By.XPATH, "//span[@class='x1rg5ohu']//*[name()='svg' and @aria-label='إعجاب']"))
-                    )
+                    like_btn = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, "//span[@class='x1rg5ohu']//*[name()='svg' and @aria-label='إعجاب']")))
                     like_btn.click()
                     time.sleep(random.uniform(1, 3))
                     bot_status = f"❤️ جولة {counter}: تم الإعجاب!"
                 except:
-                    bot_status = f"⚠️ جولة {counter}: زر الإعجاب غير موجود (قد يكون معجب مسبقاً)"
+                    bot_status = f"⚠️ جولة {counter}: زر الإعجاب غير موجود"
                 
-                # --- تعليق (Comment) ---
+                # تعليق
                 try:
-                    # النقر على حقل التعليق
-                    comment_field = WebDriverWait(driver, 10).until(
-                        EC.element_to_be_clickable((By.XPATH, "//textarea[@placeholder='أضف تعليقًا...']"))
-                    )
+                    comment_field = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//textarea[@placeholder='أضف تعليقًا...']")))
                     comment_field.click()
                     time.sleep(1)
-                    
-                    # كتابة النص المخصص (الذي كتبته أنت)
                     comment_field.send_keys(comment_text)
                     time.sleep(1)
-                    
-                    # الضغط على زر النشر
                     post_btn = driver.find_element(By.XPATH, "//div[contains(text(),'نشر')]")
                     post_btn.click()
-                    bot_status = f"💬 جولة {counter}: تم التعليق: '{
-  comment_text[:20]}...'"
+                    bot_status = f"💬 جولة {counter}: تم التعليق!"
                     time.sleep(random.uniform(2, 4))
                 except Exception as e:
                     bot_status = f"⚠️ جولة {counter}: فشل التعليق ({str(e)[:30]})"
                 
-                # ===== الانتقال للريلز التالي =====
+                # الانتقال للريلز التالي
                 driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ARROW_DOWN)
                 time.sleep(random.uniform(3, 5))
-                
-                # انتظار طويل نسبياً عشان ما ينحظر الحساب
                 wait_time = random.randint(12, 25)
-                bot_status = f"⏳ انتظار {wait_time} ثانية قبل الجولة القادمة..."
+                bot_status = f"⏳ انتظار {wait_time} ثانية..."
                 for _ in range(wait_time):
                     if stop_flag:
                         break
                     time.sleep(1)
-                    
             except Exception as e:
-                bot_status = f"❌ خطأ في الجولة {counter}: {str(e)[:50]}"
+                bot_status = f"❌ خطأ: {str(e)[:50]}"
                 time.sleep(5)
-                # محاولة العودة للريلزات
                 try:
                     driver.get(f"https://www.instagram.com/explore/tags/{target_hashtag}/")
                     time.sleep(4)
-                    first_reel = WebDriverWait(driver, 10).until(
-                        EC.element_to_be_clickable((By.XPATH, "//div[@class='_aagv']//a[contains(@href, '/reel/')]"))
-                    )
+                    first_reel = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//div[@class='_aagv']//a[contains(@href, '/reel/')]")))
                     first_reel.click()
                     time.sleep(4)
-                except:
-                    pass
-        
-        bot_status = "🛑 تم الإيقاف بواسطتك"
-        
+                except: pass
+        bot_status = "🛑 تم الإيقاف"
     except Exception as e:
-        bot_status = f"💀 خطأ فادح: {str(e)[:80]}"
-        print("="*50)
-        print("الخطأ الكامل:")
-        import traceback
-        traceback.print_exc()
-        print("="*50)
+        bot_status = f"💀 خطأ: {str(e)[:80]}"
+        import traceback; traceback.print_exc()
     finally:
-        if driver:
-            driver.quit()
+        if driver: driver.quit()
 
 # ===== مسارات الموقع =====
 @app.route('/')
-def index():
-    return render_template_string(HTML_PAGE)
+def index(): return render_template_string(HTML_PAGE)
 
 @app.route('/start', methods=['POST'])
 def start():
     global bot_thread, stop_flag, bot_status, username, password, comment_text, target_hashtag
-    
     if bot_thread and bot_thread.is_alive():
         return jsonify({"status": "⚠️ البوت يعمل بالفعل!"})
-    
     data = request.json
-    username = data.get('username')
-    password = data.get('password')
-    target_hashtag = data.get('hashtag', 'photography')
-    comment_text = data.get('comment', '🔥 ريلز رائع!')
-    
+    username, password, target_hashtag, comment_text = data.get('username'), data.get('password'), data.get('hashtag', 'photography'), data.get('comment', '🔥 رائع!')
     if not username or not password:
-        return jsonify({"status": "❌ يرجى إدخال اسم المستخدم وكلمة المرور!"})
-    
+        return jsonify({"status": "❌ يرجى إدخال البيانات!"})
     stop_flag = False
     bot_status = "🚀 جاري الإقلاع..."
     bot_thread = threading.Thread(target=run_bot)
     bot_thread.start()
-    
-    return jsonify({"status": f"✅ تم التشغيل! سيتفاعل مع #{
+    return jsonify({"status": f"✅ تم التشغيل! مستهدف #{
   target_hashtag}"})
 
 @app.route('/stop', methods=['POST'])
@@ -351,15 +192,10 @@ def stop():
     return jsonify({"status": "⏹ تم إرسال أمر الإيقاف"})
 
 @app.route('/status')
-def status():
-    return jsonify({"status": bot_status})
+def status(): return jsonify({"status": bot_status})
 
-# ===== الإقلاع =====
 if __name__ == '__main__':
-    print("="*50)
-    print("🔥 Shadow Bot V3 - النسخة الذكية")
-    print("📌 افتح المتصفح على: http://127.0.0.1:5000")
-    print("📌 اكتب تعليقك المخصص، وابدأ الهجوم الذكي!")
-    print("⚠️ تأكد أن Google Chrome مثبت على جهازك.")
-    print("="*50)
+    print("🔥 Shadow Bot - النسخة النظيفة")
+    print("📌 افتح: http://127.0.0.1:5000")
+    print("⚠️ تأكد من تثبيت Chrome و المكتبات")
     app.run(debug=True, host='0.0.0.0', port=5000)

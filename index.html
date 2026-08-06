@@ -3,106 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Z8 Store</title>
+    <title>Z8 Store - المتجر الرقمي</title>
     <!-- استدعاء مكتبات Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
     <style>
-        body { background: #0f172a; color: #fff; font-family: Tahoma, sans-serif; padding: 10px; margin: 0; }
-        .box { background: #1e293b; border: 1px solid #334155; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
-        button { background: #3a6ef5; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #00d2ff; color: #000; }
-        input, select { width: 100%; padding: 8px; margin: 5px 0 10px 0; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 5px; box-sizing: border-box; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
-        .card { background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 8px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
-        .card img { width: 100%; height: 120px; object-fit: cover; border-radius: 5px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
-        .card img:hover { opacity: 0.8; }
-        .admin-panel { display: none; }
-        .logo-circle { width: 45px; height: 45px; border: 2px solid #00d2ff; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; }
-        .logo-circle img { width: 100%; height: 100%; object-fit: cover; }
-        .filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px; }
-        .filter-btn { background: #1e293b; color: #94a3b8; border: 1px solid #334155; padding: 6px 12px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
-        .filter-btn.active { background: #3a6ef5; color: #fff; font-weight: bold; }
-        .del-btn { background: #ef4444; color: #fff; padding: 5px 10px; font-size: 0.8rem; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; }
-        .status-toggle-btn { background: #3b82f6; color: #fff; padding: 5px 10px; font-size: 0.8rem; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; margin-left: 5px; }
-        .status-badge { display: inline-block; padding: 4px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; margin-bottom: 8px; }
-        .status-available { background: rgba(0, 210, 255, 0.2); color: #00d2ff; border: 1px solid #00d2ff; }
-        .status-busy { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
-        
-        .admin-manage-list { max-height: 180px; overflow-y: auto; background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 5px; margin-top: 10px; }
-        .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #334155; font-size: 0.85rem; }
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #131b2e;
+            --border-color: #1e293b;
+            --accent-color: #f59e0b; /* لون ذهبي شبيه بـ Dhahab Store */
+            --accent-hover: #d97706;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+        }
 
-        .modal { display: none; position: fixed; z-index: 999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
-        .modal img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid #00d2ff; }
-        .close-modal { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 30px; cursor: pointer; background: #ef4444; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .loading-msg { text-align: center; color: #00d2ff; padding: 20px; font-weight: bold; grid-column: 1/-1; }
+        body { background: var(--bg-color); color: var(--text-main); font-family: Tahoma, sans-serif; padding: 0; margin: 0; box-sizing: border-box; }
+        
+        /* الهيدر العلوي */
+        .header { background: #090d16; border-bottom: 1px solid var(--border-color); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .logo-area { display: flex; align-items: center; gap: 12px; }
+        .logo-circle { width: 50px; height: 50px; border: 2px solid var(--accent-color); border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; box-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
+        .logo-circle img { width: 100%; height: 100%; object-fit: cover; }
+        .store-title { font-size: 1.2rem; font-weight: bold; color: var(--accent-color); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        /* الأقسام الفلاتر */
+        .filters { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; margin-bottom: 20px; scrollbar-width: none; }
+        .filters::-webkit-scrollbar { display: none; }
+        .filter-btn { background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--border-color); padding: 8px 18px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-size: 0.9rem; }
+        .filter-btn.active { background: var(--accent-color); color: #000; font-weight: bold; border-color: var(--accent-color); }
+
+        /* شبكة المنتجات */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
+        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .card:hover { transform: translateY(-5px); border-color: var(--accent-color); }
+        .card img { width: 100%; height: 140px; object-fit: cover; cursor: pointer; }
+        .card-body { padding: 12px; }
+        .card h4 { margin: 0 0 8px 0; font-size: 1rem; color: #fff; }
+        .price { color: var(--accent-color); font-weight: bold; font-size: 1.1rem; margin-bottom: 8px; }
+        
+        .status-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
+        .status-available { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
+        .status-busy { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
+
+        /* زر الشراء أو الطلب */
+        .buy-btn { background: var(--accent-color); color: #000; border: none; width: 100%; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        .buy-btn:hover { background: var(--accent-hover); color: #fff; }
+
+        /* زر الشات العائم (مطابق للصور) */
+        .chat-widget-btn { position: fixed; bottom: 20px; left: 20px; background: var(--accent-color); color: #000; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); z-index: 999; font-size: 24px; transition: 0.3s; }
+        .chat-widget-btn:hover { transform: scale(1.1); }
+
+        /* نافذة الشات */
+        .chat-modal { position: fixed; bottom: 90px; left: 20px; width: 320px; height: 420px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; display: none; flex-direction: column; z-index: 1000; box-shadow: 0 5px 25px rgba(0,0,0,0.5); overflow: hidden; }
+        .chat-header { background: #090d16; padding: 12px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .chat-body { flex: 1; padding: 10px; overflow-y: auto; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; }
+        .chat-footer { padding: 10px; border-top: 1px solid var(--border-color); display: flex; gap: 5px; background: #090d16; }
+        .chat-footer input { flex: 1; margin: 0; padding: 8px; font-size: 0.85rem; }
+        .chat-footer button { padding: 8px 12px; margin: 0; }
+
+        /* لوحة التحكم المخفية برابط مستقل */
+        .admin-page { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .box { background: var(--card-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+        input, select { width: 100%; padding: 10px; margin: 8px 0 12px 0; background: var(--bg-color); border: 1px solid var(--border-color); color: #fff; border-radius: 6px; box-sizing: border-box; }
+        button { background: #3b82f6; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        button:hover { opacity: 0.9; }
+        .admin-manage-list { max-height: 200px; overflow-y: auto; background: var(--bg-color); border: 1px solid var(--border-color); padding: 10px; border-radius: 5px; }
+        .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; }
+        .del-btn { background: #ef4444; padding: 4px 8px; font-size: 0.75rem; }
+
+        /* نافذة تكبير الصور */
+        .modal { display: none; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
+        .modal img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid var(--accent-color); }
+        .close-modal { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 25px; cursor: pointer; background: #ef4444; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
-<div class="box" style="display: flex; justify-content: space-between; align-items: center;">
-    <button onclick="toggleAdmin()">لوحة التحكم (Admin)</button>
-    <div style="display: flex; align-items: center; gap: 10px;">
-        <h2>Z8 Store</h2>
+<!-- الهيدر -->
+<div class="header">
+    <div class="logo-area">
         <div class="logo-circle" id="logoContainer">
-            <span style="font-size: 10px; color: #00d2ff;">Z8</span>
+            <span style="font-size: 12px; color: var(--accent-color);">Z8</span>
         </div>
+        <div class="store-title">Z8 Store</div>
+    </div>
+    <div>
+        <a href="#admin" onclick="checkAdminAccess()" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem;">🔒 لوحة التحكم</a>
     </div>
 </div>
 
-<!-- لوحة التحكم -->
-<div class="box admin-panel" id="adminPanel">
-    <h3>⚙️ لوحة التحكم</h3>
-    
-    <label>إضافة شعار للمتجر (من الألبوم):</label>
-    <input type="file" id="logoImage" accept="image/*" onchange="updateLogo()">
+<!-- واجهة المتجر الرئيسية -->
+<div class="container" id="storeView">
+    <!-- الأقسام الفلاتر -->
+    <div class="filters" id="filtersContainer"></div>
 
-    <hr style="border-color: #334155; margin: 15px 0;">
-
-    <label>تغيير كلمة المرور:</label>
-    <input type="password" id="confirmKey" placeholder="أدخل كلمة التأكيد">
-    <input type="password" id="newPass" placeholder="كلمة المرور الجديدة">
-    <button onclick="changePass()" style="background:#f59e0b; color:#000;">تغيير كلمة المرور</button>
-
-    <hr style="border-color: #334155; margin: 15px 0;">
-
-    <label>إضافة قسم جديد:</label>
-    <input type="text" id="catName" placeholder="اسم القسم الجديد...">
-    <button onclick="addCategory()" style="background:#3b82f6; color:#fff;">إضافة القسم</button>
-
-    <label>🗑️ إدارة ومسح الأقسام:</label>
-    <div class="admin-manage-list" id="adminCatsList"></div>
-
-    <hr style="border-color: #334155; margin: 15px 0;">
-
-    <label>إضافة منتج جديد:</label>
-    <input type="text" id="pName" placeholder="اسم المنتج">
-    <input type="text" id="pPrice" placeholder="السعر">
-    <select id="pCat"></select>
-    
-    <label>حالة المنتج:</label>
-    <select id="pStatus">
-        <option value="available">🟢 متوفر</option>
-        <option value="busy">🔴 غير متوفر</option>
-    </select>
-
-    <input type="file" id="pImage" accept="image/*">
-    <button onclick="addProduct()">حفظ ونشر المنتج</button>
-
-    <hr style="border-color: #334155; margin: 15px 0;">
-    <label>📦 إدارة المنتجات (الحذف وتغيير الحالة):</label>
-    <div class="admin-manage-list" id="adminManageList"></div>
+    <!-- المنتجات -->
+    <div class="box" style="border:none; background:transparent; padding:0;">
+        <h3 style="color: var(--accent-color); margin-bottom: 15px;">المنتجات المعروضة</h3>
+        <div class="grid" id="productsGrid"></div>
+    </div>
 </div>
 
-<!-- الأقسام الفلاتر -->
-<div class="filters" id="filtersContainer"></div>
+<!-- لوحة التحكم (تفتح برابط أو كلمة مرور مستقلة) -->
+<div class="admin-page" id="adminView">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h2>⚙️ لوحة تحكم المتجر</h2>
+        <button onclick="exitAdmin()" style="background:#64748b;">العودة للمتجر</button>
+    </div>
 
-<!-- المنتجات -->
-<div class="box">
-    <h3>المنتجات المعروضة</h3>
-    <div class="grid" id="productsGrid"></div>
+    <div class="box">
+        <h3>تعديل شعار المتجر</h3>
+        <input type="file" id="logoImage" accept="image/*" onchange="updateLogo()">
+    </div>
+
+    <div class="box">
+        <h3>إدارة الأقسام</h3>
+        <input type="text" id="catName" placeholder="اسم القسم الجديد (مثلاً: ستم أوفلاين)...">
+        <button onclick="addCategory()">إضافة قسم</button>
+        <div class="admin-manage-list" id="adminCatsList" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="box">
+        <h3>إضافة منتج جديد</h3>
+        <input type="text" id="pName" placeholder="اسم المنتج (مثلاً: Battlefield 3)">
+        <input type="text" id="pPrice" placeholder="السعر (مثلاً: 9,000 د.ع)">
+        <select id="pCat"></select>
+        <select id="pStatus">
+            <option value="available">🟢 متوفر</option>
+            <option value="busy">🔴 غير متوفر</option>
+        </select>
+        <input type="file" id="pImage" accept="image/*">
+        <button onclick="addProduct()">نشر المنتج فوراً</button>
+    </div>
+
+    <div class="box">
+        <h3>إدارة المنتجات المحذوفة/المعدلة</h3>
+        <div class="admin-manage-list" id="adminManageList"></div>
+    </div>
+</div>
+
+<!-- زر الشات الحي العائم -->
+<div class="chat-widget-btn" onclick="toggleChat()">💬</div>
+
+<!-- نافذة الشات الداخلي -->
+<div class="chat-modal" id="chatModal">
+    <div class="chat-header">
+        <span style="font-weight: bold; color: var(--accent-color); font-size: 0.9rem;">دعم المتجر (Store Support)</span>
+        <span style="cursor:pointer; color:#fff; font-size: 18px;" onclick="toggleChat()">&times;</span>
+    </div>
+    <div class="chat-body" id="chatMessages">
+        <div style="background: rgba(245,158,11,0.1); padding: 8px; border-radius: 6px; text-align: center; color: var(--accent-color);">
+            أهلاً بك! اطرح استفسارك وسنرد عليك في أقرب وقت.
+        </div>
+    </div>
+    <div class="chat-footer">
+        <input type="text" id="chatInput" placeholder="اكتب رسالتك هنا...">
+        <button onclick="sendChatMessage()">إرسال</button>
+    </div>
 </div>
 
 <!-- نافذة تكبير الصورة -->
@@ -112,7 +174,7 @@
 </div>
 
 <script>
-    // إعدادات Firebase الخاصة بك
+    // إعدادات Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDUNN-QVK6-81yheeE22TiLnLsrFpjNNRD0",
       authDomain: "z8-store.firebaseapp.com",
@@ -129,8 +191,6 @@
 
     let adminPass = "1234";
     let categories = [{id: 'all', name: 'الكل'}];
-    
-    // تحميل المنتجات المخزنة محلياً لتظهر فوراً بدون تأخير
     let products = JSON.parse(localStorage.getItem('cached_products')) || [];
     let currentFilter = 'الكل';
     let storeLogo = localStorage.getItem('cached_logo') || '';
@@ -139,27 +199,19 @@
         document.getElementById('logoContainer').innerHTML = `<img src="${storeLogo}">`;
     }
 
-    // عرض المنتجات المحفوظة محلياً لحظياً عند فتح الصفحة
     renderProducts();
 
-    // جلب البيانات من السحاب وتحديثها في الخلفية
-    db.ref('settings/adminPass').on('value', (snapshot) => {
-        if(snapshot.exists()) adminPass = snapshot.val();
-    });
-
+    // جلب البيانات من السحاب
+    db.ref('settings/adminPass').on('value', (snapshot) => { if(snapshot.exists()) adminPass = snapshot.val(); });
     db.ref('settings/storeLogo').on('value', (snapshot) => {
         storeLogo = snapshot.val() || '';
         localStorage.setItem('cached_logo', storeLogo);
-        if(storeLogo) {
-            document.getElementById('logoContainer').innerHTML = `<img src="${storeLogo}">`;
-        }
+        if(storeLogo) document.getElementById('logoContainer').innerHTML = `<img src="${storeLogo}">`;
     });
 
     db.ref('categories').on('value', (snapshot) => {
         categories = [{id: 'all', name: 'الكل'}];
-        snapshot.forEach((childSnapshot) => {
-            categories.push(childSnapshot.val());
-        });
+        snapshot.forEach((child) => categories.push(child.val()));
         renderCategories();
         updateCatsSelect();
         renderAdminCatsList();
@@ -167,133 +219,80 @@
 
     db.ref('products').on('value', (snapshot) => {
         products = [];
-        snapshot.forEach((childSnapshot) => {
-            products.push({ ...childSnapshot.val(), firebaseKey: childSnapshot.key });
-        });
-        // حفظ المنتجات في الذاكرة المحلية لضمان السرعة الفورية في المرات القادمة
+        snapshot.forEach((child) => products.push({ ...child.val(), firebaseKey: child.key }));
         localStorage.setItem('cached_products', JSON.stringify(products));
         renderProducts();
         renderAdminManageList();
     });
 
-    function toggleAdmin() {
-        let p = prompt("أدخل كلمة المرور لوحة التحكم:");
+    // نظام حماية واجهة التحكم برابط أو كلمة مرور
+    function checkAdminAccess() {
+        let p = prompt("أدخل كلمة مرور لوحة التحكم:");
         if(p === adminPass) {
-            let panel = document.getElementById('adminPanel');
-            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            document.getElementById('storeView').style.display = 'none';
+            document.getElementById('adminView').style.display = 'block';
             updateCatsSelect();
             renderAdminManageList();
             renderAdminCatsList();
         } else if(p !== null) {
-            alert("كلمة المرور خطأ!");
+            alert("كلمة المرور غير صحيحة!");
         }
     }
 
+    function exitAdmin() {
+        document.getElementById('adminView').style.display = 'none';
+        document.getElementById('storeView').style.display = 'block';
+    }
+
+    // إدارة الشات الداخلي
+    function toggleChat() {
+        let chat = document.getElementById('chatModal');
+        chat.style.display = chat.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function sendChatMessage() {
+        let input = document.getElementById('chatInput');
+        let msg = input.value.trim();
+        if(!msg) return;
+
+        let chatBody = document.getElementById('chatMessages');
+        chatBody.innerHTML += `<div style="background: #1e293b; padding: 8px; border-radius: 6px; text-align: left; margin-bottom: 5px;"><b>أنت:</b> ${msg}</div>`;
+        input.value = '';
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        // حفظ الرسالة في فايربيس لو حبيت تظهر عندك بلوحة التحكم لاحقاً
+        db.ref('chats').push({message: msg, time: Date.now()});
+    }
+
+    // دوال المنتجات والأقسام والشعار
     function updateLogo() {
         let file = document.getElementById('logoImage').files[0];
         if(file) {
             let reader = new FileReader();
             reader.onload = function(e) {
-                db.ref('settings/storeLogo').set(e.target.result, (error) => {
-                    if(!error) alert("تم تحديث الشعار بنجاح للجميع!");
-                });
+                db.ref('settings/storeLogo').set(e.target.result, () => alert("تم تحديث الشعار بنجاح!"));
             }
             reader.readAsDataURL(file);
         }
     }
 
-    function changePass() {
-        let key = document.getElementById('confirmKey').value;
-        let np = document.getElementById('newPass').value;
-
-        if(key !== "RAEZAR") {
-            alert("كلمة التأكيد غير صحيحة!");
-            return;
-        }
-
-        if(!np) {
-            alert("الرجاء كتابة كلمة المرور الجديدة!");
-            return;
-        }
-
-        db.ref('settings/adminPass').set(np, (error) => {
-            if(!error) {
-                document.getElementById('confirmKey').value = '';
-                document.getElementById('newPass').value = '';
-                alert("تم تغيير كلمة المرور بنجاح!");
-            }
-        });
-    }
-
     function addCategory() {
         let name = document.getElementById('catName').value.trim();
         if(name) {
-            if(categories.some(c => c.name === name)) {
-                alert("هذا القسم موجود مسبقاً!");
-                return;
-            }
-            let newCatRef = db.ref('categories').push();
-            newCatRef.set({id: newCatRef.key, name: name}, (error) => {
-                if(!error) {
-                    document.getElementById('catName').value = '';
-                    alert("تم إضافة القسم بنجاح للجميع!");
-                }
+            let ref = db.ref('categories').push();
+            ref.set({id: ref.key, name: name}, () => {
+                document.getElementById('catName').value = '';
+                alert("تم إضافة القسم بنجاح!");
             });
-        } else {
-            alert("الرجاء كتابة اسم القسم");
         }
     }
 
-    function deleteCategory(catName) {
-        if(catName === 'الكل') {
-            alert("لا يمكن حذف قسم الكل!");
-            return;
-        }
-        if(confirm(`هل أنت متأكد من حذف قسم "${catName}"؟ سيتم حذف جميع المنتجات التابعة له أيضاً.`)) {
-            db.ref('categories').once('value', (snapshot) => {
-                snapshot.forEach((childSnapshot) => {
-                    if(childSnapshot.val().name === catName) {
-                        db.ref('categories/' + childSnapshot.key).remove();
-                    }
-                });
+    function deleteCategory(name) {
+        if(confirm(`هل أنت متأكد من حذف قسم "${name}"؟`)) {
+            db.ref('categories').once('value', (snap) => {
+                snap.forEach((child) => { if(child.val().name === name) db.ref('categories/' + child.key).remove(); });
             });
-
-            db.ref('products').once('value', (snapshot) => {
-                snapshot.forEach((childSnapshot) => {
-                    if(childSnapshot.val().cat === catName) {
-                        db.ref('products/' + childSnapshot.key).remove();
-                    }
-                });
-            });
-
-            if(currentFilter === catName) currentFilter = 'الكل';
-            alert("تم حذف القسم بنجاح!");
         }
-    }
-
-    function renderCategories() {
-        let container = document.getElementById('filtersContainer');
-        container.innerHTML = '';
-        categories.forEach(c => {
-            let activeClass = currentFilter === c.name ? 'active' : '';
-            container.innerHTML += `<button class="filter-btn ${activeClass}" onclick="filterProducts('${c.name}')">${c.name}</button>`;
-        });
-    }
-
-    function filterProducts(catName) {
-        currentFilter = catName;
-        renderCategories();
-        renderProducts();
-    }
-
-    function updateCatsSelect() {
-        let select = document.getElementById('pCat');
-        select.innerHTML = '';
-        categories.forEach(c => {
-            if(c.name !== 'الكل') {
-                select.innerHTML += `<option value="${c.name}">${c.name}</option>`;
-            }
-        });
     }
 
     function addProduct() {
@@ -301,159 +300,115 @@
         let price = document.getElementById('pPrice').value.trim();
         let cat = document.getElementById('pCat').value;
         let status = document.getElementById('pStatus').value;
-        let fileInput = document.getElementById('pImage');
+        let file = document.getElementById('pImage').files[0];
 
         if(!name || !price) {
-            alert("املأ اسم المنتج والسعر!");
+            alert("يرجى ملء اسم المنتج والسعر!");
             return;
         }
 
-        if(!cat) {
-            alert("يرجى إضافة قسم أولاً لتتمكن من اختيار قسم للمنتج!");
-            return;
-        }
-
-        if(fileInput.files && fileInput.files[0]) {
+        if(file) {
             let reader = new FileReader();
-            reader.onload = function(e) {
-                saveProdToCloud(name, price, cat, status, e.target.result);
-            };
-            reader.readAsDataURL(fileInput.files[0]);
+            reader.onload = (e) => saveProd(name, price, cat, status, e.target.result);
+            reader.readAsDataURL(file);
         } else {
-            saveProdToCloud(name, price, cat, status, '');
+            saveProd(name, price, cat, status, '');
         }
     }
 
-    function saveProdToCloud(name, price, cat, status, img) {
-        let newProdRef = db.ref('products').push();
-        newProdRef.set({
-            id: newProdRef.key,
-            name: name,
-            price: price,
-            cat: cat,
-            status: status,
-            img: img
-        }, (error) => {
-            if(!error) {
-                document.getElementById('pName').value = '';
-                document.getElementById('pPrice').value = '';
-                document.getElementById('pImage').value = '';
-                alert("تم نشر المنتج بنجاح ليظهر لكل الزبائن فوراً!");
-            }
+    function saveProd(name, price, cat, status, img) {
+        let ref = db.ref('products').push();
+        ref.set({id: ref.key, name, price, cat, status, img}, () => {
+            document.getElementById('pName').value = '';
+            document.getElementById('pPrice').value = '';
+            document.getElementById('pImage').value = '';
+            alert("تم نشر المنتج بنجاح!");
         });
     }
 
-    function deleteProduct(firebaseKey) {
-        if(confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
-            db.ref('products/' + firebaseKey).remove();
-        }
+    function deleteProduct(key) {
+        if(confirm("هل أنت متأكد من الحذف؟")) db.ref('products/' + key).remove();
     }
 
-    function toggleProductStatus(firebaseKey, currentStatus) {
-        let newStatus = currentStatus === 'available' ? 'busy' : 'available';
-        db.ref('products/' + firebaseKey).update({ status: newStatus });
+    function toggleProductStatus(key, status) {
+        db.ref('products/' + key).update({status: status === 'available' ? 'busy' : 'available'});
     }
 
-    function openImageModal(imgSrc) {
-        if(!imgSrc) return;
-        document.getElementById('modalImg').src = imgSrc;
-        document.getElementById('imageModal').style.display = 'flex';
-    }
-
-    function closeImageModal() {
-        document.getElementById('imageModal').style.display = 'none';
-    }
-
-    function renderAdminCatsList() {
-        let listContainer = document.getElementById('adminCatsList');
-        if(!listContainer) return;
-        listContainer.innerHTML = '';
-
-        let subCats = categories.filter(c => c.name !== 'الكل');
-        if(subCats.length === 0) {
-            listContainer.innerHTML = '<div style="color:#94a3b8; text-align:center; font-size:0.8rem;">لا توجد أقسام مضافة حالياً</div>';
-            return;
-        }
-
-        subCats.forEach(c => {
-            listContainer.innerHTML += `
-                <div class="admin-item-row">
-                    <span><b>${c.name}</b></span>
-                    <button class="del-btn" onclick="deleteCategory('${c.name}')">حذف القسم</button>
-                </div>
-            `;
+    function renderCategories() {
+        let container = document.getElementById('filtersContainer');
+        container.innerHTML = '';
+        categories.forEach(c => {
+            let active = currentFilter === c.name ? 'active' : '';
+            container.innerHTML += `<button class="filter-btn ${active}" onclick="currentFilter='${c.name}';renderCategories();renderProducts();">${c.name}</button>`;
         });
     }
 
-    function renderAdminManageList() {
-        let listContainer = document.getElementById('adminManageList');
-        if(!listContainer) return;
-        listContainer.innerHTML = '';
-
-        if(products.length === 0) {
-            listContainer.innerHTML = '<div style="color:#94a3b8; text-align:center; font-size:0.8rem;">لا توجد منتجات حالياً</div>';
-            return;
-        }
-
-        products.forEach(p => {
-            let statusText = p.status === 'available' ? '🟢 متوفر' : '🔴 غير متوفر';
-            listContainer.innerHTML += `
-                <div class="admin-item-row">
-                    <span><b>${p.name}</b><br><small style="color:#94a3b8;">${statusText}</small></span>
-                    <div>
-                        <button class="status-toggle-btn" onclick="toggleProductStatus('${p.firebaseKey}', '${p.status}')">تبديل الحالة</button>
-                        <button class="del-btn" onclick="deleteProduct('${p.firebaseKey}')">حذف</button>
-                    </div>
-                </div>
-            `;
-        });
+    updateCatsSelect = function() {
+        let select = document.getElementById('pCat');
+        if(!select) return;
+        select.innerHTML = '';
+        categories.forEach(c => { if(c.name !== 'الكل') select.innerHTML += `<option value="${c.name}">${c.name}</option>`; });
     }
 
     function renderProducts() {
         let grid = document.getElementById('productsGrid');
-        
-        if(products.length === 0) {
-            grid.innerHTML = '<div class="loading-msg">⚡ جاري تحميل المنتجات...</div>';
-            return;
-        }
-
+        if(!grid) return;
         grid.innerHTML = '';
 
         let filtered = currentFilter === 'الكل' ? products : products.filter(p => p.cat === currentFilter);
 
         if(filtered.length === 0) {
-            grid.innerHTML = '<p style="color:#94a3b8; grid-column:1/-1; text-align:center;">لا توجد منتجات في هذا القسم حالياً</p>';
+            grid.innerHTML = '<p style="color:var(--text-muted); grid-column:1/-1; text-align:center;">لا توجد منتجات متاحة حالياً</p>';
             return;
         }
-        
-        filtered.forEach(p => {
-            let statusHtml = p.status === 'available' 
-                ? '<div class="status-badge status-available">🟢 متوفر</div>' 
-                : '<div class="status-badge status-busy">🔴 غير متوفر</div>';
 
-            let imgHtml = p.img ? `<img src="${p.img}" onclick="openImageModal('${p.img}')" alt="صورة المنتج">` : '';
+        filtered.forEach(p => {
+            let badge = p.status === 'available' ? '<span class="status-badge status-available">🟢 متوفر</span>' : '<span class="status-badge status-busy">🔴 غير متوفر</span>';
+            let img = p.img ? `<img src="${p.img}" onclick="openImageModal('${p.img}')">` : '';
 
             grid.innerHTML += `
                 <div class="card">
                     <div>
-                        ${imgHtml}
-                        <h4>${p.name}</h4>
-                        <p style="color:#00d2ff; font-weight:bold; margin:5px 0;">${p.price}</p>
-                        ${statusHtml}
-                        <br><small style="color:#94a3b8;">القسم: ${p.cat}</small>
+                        ${img}
+                        <div class="card-body">
+                            <h4>${p.name}</h4>
+                            <div class="price">${p.price}</div>
+                            ${badge}
+                        </div>
                     </div>
-            <div style="margin-top: 12px; text-align: center;">
-                <a href="https://discord.gg/z8" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; background: #5865F2; color: #fff; padding: 8px 10px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold; font-family: Tahoma, sans-serif; box-sizing: border-box;">
-                    <svg width="16" height="16" viewBox="0 0 127.14 96.36" fill="currentColor">
-                        <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6,5.4,80.21h0A105.73,105.73,0,0,0,32.79,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.81,11.1,105.25,105.25,0,0,0,27.39-16.15c8.33-27.14-3.56-50.5-5.67-54.34ZM42.45,65.69c-6.18,0-11.28-5.69-11.28-12.7s5.07-12.7,11.28-12.7c6.27,0,11.37,5.72,11.28,12.7C53.73,60,48.72,65.69,42.45,65.69Zm42.24,0c-6.18,0-11.28-5.69-11.28-12.7s5.07-12.7,11.28-12.7c6.27,0,11.37,5.72,11.28,12.7C95.96,60,91,65.69,84.69,65.69Z"/>
-                    </svg>
-                    استفسار / فتح تكت
-                </a>
-            </div>
-        </div>
-    </div>
-`;
+                    <div style="padding: 12px; padding-top: 0;">
+                        <button class="buy-btn" onclick="toggleChat()">استفسر / اطلب الآن</button>
+                    </div>
+                </div>
+            `;
         });
+    }
+
+    function renderAdminCatsList() {
+        let list = document.getElementById('adminCatsList');
+        if(!list) return;
+        list.innerHTML = '';
+        categories.filter(c => c.name !== 'الكل').forEach(c => {
+            list.innerHTML += `<div class="admin-item-row"><span>${c.name}</span><button class="del-btn" onclick="deleteCategory('${c.name}')">حذف</button></div>`;
+        });
+    }
+
+    function renderAdminManageList() {
+        let list = document.getElementById('adminManageList');
+        if(!list) return;
+        list.innerHTML = '';
+        products.forEach(p => {
+            list.innerHTML += `<div class="admin-item-row"><span><b>${p.name}</b></span><div><button onclick="toggleProductStatus('${p.firebaseKey}','${p.status}')" style="padding:4px 8px; font-size:0.75rem;">تغيير الحالة</button> <button class="del-btn" onclick="deleteProduct('${p.firebaseKey}')">حذف</button></div></div>`;
+        });
+    }
+
+    function openImageModal(src) {
+        document.getElementById('modalImg').src = src;
+        document.getElementById('imageModal').style.display = 'flex';
+    }
+
+    function closeImageModal() {
+        document.getElementById('imageModal').style.display = 'none';
     }
 </script>
 </body>
